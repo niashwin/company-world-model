@@ -1,0 +1,415 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{booktabs,tabularx,multirow}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,decorations.pathreplacing}
+\usepackage{enumitem}
+\usepackage[font=small,labelfont=bf,skip=4pt]{caption}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=goodblue,citecolor=goodblue,urlcolor=goodblue]{hyperref}
+
+\definecolor{goodblue}{HTML}{2A78D6}
+\definecolor{badorange}{HTML}{EB6834}
+\definecolor{ntpaqua}{HTML}{1BAF7A}
+\definecolor{custA}{HTML}{6250D6}
+\definecolor{custB}{HTML}{EDA100}
+\definecolor{custC}{HTML}{E87BA4}
+\definecolor{inktwo}{HTML}{52514E}
+
+\setlist{itemsep=2pt,topsep=3pt,leftmargin=1.4em}
+\setlength{\parskip}{3pt}
+\newcommand{\good}{\textcolor{goodblue}{\textbf{good views}}}
+\newcommand{\figref}[1]{Figure~\ref{#1}}
+\newcommand{\secref}[1]{\S\ref{#1}}
+
+\title{\textbf{Toward World Models of Organizations:\\Every System Sees the Same Company}}
+\author{Ashwin Gopinath\\[2pt] \normalsize Sentra, San Francisco}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+A company is one world observed by many systems. Email, chat, the CRM, support tickets, call recordings, calendars and issue trackers each record part of what is happening with every customer, deal and project, yet no system records the situation itself. People rebuild it in their heads; software stores disconnected records. We ask how a machine can learn the joined-up picture: a \emph{world model of the organization} whose state space places every record by the situation it describes, whichever system wrote it. Our starting point is the Platonic Representation Theorem, which shows that joint-embedding predictive architectures (JEPAs) trained on \emph{good views}, different observations of one underlying state, converge to the same representation up to a rotation. Our observation is that organizations already keep good views without anyone annotating them: records that different systems link to the same customer in the same time window. On a simulated company from Era by Eon (seven systems, 21{,}972 customer-linked records, exact ground truth), we train small text JEPAs from scratch on such links and compare them with corruption-based views and next-token prediction on identical text. On records whose links were hidden during training, good views place HOGOODCUST of records with the right customer, against HOTFCUST for TF-IDF, the strongest alternative. With customer names and identifiers masked out of every record, about half of the customer signal remains. Encoders trained separately on messages and on systems of record can be partly aligned by one rotation fitted on 64 anchor pairs, unlike the alternatives, and a rotation lets a retrained encoder search the index built by the old one (E3BROTPCT of nearest neighbours on the right customer, against E3BUNROTPCT without it). We also report what does not work yet: the state vectors do not forecast the next quarter, and they are poor at facts about which system recorded what. We argue that a shared state space learned from the links an organization already keeps is the foundation of an organizational world model, and we release our code and data exporter.
+\end{abstract}
+
+% ============================================================================================ FIGURE 1
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/idea.pdf}
+\caption{\textbf{The idea.} (1) Every system records a piece of each customer's situation. (2) The links the systems already keep tell us which records are two observations of the same situation, the \emph{good views} that the Platonic Representation Theorem asks for. (3) A JEPA trained on them maps records from every system into one state space where records about the same customer and quarter land together and records without links can be placed by content; separately trained or retrained encoders can be partly aligned by a rotation. Predicting how states move is the next step toward a full world model.}
+\label{fig:idea}
+\end{figure}
+
+% ============================================================================================ 1
+\section{Introduction}
+\label{sec:intro}
+
+Ask anyone in a company what is going on with its largest customer. The honest answer is spread across a sales call last Tuesday, three support tickets, a chat thread, an email chain with procurement and a CRM stage that is two weeks out of date. Each system records a piece of the situation; none records the situation itself. People rebuild it in their heads, slowly, partially and differently from one another. AI assistants rebuild it from scratch every time they are asked, by retrieving documents and reading them.
+
+What is missing is a model of the company itself: a \emph{world model}. In robotics and video, a world model is a learned representation of the state of the world together with a way to predict how that state changes~\citep{ha2018world,hafner2020dreamer,lecun2022path}. For an organization, the world is the situation of every customer, deal, project and team at every moment, and the observations are the records the organization produces as it works. A world model of an organization would map every record, from every system, into one state space where records about the same situation land together. It would stay stable as systems, models and time change. Eventually, it would predict how states evolve and how actions change them.
+
+The hard part is learning such a space without labels. Nobody annotates ``situations''. Generic text embeddings organize records by topic and template; next-token prediction learns the language of the records, not the company. The Platonic Representation Theorem~\citep{balestriero2026platonic} makes the requirement precise. JEPAs trained on \good{}, two different observations of the same underlying state, converge to the same representation up to one rotation, whatever the modality. With \emph{bad views}, corruptions of a single observation, they do not, and next-token prediction behaves like a JEPA with bad views. In vision and language, good views are scarce: someone has to pair an image with its caption.
+
+Our central observation is that \textbf{organizations produce good views for free}. The same customer appears in an email, a ticket, a call and a CRM update in the same week, and the systems themselves record the links: account identifiers, deal identifiers, organization fields, channel names, calendar invitations. Records linked to the same entity in the same time window are different observations of the same situation. The links a company already keeps are, in the language of the theorem, a supply of good views.
+
+We test this on a simulated company generated by Era by Eon~\citep{eon2026era,gruenbaum2026era}, whose system simulators produce one consistent company with exact ground truth. We train small text JEPAs from scratch on the company's own records and compare good views, bad views and next-token prediction on identical text, architecture and budget. Our contributions are:
+\begin{itemize}
+\item A definition of an organizational world model and a recipe for its state space: states are (entity, time window) pairs, observations are records from any system, and good views are records linked to the same state (\secref{sec:what}, \secref{sec:method}).
+\item Evidence that the links make the space. On records whose links were hidden during training, good views place HOGOODCUST of records with the right customer, against HOTFCUST for TF-IDF and HOBADCUST and HONTPCUST for bad views and next-token prediction (\secref{sec:heldout}). On the training records, 95\% of a record's nearest neighbours from other systems concern the same customer, against 13--14\% for the alternatives (\secref{sec:e1}). About half of that signal survives masking every customer name and identifier (\secref{sec:mask}), and it degrades gracefully as links are corrupted (\secref{sec:noise}).
+\item Evidence that the space can be shared and updated. Encoders trained separately on different systems can be partly aligned by one rotation fitted on 64 anchor pairs, and encoders trained with the alternatives cannot (\secref{sec:e2}). A retrained encoder can search the old index through one rotation, although only the leading directions of the space survive retraining (\secref{sec:e3}).
+\item An account of what does not work yet, forecasting and the facts that depend on which system wrote a record, and what it implies for the rest of an organizational world model (\secref{sec:limits-results}, \secref{sec:why}).
+\item Code, an exporter for Era's simulators and all results (\secref{sec:code}).
+\end{itemize}
+
+% ============================================================================================ 2
+\section{What is a world model of an organization?}
+\label{sec:what}
+
+\paragraph{States, observations and dynamics.}
+We model an organization as a set of entities $e$ (customers, deals, projects, people) whose situation changes over time. Write $s_{e,t}$ for the latent state of entity $e$ during time window $t$: everything that is true about that customer this quarter, from the open issues and the deal stage to the people involved and the mood of the last call. States are never observed directly. What the organization observes are \emph{records} $x$: an email, a chat message, a ticket comment, a call-transcript turn, a CRM change, an issue, a meeting. Each record is rendered from a state by a system and carries nuisance,
+\begin{equation}
+x = r_m\!\left(s_{e,t},\, n\right),
+\end{equation}
+where $m$ is the system (email, chat, CRM, \dots) and $n$ collects everything that is not the situation: the author, the template, the wording, the formatting. A world model of the organization has three parts:
+\begin{enumerate}[label=(\roman*)]
+\item an \textbf{encoder} $f$ that maps any record into a shared state space, $f(x) \approx g(s_{e,t})$, invariant to the system $m$ and the nuisance $n$;
+\item a \textbf{memory} that aggregates encoded records into current states and serves them to people and programs;
+\item a \textbf{predictor} that maps a state, and possibly an action, to the next state: $s_{e,t+1} \approx h(s_{e,t}, a_t)$.
+\end{enumerate}
+This paper is about the first part, the state space, and about keeping it stable as the organization changes. We report early and mostly negative results on the third.
+
+\paragraph{What a shared state space is for.}
+It turns everyday questions into geometry.
+\emph{Where are we?} The state of a customer this week is a point, and its nearest neighbours from every system are the records that matter. The encoder can also place records that nobody linked, which in our simulated company are 72\% of all records; we test this by hiding links (\secref{sec:heldout}).
+\emph{What changed?} The difference between this week's state and last week's.
+\emph{What is this like?} Situations that look alike across customers, such as accounts that look the way a lost account looked before it was lost.
+\emph{Is something off?} A state that moves fast, or two teams' records about the same customer drifting apart.
+\emph{What about new tools and new models?} In our experiments, separately trained encoders can be partly aligned by one rotation fitted on 64 matched records, and a retrained encoder can search the old index through another (\secref{sec:e2}, \secref{sec:e3}).
+
+For an individual the difference is concrete. A new account manager sees one customer's situation assembled from systems they have never opened. A support engineer sees that the ticket in front of them belongs to a customer whose renewal call went badly yesterday. An executive asks what changed across all customers this week and gets an answer computed from states, not from reading thousands of documents. AI agents read a compact, shared state instead of rebuilding context from documents on every request.
+
+\paragraph{Why links are the right training signal.}
+Self-supervised learning needs a notion of ``the same''. Corrupting a record by cropping, masking or dropping words says that a record is the same as a damaged copy of itself; the model learns the record's wording, template and source. Predicting the next token teaches the model the language of the records. Neither says anything about the company. Links do: two records linked to the same customer in the same quarter are about the same situation, written by different people, in different systems, for different purposes, and what they share is the situation. This is the setting in which the Platonic Representation Theorem predicts convergence (\secref{sec:background}). Links are not annotations: nobody creates them to train a model; they are metadata the systems keep in order to work. They are, however, a form of weak supervision, so we evaluate both on the records used in training and on records whose links were hidden.
+
+% ============================================================================================ 3
+\section{Background}
+\label{sec:background}
+
+\paragraph{JEPAs and LeJEPA.}
+A joint-embedding predictive architecture learns an encoder by making the embeddings of related views predictable from one another, without reconstructing the input~\citep{lecun2022path,assran2023ijepa}. LeJEPA~\citep{balestriero2025lejepa} replaces the usual heuristics against collapse with SIGReg, a regularizer that pushes the distribution of embeddings toward an isotropic Gaussian using random one-dimensional projections and the Epps--Pulley test. The loss pulls every view's projected embedding toward the mean of the global views and adds SIGReg: $\mathcal{L} = (1-\lambda)\,\mathcal{L}_{\text{inv}} + \lambda\,\mathcal{L}_{\text{SIGReg}}$.
+
+\paragraph{The Platonic Representation Theorem.}
+\citet{huh2024platonic} conjectured that representations learned by different models and modalities converge as they scale. \citet{balestriero2026platonic} turn the conjecture into a theorem for JEPAs. We use five of its parts. (1) A JEPA trained with SIGReg learns a spectral embedding of the \emph{positive-pair graph}, the graph that says which views count as the same; the representation is set by that graph more than by the architecture. (2) Encoders trained on different modalities learn the same representation up to one rotation when their positive pairs are two observations of one scene (good views); otherwise their misalignment is bounded by how much the two graphs disagree about which scenes are alike. (3) That rotation is identified from a small number of anchor pairs by orthogonal Procrustes~\citep{schonemann1966procrustes}. (4) Nuisance that the views do not share is discarded; the fraction of the embedding explained by the scene, $\rho$, measures how much of it is the world. (5) Next-token prediction can be read as a JEPA with bad views, parts of one document, which explains why language models align with vision only slowly as they scale. The paper validates the theory on images and captions. We test it on an organization.
+
+% ============================================================================================ 4
+\section{Method}
+\label{sec:method}
+
+\paragraph{From records to states.}
+We use customers as entities and calendar quarters as time windows, so a state is a (customer, quarter) pair. A record belongs to a state if its source system links it to the customer and its timestamp falls in the quarter. The links come from the systems themselves: a customer's dedicated chat channel, a customer header on an email, the CRM context of a recorded call, the organization of a support ticket, a customer field on an issue, the account of a CRM object and, for calendar events, the call they schedule. The encoder never reads these links; they only decide which records are positives. In our experiments we keep only linked records, so that every record can be scored against the ground truth; to see how the model places records without links, we hide the links of a quarter of the threads during training (\secref{sec:heldout}).
+
+\paragraph{Views.}
+Each batch has 256 anchor records drawn uniformly, so states are weighted by their number of records, and each anchor gets two global and six local views, following LeJEPA's multi-crop recipe. With \good, each view is a record drawn at random, with replacement, from the anchor's state, so the views are usually \emph{different records}, from any system. Each is trimmed to a contiguous span (50--100\% of its tokens for global views, 15--50\% for local views) with 15\% of tokens masked. With \textcolor{badorange}{\textbf{bad views}}, all eight views are trimmed and masked copies of the anchor record itself: standard corruption-based self-supervision for text. Everything else is identical, so the only difference is the definition of ``the same''.
+
+\paragraph{Encoder and training.}
+So that the encoder learns from the company's data alone, with no pretrained language knowledge, we use a deliberately small model trained from scratch: unigrams and hashed bigrams ($2^{18}$ buckets) feed a 192-dimensional embedding bag and a two-layer MLP with a 256-dimensional output, the representation we evaluate. A projector (1{,}024 hidden units, 128 outputs) is used only for the loss. We train with LeJEPA's loss ($\lambda = 0.05$, 256 random slices) for 1{,}500 steps with batches of 256 anchor records, a peak learning rate of $10^{-3}$, 5\% warm-up and cosine decay, using sparse Adam for the embedding table and AdamW elsewhere. One run takes three to six minutes on a CPU. The \textcolor{ntpaqua}{\textbf{next-token}} baseline trains the same encoder on random prefixes of records with a softmax head over the whole vocabulary (6{,}061 words).
+
+\paragraph{One space across systems.}
+To test whether separately trained models agree, we split the systems into two families: messages people write to each other (email and chat) and systems of record (CRM, support, calls, calendar and issues). We train one encoder per family; each sees only its own family's records and never a cross-family pair. We whiten each encoder's output to 64 dimensions without labels and fit one orthogonal map between the two spaces by Procrustes on $k$ anchor pairs, each a message and a record linked to the same state.
+
+\paragraph{Stability over time: a rotation registry.}
+When new data arrives, the encoder is retrained. Instead of re-embedding everything stored, we fit one rotation and one global scale from the new model's space to the old one on records both models have embedded, and rotate new queries into the old space. A registry of such rotations keeps every stored vector usable across model versions.
+
+% ============================================================================================ 5
+\section{Experimental setup}
+\label{sec:setup}
+
+\paragraph{A simulated company.}
+Era by Eon generates synthetic companies whose systems agree with each other, behind vendor-compatible interfaces and with exact ground truth~\citep{eon2026era,gruenbaum2026era}. We ran seven of its public simulator images (Gmail, Google Calendar, Slack, Salesforce, Zendesk, Gong and Jira) with one seed, so all seven describe the same fictional company, Northwind Robotics, as of 31~October 2026 (\emph{day~1}). We then advanced the simulators past the close of the next fiscal quarter, 30~January 2027 (\emph{day~2}). An exporter pulls every text-bearing record through each system's API into one table of system, timestamp, author, thread, text and link fields. Table~\ref{tab:data} summarizes the data. On day~1 the company has 78{,}048 records, of which 21{,}972 (28\%) are linked to one of 21 active customers, spread over 180 customer-quarter states from late 2022 to late 2026. By day~2 the same customers have 7{,}990 new linked records, written in the three months after day~1 (most in the last calendar quarter of 2026, the rest in January 2027). Era generates records from one shared company graph, with text from templates and a pre-written text pack, part of it written by a language model, whose facts are filled in from the graph~\citep{eon2026era}. Real company text is messier, a point we return to in \secref{sec:limits}.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{The simulated company on day~1.} A record is linked if its system ties it to one of the 21 active customers. Linked records define the states and the evaluation; all records can be embedded.}
+\label{tab:data}
+\begin{tabular}{lrrr}
+\toprule
+System & Records & Linked to a customer & Share linked \\
+\midrule
+Slack (chat) & 45{,}382 & 457 & 1\% \\
+Gmail (email) & 19{,}713 & 14{,}160 & 72\% \\
+Salesforce (CRM) & 5{,}077 & 1{,}136 & 22\% \\
+Zendesk (support) & 4{,}117 & 4{,}117 & 100\% \\
+Gong (calls) & 2{,}066 & 1{,}858 & 90\% \\
+Jira (issues) & 1{,}206 & 77 & 6\% \\
+Google Calendar & 487 & 167 & 34\% \\
+\midrule
+All & 78{,}048 & 21{,}972 & 28\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Baselines.}
+Bad views and next-token prediction isolate the effect of the views: same text, same encoder, same budget. TF-IDF with latent semantic analysis (256 dimensions) is a classical text representation, and a randomly initialized encoder is a floor.
+
+\paragraph{Metrics.}
+\emph{Cross-system precision@10}: for a record, the fraction of its ten nearest neighbours (cosine), restricted to records from \emph{other systems} and other threads, that concern the same customer, or the same customer and quarter, averaged over 3{,}000 linked records; neighbours are searched among linked records. Restricting to other systems makes this a test of a shared state space rather than of a shared template. \emph{Placement} (held-out records): each record is assigned to the training state whose mean embedding is nearest, and we report the share assigned to the right customer and to the right customer and quarter. \emph{Cross-family probes}: a linear classifier trained to predict the customer from message embeddings and tested on record embeddings, and the reverse. \emph{$\rho$ and $R^2$}: on the whitened top 32 dimensions, the fraction of the embedding explained by the state, the customer or the system (between-group covariance with the within-group bias removed); $\rho$ is the theorem's scene-explained fraction. \emph{Alignment}: same-state recall@1 when messages retrieve records after the rotation, on held-out states, and mutual ten-nearest-neighbour agreement before it. \emph{Time}: customer probes on new-quarter records, per-direction correlation between old and rotated new embeddings, and precision@10 of new queries against the old index.
+
+% ============================================================================================ 6
+\section{Results}
+\label{sec:results}
+
+\subsection{Good views absorb the company's links; bad views and next-token prediction do not}
+\label{sec:e1}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/e1_precision.pdf}
+\caption{\textbf{On the training records, only good views put records from different systems about the same situation together.} Precision@10 among neighbours from \emph{other} systems, for the same customer (left) and the same customer and quarter (right). Same text, encoder and budget for the three JEPA objectives; bars show the mean and standard deviation over three seeds. The dashed line is the most a model could reach by recognizing the customer alone.}
+\label{fig:e1}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{One encoder over all seven systems, measured on the training records} (day~1). Mean $\pm$ standard deviation over three seeds for the JEPA objectives. Cross-system precision@10 for the same customer and the same state (customer and quarter); probe accuracy for the customer, trained on messages and tested on systems of record (M$\to$R) and the reverse; $\rho$ and $R^2$ are fractions of the whitened embedding explained by the state or by the system.}
+\label{tab:e1}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccccccc}
+\toprule
+& \multicolumn{2}{c}{Precision@10, other systems} & \multicolumn{2}{c}{Customer probe} & & & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Representation & customer & state & M$\to$R & R$\to$M & $\rho_{\text{state}}$ & $R^2_{\text{state}}$ & $R^2_{\text{system}}$ \\
+\midrule
+\textcolor{goodblue}{\textbf{Good views}} & \textbf{E1GOODACC} & \textbf{E1GOODST} & \textbf{E1GOODMR} & \textbf{E1GOODRM} & \textbf{E1GOODRHO} & \textbf{E1GOODR2} & E1GOODSYS \\
+\textcolor{badorange}{Bad views} & E1BADACC & E1BADST & E1BADMR & E1BADRM & E1BADRHO & E1BADR2 & E1BADSYS \\
+\textcolor{ntpaqua}{Next-token} & E1NTPACC & E1NTPST & E1NTPMR & E1NTPRM & E1NTPRHO & E1NTPR2 & E1NTPSYS \\
+TF-IDF + LSA & 0.346 & 0.105 & 0.358 & 0.383 & 0.14 & 0.06 & 0.05 \\
+Random encoder & 0.132 & 0.055 & 0.188 & 0.150 & 0.17 & 0.05 & 0.04 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:e1} and Table~\ref{tab:e1} measure how each objective organizes the records it was trained on. With good views, E1GOODPCT of a record's ten nearest neighbours from other systems concern the same customer, against E1BADPCT for bad views and E1NTPPCT for next-token prediction, with the same text and model. TF-IDF reaches 34.6\% and a randomly initialized encoder 13.2\%: with this small encoder, corruption-based views and next-token prediction learn almost nothing about customers. For the state, customer and quarter together, good views reach E1GOODSTPCT against about 4--5\% for the other two objectives; a model that recognized only the customer could reach at most 16.3\%, so the good-view space also separates a customer's quarters. A linear probe trained on messages names the customer of a CRM, support or call record E1GOODMRPCT of the time with good views, and about a quarter of the time with the other objectives. The theorem's scene-explained fraction $\rho$ is about 0.7 for good views and below 0.2 for every other representation, while the system that wrote a record explains about 4\% of the good-view embedding. Figure~\ref{fig:maps} shows the difference: with good views, each customer's records from every system gather in a few tight regions; with the other objectives they are scattered among everyone else's.
+
+These numbers are measured on the records used for training, with the same customer-quarter grouping that defined the positive pairs. They show how well each objective absorbs the links, not how well it generalizes. The next experiment tests generalization.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/maps.pdf}
+\caption{\textbf{What each objective learns.} Two-dimensional t-SNE maps of the same 3{,}000 training records from all seven systems. Three well-observed customers are highlighted; all other customers are grey. Only good views gather each customer's records, whatever system wrote them.}
+\label{fig:maps}
+\end{figure}
+
+\subsection{Records whose links were hidden find their place}
+\label{sec:heldout}
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Held-out records.} A quarter of the threads (HONTEST records) were hidden from training: their records were never a view or a prefix. Left: precision@10 among the hidden records, neighbours from other systems. Right: each hidden record is placed at the nearest training state (mean embedding); share placed with the right customer and with the right customer and quarter. One seed.}
+\label{tab:heldout}
+HOTABLE
+\end{table}
+
+We hid a quarter of the threads from training, HONTEST records whose links the model never saw, and trained each objective on the rest. We then placed each hidden record at the training state whose mean embedding is nearest (Table~\ref{tab:heldout}). Good views place HOGOODCUST of the hidden records with the right customer and HOGOODSTATE with the right customer and quarter. TF-IDF places HOTFCUST and HOTFSTATE, bad views HOBADCUST and HOBADSTATE, and next-token prediction HONTPCUST and HONTPSTATE. Knowing each record's customer and choosing that customer's busiest quarter would place HOREFSTATE with the right state, about as many as good views do: on records the model has not seen, the gain is in finding the customer, not yet in telling that customer's quarters apart. Among the hidden records themselves, HOGOODACCPCT of a record's ten nearest neighbours from other systems concern the same customer with good views, against HOTFACCPCT for TF-IDF. Records that carry no link at all, 72\% of this company's records, are in a similar position, although they may differ in kind from linked records (most are chat messages); we cannot score them directly because they have no ground truth.
+
+\subsection{More than names}
+\label{sec:mask}
+
+A natural worry is that the encoder merely learns to spot customer names, as embeddings of earnings calls mostly encode company identity~\citep{yu2024samecompany}. We masked, in every record, the customers' names and their distinctive words, contact names, email addresses, web domains and record identifiers. The mask is deliberately aggressive: it changed 86\% of linked records and also removes some ordinary words that happen to occur in a name. It keeps the names of the company's own employees, however, and an employee who works with only one customer can still give that customer away. We retrained the good-view encoder on the masked records (one seed). On the training records, same-customer precision across systems falls from 95\% to MASKGOODPCT, and TF-IDF falls from 35\% to MASKTFPCT (\figref{fig:robust}, right). Roughly half of the customer signal was names and identifiers; the rest comes from the remaining text, employees' names included. The masked model's state-level precision, MASKSTPCT, stays above the 16.3\% that knowing only the customer would give, so it still separates a customer's quarters.
+
+\subsection{Wrong links degrade gracefully}
+\label{sec:noise}
+
+Real links are imperfect. Tickets get filed under the wrong organization, and duplicate customer records go unmerged. In the theorem, the damage is bounded by how much the wrong links change the positive-pair graph. We attached NOISELOWPCT and NOISEHIGHPCT of linked records to a random wrong state before training (one seed) and evaluated against the true states (\figref{fig:robust}, left). NOISESENTENCE
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/robustness.pdf}
+\caption{\textbf{Robustness, on the training records.} Left: good views trained with a share of records attached to a random wrong state, evaluated against the true states; dashed lines are bad views and next-token prediction with clean links. Right: same-customer precision before and after masking customer names, contacts, domains, email addresses and identifiers from every record.}
+\label{fig:robust}
+\end{figure}
+
+\subsection{Separately trained encoders can be partly aligned by one rotation}
+\label{sec:e2}
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[t]{0.47\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/e2_anchors.pdf}
+\caption{\textbf{One rotation partly aligns two separately trained encoders}, one for messages and one for systems of record, but only with good views. Same-state recall@1 of messages retrieving records, on states held out from the rotation fit.}
+\label{fig:e2}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/persistence.pdf}
+\caption{\textbf{States persist and drift.} Cosine similarity between centred state vectors of the same customer $k$ quarters apart (lines) and of different customers in the same quarter (diamonds); states with at least five records.}
+\label{fig:traj}
+\end{minipage}
+\end{figure}
+
+We trained one encoder on messages and another on systems of record, with no pair crossing the two, and joined them with one orthogonal map (\figref{fig:e2}). After a rotation fitted on 64 anchor pairs, a message retrieves a record of the same customer and quarter as its top match 20.7\% of the time on states held out from the fit, against 3.8\% by chance; with 2{,}000 anchors, 25.1\%. Same-customer recall@1 is 41--50\% against 14\% by chance. With bad views or next-token prediction no rotation helps: same-state recall stays at 4--6\%, near chance. Before any rotation, the mutual ten-nearest-neighbour agreement between the two spaces is 0.15 with good views and 0.02 with either alternative. The alignment is partial. A message finds a record of the same customer and quarter as its top match only about a fifth of the time; messages and systems of record observe different aspects of a customer's situation, while the theorem's guarantee assumes they observe the same state; and the two encoders share a vocabulary and were trained on the records of the test states, which are held out only from the rotation fit. Still, with good views a single rotation finds shared structure, and with the alternatives it finds none, consistent with the theorem's qualitative prediction.
+
+\subsection{New data and retraining}
+\label{sec:e3}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/e3_time.pdf}
+\caption{\textbf{Retraining without re-embedding.} Left: correlation between the old model's embeddings and the retrained model's rotated embeddings of the same records, along the old space's principal directions. Right: new-quarter records that neither model was trained on, searched against the old index.}
+\label{fig:e3}
+\end{figure}
+
+\paragraph{New records.} A customer probe trained on day-1 embeddings assigns 72.6\% of the 7{,}990 records written after training to the right customer with good views, against 41.0\% for next-token prediction and 30.5\% for bad views. The day-1 encoders never saw these records.
+
+\paragraph{New models.} We retrained the good-view encoder on all data through day~2, with the threads of E3BNHIDDEN new records hidden from training, and fitted one rotation and one global scale from the new space to the old on 2{,}000 day-1 records embedded by both. Along the old space's ten leading principal directions, the old and rotated new embeddings correlate at E3BCORR10; from the 33rd direction on, the mean correlation is E3BCORRTAIL (\figref{fig:e3}, left). The leading directions carry most of the variance (the first 16 carry E3BVAR16), so the rotation explains E3BR2 of the variance, but not the low-variance tail. We then used hidden new records, which neither model was trained on, as queries against the old index. Embedded by the retrained model and rotated, they retrieve the same customer with E3BROT precision@10, against E3BUNROT without the rotation and E3BOLD when the old model embeds them (\figref{fig:e3}, right).
+
+Not every measure favours good views. In a second retraining test, scored in a whitened 64-dimensional space that weights every direction equally, a rotation fitted on 256 anchors explains less of a retrained good-view encoder than of a retrained bad-view encoder ($R^2$ of $-0.22$ against $0.28$; mutual ten-nearest-neighbour agreement 0.36 against 0.59). A plausible reading is that bad-view encoders mostly encode surface features of the text, which any retraining reproduces, while the good-view encoder's leading directions, which carry the state, are stable and its tail is not. A rotation registry therefore preserves the part of the space that search relies on, not the whole space.
+
+\paragraph{States persist and drift.} We averaged each customer-quarter's records into a state vector (frozen day-1 encoders, all records through day~2) and compared states (\figref{fig:traj}). With good views, a customer's states in consecutive quarters have a cosine similarity of 0.88, which falls smoothly to 0.38 six quarters apart, while different customers in the same quarter sit at 0.05. With bad views and next-token prediction, consecutive quarters are only 0.55--0.57 alike and different customers 0.22--0.25. In the good-view space a customer's state is persistent yet changes gradually: the raw material a model of dynamics needs.
+
+\subsection{What does not work yet}
+\label{sec:limits-results}
+
+\paragraph{Counting and forecasting.} From each customer-quarter's state vector, the mean of its records' embeddings, we trained linear probes, holding out one customer at a time, to read four facts from Era's ground truth: the number of support tickets (four buckets), the worst ticket priority, whether a sales call took place and the deal stage. We also tried to predict the same facts for the \emph{next} quarter (Appendix~\ref{app:state}). Two findings stand out. First, the good-view state vectors are poor at facts that amount to counting one system's records. For the ticket count, the worst priority and whether a call took place they do no better than the most common answer (0.59, 0.55 and 0.72 against 0.57, 0.57 and 0.71), while bad-view states read whether a call took place 97\% of the time. One plausible reason is that good views are trained to ignore which system wrote a record, and these facts are about which system wrote one; another is that probes tested on unseen customers must extrapolate in a space organized by customer. We did not separate the two. The deal stage, the one fact about content, is read about equally well from every representation (34--43\%, against 29\% for the most common stage). Second, no representation forecasts the next quarter. With 165 transitions from 21 customers, every probe stays within a few points of the majority class (43--51\% against 49\%), far from simply copying this quarter's true facts (67\%).
+
+\paragraph{Reading the store with memory tokens.} A Memorilla-style reader~\citep{fallahpour2026memorilla}, sixteen query-conditioned memory tokens reading the 16 stored records retrieved for a question, improved accuracy on 144 templated test questions by 4.3 $\pm$ 1.0 points over a closed-book reader (mean $\pm$ standard deviation over four seeds). That is about six questions, within the binomial standard error of about four points. A store built from a generic pretrained sentence encoder did better, and adding the next quarter's records to the store lowered accuracy on questions about that quarter (Appendix~\ref{app:memory}). We treat this result as inconclusive.
+
+Both findings suggest the same design. A useful organizational world model probably needs two channels per record: a \emph{state} vector, which says which situation a record belongs to and is shared across systems, and a \emph{detail} vector, which keeps what the record specifically says and where it came from. Dynamics will need far more transitions than one simulated company provides.
+
+% ============================================================================================ 7
+\section{Why this matters: from records to a model of the company}
+\label{sec:why}
+
+Most enterprise AI today is retrieval: given a question, find documents, read them, answer and forget. Every question pays the full cost of rebuilding the situation, and two questions about the same customer may rebuild it differently. A world model inverts this. The organization's state is maintained continuously as records arrive, and questions are answered from the state. The path from records to such a model has four steps, each useful on its own and each making the next possible: (1) a shared state space learned from the links an organization already keeps, the subject of this paper; (2) a memory that stores both the state and the detail of every record and answers from both; (3) a predictor of how states change, trained on the organization's own history of states, decisions and outcomes; and (4) planning, in which people and agents try decisions against the predictor before making them. Four properties make the first step practical, and the experiments above speak to each, with the caveats noted.
+\begin{itemize}
+\item \textbf{No annotation.} The training signal is the link structure the organization's systems already keep (\secref{sec:e1}, \secref{sec:heldout}). Nobody labels anything, and wrong links blur the space instead of breaking it (\secref{sec:noise}).
+\item \textbf{Records without links find their place.} Records whose links were hidden during training are placed with the right customer by what they say (\secref{sec:heldout}), and masking names shows that this is more than matching names (\secref{sec:mask}).
+\item \textbf{Every system, one space.} Encoders trained separately for different systems can be partly aligned by one rotation fitted on matched records (\secref{sec:e2}). A new tool, or an acquired company's chat, could join this way without retraining everything; we have not tested that directly.
+\item \textbf{Memory that survives upgrades.} One rotation lets a retrained encoder search the old index (\secref{sec:e3}). If that holds across many upgrades, which we have not tested, an organization's memory can compound across model versions instead of being rebuilt with each one.
+\end{itemize}
+
+\paragraph{What changes for a company.}
+When people and AI agents read the same state, coordination becomes measurable. Two teams whose records about the same customer drift apart in state space are misaligned before anyone notices. Hand-offs, onboarding and reviews start from the state instead of from a search. Because the state space is shared, what the organization knows accumulates in one place instead of in each person's head, and it stays usable when people leave.
+
+\paragraph{Toward dynamics.}
+A state space is the first half of a world model. The second half is a predictor over it: given a customer's state this quarter and an action, such as a discount, an escalation or a new owner, what is the likely next state? Predictors trained in a learned latent space are how world models are built for video and robotics~\citep{lecun2022path,hafner2020dreamer}. In an organization, the training data for such a predictor is the history of states, decisions and outcomes that the company already records. Our forecasting result shows that 165 quarterly transitions from one company are not enough; many companies, finer time windows and explicit actions will be needed. With a predictor, a company can ask ``what happens if'' before acting, and agents can plan against a model of the organization instead of against documents.
+
+\paragraph{Personal world models.}
+The same recipe applies to one person. Their email, calendar, messages and documents are different observations of their own projects and relationships, linked by people, threads and time.
+
+\paragraph{Requirements.}
+Training stays within one organization's data and, inside it, within each permission scope: a state vector learned from positives that cross an access boundary can carry what a reader may not see, so positive pairs should be formed only among records visible to the same audience. Results on synthetic data also need confirmation on real data (\secref{sec:limits}).
+
+% ============================================================================================ 8
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Linked records as positives.} Treating records that share a link as positive pairs is established: citations~\citep{cohan2020specter}, authors and venues~\citep{zhang2022metadata}, product identifiers~\citep{peeters2022supervised}, foreign keys in relational databases~\citep{peleska2025relational}, one bank client's transactions, locations and support calls~\citep{mollaev2025banking}, one patient's codes and notes~\citep{cai2024ehr} and, in industry, per-company embedding models fine-tuned on document links, co-access and chat threads.\footnote{\url{https://jxnl.co/writing/2025/03/06/fine-tuning-embedding-models-for-enterprise-rag-lessons-from-glean/}} The closest is the multimodal banking work, which trains one encoder per modality jointly with a CLIP-style objective~\citep{radford2021clip}. We differ in defining states by entity \emph{and} time window across a company's systems, training per-system encoders separately and joining them by a rotation, and testing the predictions of the Platonic Representation Theorem against bad-view and next-token controls.
+
+\paragraph{JEPAs for text.} LLM-JEPA applies a JEPA loss to curated pairs of text and code that describe the same thing~\citep{huang2025llmjepa}, and \citet{zuo2026asymmetric} apply JEPA with SIGReg to sections of a scientific paper. Our views come from organizational links, and our encoder is trained from scratch on one company.
+
+\paragraph{Convergence and alignment of representations.} Beyond the Platonic hypothesis and theorem~\citep{huh2024platonic,balestriero2026platonic}, anchors and orthogonal maps join independently trained latent spaces~\citep{moschella2023relative,maiorca2023latent} and data silos~\citep{nosaka2024collaboration}, and orthogonal Procrustes has aligned word embeddings across decades~\citep{hamilton2016diachronic}. Theory relates self-supervised representations to the spectrum of the positive-pair graph~\citep{haochen2021spectral} and to the content that views share~\citep{vonkugelgen2021content}.
+
+\paragraph{Compatible embeddings across model updates.} Backward-compatible training makes a new model's embeddings comparable with an old index~\citep{shen2020bct}; fitted Procrustes maps or affine adapters do so after training~\citep{maystre2025procrustes,vejendla2025drift}. Our rotation registry is an instance of the latter; for good-view encoders it preserves the leading directions of the space but not the tail.
+
+\paragraph{Memory for language models.} Memorilla compresses a document collection into a few query-dependent memory tokens for a frozen model~\citep{fallahpour2026memorilla}, and xRAG compresses a retrieved document into one token~\citep{cheng2024xrag}.
+
+\paragraph{Simulated organizations and enterprise world models.} Era by Eon~\citep{gruenbaum2026era}, OrgForge~\citep{flynt2026orgforge}, TheAgentCompany~\citep{xu2024theagentcompany} and CRMArena~\citep{huang2024crmarena} simulate companies to evaluate agents; we use one to learn representations. \citet{nair2026enterprise} study learned world models of enterprise systems as predictors of state transitions and find that they falter when a deployment's configuration changes. Organizational memory has a long history in management research~\citep{walsh1991organizational}, and object-centric process mining relates events to the business objects they touch~\citep{vanderaalst2019object}. For individuals, general user models are built from a person's computer use and kept as text statements~\citep{shaikh2025gum}.
+
+% ============================================================================================ 9
+\section{Limitations}
+\label{sec:limits}
+
+\begin{itemize}
+\item \textbf{One simulated company.} All results come from one Era company with 21 active customers. Era's text is cleaner and more regular than real company text, and its systems agree by construction. Replication on more simulated companies, and on real data, is the most important next step.
+\item \textbf{Weak supervision, evaluated partly on itself.} Links are not annotations, but they are supervision: the positive pairs come from the same customer-quarter grouping that most of our metrics score. Results on training records (\secref{sec:e1}, \secref{sec:mask}, \secref{sec:noise}) are therefore upper bounds; the held-out test (\secref{sec:heldout}) is the fairer measure.
+\item \textbf{Weak alternatives.} With our small encoder, corruption-based views and next-token prediction learn little about customers on training records (no better than a random encoder there), and TF-IDF is the strongest alternative. Larger encoders may narrow the gap.
+\item \textbf{Small encoders, by design.} We use a bag-of-n-grams encoder trained from scratch so that nothing but the company's data shapes it. Transformers trained with the same recipe, or pretrained encoders fine-tuned on good views, may behave differently.
+\item \textbf{Seeds.} The main comparison uses three seeds; the held-out, alignment, time, masking and noise experiments use one.
+\item \textbf{Partial alignment.} Separately trained encoders agree on the leading directions, not on the tail, and messages and systems of record share only part of the state.
+\item \textbf{The masking test keeps employees' names}, which can identify a customer.
+\item \textbf{No dynamics yet, and no detail channel.} The state space does not forecast, and it is poor at facts about which system wrote a record (\secref{sec:limits-results}).
+\item \textbf{Privacy and access control} are discussed (\secref{sec:why}) but not tested.
+\end{itemize}
+
+% ============================================================================================ 10
+\section{Conclusion}
+\label{sec:conclusion}
+
+Organizations already keep the training signal for a model of themselves. Records that different systems link to the same customer in the same window are good views of one situation. Training on them, with no annotation, yields a state space that places records from every system by the situation they describe, generalizes to records whose links it never saw, can be partly aligned across separately trained encoders, and lets a retrained encoder use an old index. That is the first part of an organizational world model. The next parts are a memory that keeps both state and detail, and a predictor of how states change and how actions change them.
+
+\paragraph{Code and data.}
+\label{sec:code}
+Code, the Era exporter, every result reported here and the scripts that draw the figures are released with this paper.\footnote{Repository: \texttt{company-world-model} (link to be added on release).} Era's simulators are free; the exact company can be regenerated from the seed and dates in the repository.
+
+\paragraph{Acknowledgments.}
+We thank Eon for making Era freely available. Experiments and drafting were assisted by an AI model (Claude, Anthropic); the author takes full responsibility for the content.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+% ============================================================================================ APPENDIX
+\clearpage
+\appendix
+\section{Experimental details}
+\label{app:details}
+
+\paragraph{Data export.} The seven simulators run as Docker images (\texttt{erabyeon/*}) with seed 42, the simulated date set to 31~October 2026 and high fidelity. The exporter reads every system through its REST interface: Slack messages, Gmail messages, Google Calendar events, Salesforce objects (accounts, opportunities, tasks, cases and notes), Zendesk tickets and comments, Gong call transcripts and Jira issues and comments. Day~2 is the simulators' second state, after the fiscal quarter that closes on 30~January 2027. Texts are lower-cased and tokenized into words; each record keeps its first 96 tokens, and the vocabulary keeps words that occur at least twice among the linked records (6{,}061 words on day~1; it is built before any held-out split, from text only). All experiments use linked records only.
+
+\paragraph{Hyperparameters.} Encoder: embedding bag of $2^{18}$ buckets $\times$ 192, LayerNorm, Linear(192, 512), GELU, Linear(512, 256). Projector: Linear(256, 1024), BatchNorm, GELU, Linear(1024, 128). Loss: $(1-\lambda)\,\mathcal{L}_{\text{inv}} + \lambda\,\mathcal{L}_{\text{SIGReg}}$, $\lambda = 0.05$; SIGReg with 256 random directions and 17 integration knots on $[-5,5]$. Views: 2 global (50--100\% contiguous span) and 6 local (15--50\%), 15\% token masking. Optimization: 1{,}500 steps (1{,}000 for the per-family encoders), batch 256, peak learning rate $10^{-3}$, 5\% linear warm-up, cosine decay, AdamW (weight decay 0.05) for dense parameters and sparse Adam for the embedding bag. Next-token baseline: 1{,}024 random prefixes per batch, softmax over the whole vocabulary.
+
+\paragraph{Evaluation details.} Cross-system precision@10 excludes neighbours from the query's own system and thread and averages over 3{,}000 random linked records. Probes are multinomial logistic regressions. $\rho$ and $R^2$ use the top 32 dimensions after whitening, with the between-group covariance corrected for its finite-sample bias. For the alignment test, the 126 states observed by both families are split in half; anchors come from one half, test pairs (1{,}000) from the other. The per-direction analysis of the retrained encoder fits one rotation and one global scale on 2{,}000 day-1 records embedded by both models and tests it on 6{,}000 others, in the centred (not whitened) space; its variance-weighted $R^2$ is E3BR2 (E3BR2TOP8 on the top 8 directions). The second retraining test in \secref{sec:e3} is a separate run: a retrained encoder (different seed, no hidden records), a rotation fitted on 256 anchors in a whitened 64-dimensional space without scale. For the held-out test, threads are drawn at random among linked records; TF-IDF is fitted on the training records only. For the state probes and \figref{fig:traj}, TF-IDF is refitted on the day-2 corpus.
+
+\paragraph{Masking.} Customer account and organization names, the distinctive words in them (words shared by several customer names, such as ``payments'', are kept), customer web domains, contact names, email addresses and identifiers of records, cases, requests and long numbers are replaced with one placeholder token before tokenization. Names of the company's own employees are kept.
+
+\section{All results of the main comparison}
+\label{app:e1}
+
+\begin{table}[h]
+\centering
+\small
+\caption{Per-seed results of the main comparison on the training records: cross-system precision@10, customer probes and $\rho$.}
+\label{tab:seeds}
+APPSEEDTABLE
+\end{table}
+
+\section{State tracking and forecasting}
+\label{app:state}
+
+For each customer-quarter, the state vector is the mean of the L2-normalized embeddings of its records, from the frozen day-1 encoders applied to all records through day~2. Probes are standardized, reduced to 32 principal components and fitted by logistic regression, holding out one customer at a time, so that no probe can memorize a customer. ``Now'' predicts a quarter's facts from its own state; ``next'' predicts the following quarter's facts from the current state (165 transitions). The majority class is the share of the most common answer. Oracle persistence copies the current quarter's true facts and therefore reads the ground truth directly.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Accuracy of linear probes on state vectors, holding out one customer at a time.}
+\label{tab:state}
+APPSTATETABLE
+\end{table}
+
+\section{Reading the store with memory tokens}
+\label{app:memory}
+
+Each linked record is stored once as a row: its embedding mapped to 112 dimensions by PCA whitening, a 16-dimensional sinusoidal time code and a one-hot code of its source system. A Memorilla-style module~\citep{fallahpour2026memorilla} turns a question, embedded by the store's encoder, into 16 query-conditioned slots that attend, through two Perceiver-style cross-attention blocks, either over the whole store or over the 16 rows most similar to the question. The slots are averaged and matched against fixed embeddings of the 18 possible answers from a pretrained sentence encoder (all-MiniLM-L6-v2), so the reader is a classifier with a frozen output layer rather than a language model. Questions are generated from Era's ground truth for each customer-quarter: the number of support tickets, the worst ticket priority, whether a sales call happened and the deal stage. Customer-quarters are split 70/10/20 into training, validation and test (36 test customer-quarters, 144 test questions). The module is first pre-trained for 250 steps to recover what the store holds about a customer and date, including the share of records from each system and their volume, then trained on the questions for 12 epochs, keeping the checkpoint that does best on validation. With the generic store, questions are also embedded by the generic encoder, which changes the closed-book baseline.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Accuracy of the memory reader on the 144 test questions (mean over seeds); the answer layer is frozen.}
+\label{tab:memory}
+APPMEMTABLE
+\end{table}
+
+\end{document}

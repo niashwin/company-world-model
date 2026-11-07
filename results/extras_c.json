@@ -1,0 +1,36 @@
+{
+ "heldout": {
+  "n_train_records": 16606,
+  "n_test_records": 5366,
+  "thread_share": 0.25,
+  "reference_customer_known_state_acc": 0.2638837122623928,
+  "reference_majority_state_acc": 0.03559448378680581,
+  "reference_majority_customer_acc": 0.11945583302273574,
+  "tfidf_lsa": {
+   "account_p@10_cross_system": 0.2632333333333334,
+   "state_p@10_cross_system": 0.0653,
+   "customer_acc": 0.5270219903093551,
+   "state_acc": 0.13622810286992174
+  },
+  "random_init": {
+   "account_p@10_cross_system": 0.09540000000000001,
+   "state_p@10_cross_system": 0.026,
+   "customer_acc": 0.3194185613119642,
+   "state_acc": 0.08311591502049943
+  },
+  "good_s0": {
+   "account_p@10_cross_system": 0.7031333333333332,
+   "state_p@10_cross_system": 0.1874666666666667,
+   "customer_acc": 0.7554975773387999,
+   "state_acc": 0.26202012672381664,
+   "train_seconds": 377.7523102760315
+  },
+  "bad_s0": {
+   "account_p@10_cross_system": 0.10963333333333333,
+   "state_p@10_cross_system": 0.028433333333333338,
+   "customer_acc": 0.18673127096533731,
+   "state_acc": 0.04323518449496832,
+   "train_seconds": 320.2658500671387
+  }
+ }
+}

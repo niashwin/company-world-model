@@ -1,0 +1,78 @@
+{
+ "mask": {
+  "identity_only_state_p@10": 0.16334083029778165,
+  "tfidf_lsa": {
+   "account_p@10_cross_system": 0.1442,
+   "state_p@10_cross_system": 0.066,
+   "probe_account_messages_to_records": 0.22256968048946296,
+   "probe_account_records_to_messages": 0.09495792570294861,
+   "rho_state": 0.09416803621799627,
+   "r2_state": 0.031998558388358835,
+   "r2_account": 0.019766885109482504,
+   "r2_system": 0.05316466186971489
+  },
+  "good_s0": {
+   "account_p@10_cross_system": 0.4820666666666666,
+   "state_p@10_cross_system": 0.2712333333333333,
+   "probe_account_messages_to_records": 0.6038069340584636,
+   "probe_account_records_to_messages": 0.3006772935622905,
+   "rho_state": 0.43592854445575385,
+   "r2_state": 0.25067244873495376,
+   "r2_account": 0.11199195284371864,
+   "r2_system": 0.046260791253440396,
+   "train_seconds": 375.140629529953
+  },
+  "all_records": 78048,
+  "all_records_changed": 34481,
+  "linked_records": 21972,
+  "linked_records_changed": 18832
+ },
+ "noise": {
+  "p0.25": {
+   "account_p@10_cross_system": 0.8432666666666667,
+   "state_p@10_cross_system": 0.3201333333333334,
+   "probe_account_messages_to_records": 0.7287559483344663,
+   "probe_account_records_to_messages": 0.7714305260997468,
+   "rho_state": 0.5826181067788005,
+   "r2_state": 0.41204226500654173,
+   "r2_account": 0.32052457906080334,
+   "r2_system": 0.038209278164134414,
+   "train_seconds": 363.6343333721161
+  },
+  "p0.5": {
+   "account_p@10_cross_system": 0.6785333333333333,
+   "state_p@10_cross_system": 0.22046666666666667,
+   "probe_account_messages_to_records": 0.5827328348062543,
+   "probe_account_records_to_messages": 0.6379558048847233,
+   "rho_state": 0.44660248853813383,
+   "r2_state": 0.2679286316071928,
+   "r2_account": 0.21692773644615052,
+   "r2_system": 0.04196387388041718,
+   "train_seconds": 381.7302317619324
+  }
+ },
+ "E1_seeds": {
+  "ntp_s1": {
+   "account_p@10_cross_system": 0.1293,
+   "state_p@10_cross_system": 0.042133333333333335,
+   "probe_account_messages_to_records": 0.242556084296397,
+   "probe_account_records_to_messages": 0.21317643839365122,
+   "rho_state": 0.17826882703616878,
+   "r2_state": 0.062194772616441595,
+   "r2_account": 0.047876381102180635,
+   "r2_system": 0.06234509469887423,
+   "train_seconds": 311.4273986816406
+  },
+  "ntp_s2": {
+   "account_p@10_cross_system": 0.14316666666666666,
+   "state_p@10_cross_system": 0.0462,
+   "probe_account_messages_to_records": 0.2399728076138681,
+   "probe_account_records_to_messages": 0.23226380242183758,
+   "rho_state": 0.17738722900312134,
+   "r2_state": 0.06263694099373922,
+   "r2_account": 0.048432574104162025,
+   "r2_system": 0.06145784654400329,
+   "train_seconds": 314.24410104751587
+  }
+ }
+}

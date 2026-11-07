@@ -1,0 +1,152 @@
+{
+ "data": {
+  "observations": 21972,
+  "states": 180,
+  "accounts": 21,
+  "per_system": {
+   "calendar": 167,
+   "gmail": 14160,
+   "gong": 1858,
+   "jira": 77,
+   "salesforce": 1136,
+   "slack": 457,
+   "zendesk": 4117
+  }
+ },
+ "E1": {
+  "tfidf_lsa": {
+   "account_p@10_cross_system": 0.34580000000000005,
+   "state_p@10_cross_system": 0.10533333333333333,
+   "probe_account_messages_to_records": 0.35825968728755947,
+   "probe_account_records_to_messages": 0.3829787234042553,
+   "rho_state": 0.1384043826870019,
+   "r2_state": 0.06437225701311954,
+   "r2_account": 0.05111392414331071,
+   "r2_system": 0.054926224283555924
+  },
+  "random_init": {
+   "account_p@10_cross_system": 0.1321,
+   "state_p@10_cross_system": 0.05466666666666667,
+   "probe_account_messages_to_records": 0.18803535010197145,
+   "probe_account_records_to_messages": 0.15009919956215365,
+   "rho_state": 0.16663599526605138,
+   "r2_state": 0.04617242168381662,
+   "r2_account": 0.03325620496639957,
+   "r2_system": 0.036937218774922585
+  },
+  "good_s0": {
+   "account_p@10_cross_system": 0.9529333333333332,
+   "state_p@10_cross_system": 0.3887666666666667,
+   "probe_account_messages_to_records": 0.883480625424881,
+   "probe_account_records_to_messages": 0.9783813367996169,
+   "rho_state": 0.7231629739574265,
+   "r2_state": 0.5984994416572105,
+   "r2_account": 0.44267726335100155,
+   "r2_system": 0.04073344961086268,
+   "train_seconds": 232.49370455741882
+  },
+  "bad_s0": {
+   "account_p@10_cross_system": 0.14010000000000003,
+   "state_p@10_cross_system": 0.049833333333333334,
+   "probe_account_messages_to_records": 0.24391570360299117,
+   "probe_account_records_to_messages": 0.14209482109872068,
+   "rho_state": 0.16726018646539767,
+   "r2_state": 0.056760270138565654,
+   "r2_account": 0.03575855381596792,
+   "r2_system": 0.08554863655956768,
+   "train_seconds": 203.83970713615417
+  },
+  "ntp_s0": {
+   "account_p@10_cross_system": 0.12303333333333334,
+   "state_p@10_cross_system": 0.040933333333333335,
+   "probe_account_messages_to_records": 0.2613188307273963,
+   "probe_account_records_to_messages": 0.1838954641855374,
+   "rho_state": 0.17682056495551784,
+   "r2_state": 0.06374845498720776,
+   "r2_account": 0.04948746242948031,
+   "r2_system": 0.06259919660375218,
+   "train_seconds": 168.31219601631165
+  }
+ },
+ "E2": {
+  "n_states_with_both": 126,
+  "chance_state_R@1": 0.03843,
+  "chance_account_R@1": 0.1402,
+  "good_s0": {
+   "mutual_10nn_test": 0.1505,
+   "anchors_64": {
+    "state_R@1": 0.207,
+    "state_R@10": 0.407,
+    "account_R@1": 0.413
+   },
+   "anchors_256": {
+    "state_R@1": 0.218,
+    "state_R@10": 0.419,
+    "account_R@1": 0.43
+   },
+   "anchors_2000": {
+    "state_R@1": 0.251,
+    "state_R@10": 0.422,
+    "account_R@1": 0.498
+   },
+   "random_rotation_state_R@1": 0.04,
+   "train_seconds": 446.1803460121155
+  },
+  "bad_s0": {
+   "mutual_10nn_test": 0.019100000000000002,
+   "anchors_64": {
+    "state_R@1": 0.042,
+    "state_R@10": 0.23,
+    "account_R@1": 0.146
+   },
+   "anchors_256": {
+    "state_R@1": 0.052,
+    "state_R@10": 0.247,
+    "account_R@1": 0.167
+   },
+   "anchors_2000": {
+    "state_R@1": 0.051,
+    "state_R@10": 0.274,
+    "account_R@1": 0.183
+   },
+   "random_rotation_state_R@1": 0.034,
+   "train_seconds": 425.7500684261322
+  },
+  "ntp_s0": {
+   "mutual_10nn_test": 0.017900000000000003,
+   "anchors_64": {
+    "state_R@1": 0.044,
+    "state_R@10": 0.285,
+    "account_R@1": 0.134
+   },
+   "anchors_256": {
+    "state_R@1": 0.044,
+    "state_R@10": 0.262,
+    "account_R@1": 0.143
+   },
+   "anchors_2000": {
+    "state_R@1": 0.057,
+    "state_R@10": 0.327,
+    "account_R@1": 0.212
+   },
+   "random_rotation_state_R@1": 0.028,
+   "train_seconds": 392.9666817188263
+  }
+ },
+ "E3": {
+  "n_new_linked": 7990,
+  "good": {
+   "probe_account_day1_to_new_quarter": 0.7260325406758448,
+   "v2_to_v1_rotation_r2": -0.22496188467404732,
+   "v2_to_v1_mutual_10nn": 0.3605
+  },
+  "bad": {
+   "probe_account_day1_to_new_quarter": 0.304630788485607,
+   "v2_to_v1_rotation_r2": 0.2753752978970333,
+   "v2_to_v1_mutual_10nn": 0.5885999999999999
+  },
+  "ntp": {
+   "probe_account_day1_to_new_quarter": 0.40976220275344183
+  }
+ }
+}

@@ -1,0 +1,23 @@
+# generated data (regenerate with cwm/era_up.sh + cwm/era_export.py)
+data/
+# large or derived artifacts
+results/*.npy
+results/*.npz
+results/*.pt
+results/masked_observations.jsonl
+# LaTeX build files
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/figures/*.aux
+paper/figures/*.log
+# python
+__pycache__/
+*.pyc
+.venv/
+results/*_log.txt

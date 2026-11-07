@@ -1,0 +1,83 @@
+{
+ "setup": {
+  "epochs": 12,
+  "pretrain_steps": 250,
+  "store_encoder": "minilm"
+ },
+ "growth_setup": {
+  "new_records": 7990,
+  "new_questions": 172,
+  "majority_on_new": 0.436046511627907
+ },
+ "runs": {
+  "closed_book/s0": {
+   "tickets": 0.8333333333333334,
+   "call": 0.6388888888888888,
+   "priority": 0.6666666666666666,
+   "stage": 0.4722222222222222,
+   "overall": 0.6527777777777778,
+   "growth": {
+    "closed_book": 0.5813953488372093
+   },
+   "seconds": 1.1099364757537842
+  },
+  "top16_pretrained/s0": {
+   "tickets": 0.8611111111111112,
+   "call": 0.75,
+   "priority": 0.6944444444444444,
+   "stage": 0.5,
+   "overall": 0.7013888888888888,
+   "growth": {
+    "stale_store": 0.563953488372093,
+    "grown_store": 0.5523255813953488
+   },
+   "seconds": 18.62124466896057
+  },
+  "closed_book/s1": {
+   "tickets": 0.8055555555555556,
+   "call": 0.6388888888888888,
+   "priority": 0.6666666666666666,
+   "stage": 0.4722222222222222,
+   "overall": 0.6458333333333334,
+   "growth": {
+    "closed_book": 0.6162790697674418
+   },
+   "seconds": 1.125197172164917
+  },
+  "top16_pretrained/s1": {
+   "tickets": 0.8055555555555556,
+   "call": 0.7222222222222222,
+   "priority": 0.7222222222222222,
+   "stage": 0.6388888888888888,
+   "overall": 0.7222222222222222,
+   "growth": {
+    "stale_store": 0.5813953488372093,
+    "grown_store": 0.563953488372093
+   },
+   "seconds": 18.81161618232727
+  },
+  "closed_book/s2": {
+   "tickets": 0.75,
+   "call": 0.5833333333333334,
+   "priority": 0.6666666666666666,
+   "stage": 0.3888888888888889,
+   "overall": 0.5972222222222222,
+   "growth": {
+    "closed_book": 0.5813953488372093
+   },
+   "seconds": 1.08823823928833
+  },
+  "top16_pretrained/s2": {
+   "tickets": 0.8055555555555556,
+   "call": 0.7222222222222222,
+   "priority": 0.6944444444444444,
+   "stage": 0.5,
+   "overall": 0.6805555555555556,
+   "growth": {
+    "stale_store": 0.5581395348837209,
+    "grown_store": 0.5058139534883721
+   },
+   "seconds": 19.00060772895813
+  }
+ }
+}

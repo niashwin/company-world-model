@@ -1,0 +1,14 @@
+{
+ "heldout": {
+  "n_train_records": 16606,
+  "n_test_records": 5366,
+  "thread_share": 0.25,
+  "ntp_s0": {
+   "account_p@10_cross_system": 0.08946666666666665,
+   "state_p@10_cross_system": 0.022866666666666664,
+   "customer_acc": 0.20313082370480806,
+   "state_acc": 0.04435333581811405,
+   "train_seconds": 346.35144996643066
+  }
+ }
+}

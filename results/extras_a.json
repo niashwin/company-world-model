@@ -1,0 +1,48 @@
+{
+ "E1_seeds": {
+  "good_s1": {
+   "account_p@10_cross_system": 0.9521333333333334,
+   "state_p@10_cross_system": 0.3835333333333333,
+   "probe_account_messages_to_records": 0.8781781101291638,
+   "probe_account_records_to_messages": 0.9371280016419238,
+   "rho_state": 0.7432061544472073,
+   "r2_state": 0.6194849886856333,
+   "r2_account": 0.4494262397926579,
+   "r2_system": 0.03774701235211782,
+   "train_seconds": 382.5994505882263
+  },
+  "bad_s1": {
+   "account_p@10_cross_system": 0.13666666666666666,
+   "state_p@10_cross_system": 0.048600000000000004,
+   "probe_account_messages_to_records": 0.22093813732154996,
+   "probe_account_records_to_messages": 0.14079496476705206,
+   "rho_state": 0.16112136847566272,
+   "r2_state": 0.05521727712156692,
+   "r2_account": 0.03429934530090685,
+   "r2_system": 0.08349537089070534,
+   "train_seconds": 334.91449427604675
+  },
+  "good_s2": {
+   "account_p@10_cross_system": 0.9470999999999999,
+   "state_p@10_cross_system": 0.397,
+   "probe_account_messages_to_records": 0.8810333106730116,
+   "probe_account_records_to_messages": 0.8664568652938359,
+   "rho_state": 0.7324227971360808,
+   "r2_state": 0.6071397755897046,
+   "r2_account": 0.4445181988292068,
+   "r2_system": 0.03742537068713095,
+   "train_seconds": 379.9648971557617
+  },
+  "bad_s2": {
+   "account_p@10_cross_system": 0.13246666666666665,
+   "state_p@10_cross_system": 0.046400000000000004,
+   "probe_account_messages_to_records": 0.2178110129163834,
+   "probe_account_records_to_messages": 0.1193815420400903,
+   "rho_state": 0.16637347131593627,
+   "r2_state": 0.05659575103122747,
+   "r2_account": 0.0359396965495703,
+   "r2_system": 0.08328026802912866,
+   "train_seconds": 327.067360162735
+  }
+ }
+}

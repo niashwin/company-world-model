@@ -1,0 +1,146 @@
+{
+ "setup": {
+  "epochs": 12,
+  "pretrain_steps": 250
+ },
+ "growth_setup": {
+  "new_records": 7990,
+  "new_questions": 172,
+  "majority_on_new": 0.436046511627907
+ },
+ "runs": {
+  "closed_book/s0": {
+   "tickets": 0.8055555555555556,
+   "call": 0.5833333333333334,
+   "priority": 0.6388888888888888,
+   "stage": 0.4166666666666667,
+   "overall": 0.6111111111111112,
+   "growth": {
+    "closed_book": 0.5232558139534884
+   },
+   "seconds": 1.0925323963165283
+  },
+  "memorilla_no_pretrain/s0": {
+   "tickets": 0.8333333333333334,
+   "call": 0.6111111111111112,
+   "priority": 0.6388888888888888,
+   "stage": 0.4722222222222222,
+   "overall": 0.6388888888888888,
+   "growth": {
+    "stale_store": 0.5232558139534884,
+    "grown_store": 0.5232558139534884
+   },
+   "seconds": 414.04291677474976
+  },
+  "top16_pretrained/s0": {
+   "tickets": 0.6944444444444444,
+   "call": 0.8055555555555556,
+   "priority": 0.6388888888888888,
+   "stage": 0.5277777777777778,
+   "overall": 0.6666666666666666,
+   "growth": {
+    "stale_store": 0.5988372093023255,
+    "grown_store": 0.5813953488372093
+   },
+   "seconds": 19.666887998580933
+  },
+  "memorilla_pretrained/s0": {
+   "tickets": 0.75,
+   "call": 0.7222222222222222,
+   "priority": 0.5833333333333334,
+   "stage": 0.5,
+   "overall": 0.6388888888888888,
+   "growth": {
+    "stale_store": 0.5755813953488372,
+    "grown_store": 0.5755813953488372
+   },
+   "seconds": 932.1954550743103
+  }
+ },
+ "attention_examples": [
+  {
+   "question": "How many support tickets did Chroma Bank open in Q4 2026?",
+   "answer": "none",
+   "attention_on_this_customer": 0.09527510404586792,
+   "share_of_store_that_is_this_customer": 0.10293037847940725,
+   "read": [
+    "zendesk 2025Q2 [acct-14]: Hi Jodi, It reproduced again at 11:42, same request pattern. We captured the pay",
+    "zendesk 2025Q2 [acct-11]: I can reproduce reading stale configuration on the retention policy in our stagi",
+    "zendesk 2025Q2 [acct-12]: For admin console, confirmed the same recurrence again in a1c564fbe167ad6e. We t",
+    "zendesk 2025Q2 [acct-2]: Hi Claudia, Request req_346af3b09c is in our traces, so this is on our side rath",
+    "zendesk 2025Q2 [acct-7]: Activity feed - double-sending (req_99a42cba45). Our team noticed at the start o",
+    "zendesk 2025Q2 [acct-7]: It reproduced again at 06:37, same request pattern. We captured the payload if t"
+   ]
+  },
+  {
+   "question": "How many support tickets did Honoris Components open in Q1 2027?",
+   "answer": "six or more",
+   "attention_on_this_customer": 0.08103955537080765,
+   "share_of_store_that_is_this_customer": 0.07265870102129364,
+   "read": [
+    "zendesk 2025Q2 [acct-2]: Hi Claudia, Request req_346af3b09c is in our traces, so this is on our side rath",
+    "zendesk 2025Q2 [acct-2]: Hi Jodi, It reproduced again at 16:05, same request pattern. We captured the pay",
+    "zendesk 2025Q2 [acct-7]: It reproduced again at 06:37, same request pattern. We captured the payload if t",
+    "zendesk 2025Q2 [acct-14]: Hi Jodi, It reproduced again at 11:42, same request pattern. We captured the pay",
+    "zendesk 2025Q2 [acct-2]: /v1/api-gateway/records returning 409 for everyone in the finance group - billin",
+    "zendesk 2025Q2 [acct-2]: Hi Claudia, For billing portal, do you have one attempt from 16:05 that worked n"
+   ]
+  },
+  {
+   "question": "How many support tickets did Solentra open in Q4 2026?",
+   "answer": "none",
+   "attention_on_this_customer": 0.028406862169504166,
+   "share_of_store_that_is_this_customer": 0.02703424337494159,
+   "read": [
+    "zendesk 2025Q4 [acct-14]: Request req_2fd08a3f7e is in our traces, so this is on our side rather than your",
+    "zendesk 2024Q4 [acct-11]: Question about trend chart limits on our staging tenant. Escalating: java.io.IOE",
+    "zendesk 2024Q4 [acct-11]: Hi Teerth, billing-service-d2e32-3e4 was recycling when your calls landed, which",
+    "zendesk 2024Q4 [acct-11]: Hi Jodi, Adding another example - same symptom, same error 503. This is blocking",
+    "slack 2025Q4 [acct-15]: Call summary: Commercial review - Solentra (32m, 4 participants) \u2014 recording (re",
+    "zendesk 2025Q4 [acct-12]: Our go-live next week blocked by sandbox refresh. Since the weekend, the sandbox"
+   ]
+  },
+  {
+   "question": "How many support tickets did Eclat Logistics open in Q1 2027?",
+   "answer": "none",
+   "attention_on_this_customer": 0.01951075904071331,
+   "share_of_store_that_is_this_customer": 0.020058741072024565,
+   "read": [
+    "calendar 2025Q4 [acct-15]: Commercial review - Solentra. Account sync with Solentra. Agenda: - Where we lan",
+    "zendesk 2025Q4 [acct-3]: Our own monitoring has it about once an hour under load since we doubled the ing",
+    "calendar 2025Q4 [acct-15]: Commercial follow-up - Solentra. Account sync with Solentra. Agenda: - Where we ",
+    "zendesk 2025Q1 [acct-7]: Hi Sebastian, Our alerting fired for billing-service in eu-west-1 around 14:47, ",
+    "calendar 2025Q4 [acct-15]: Contract redlines - Solentra. Account sync with Solentra. Agenda: - Keeping in t",
+    "zendesk 2025Q4 [acct-3]: The correction for a bad cache key shipped earlier today. Search index should be"
+   ]
+  },
+  {
+   "question": "How many support tickets did Finitra open in Q4 2026?",
+   "answer": "six or more",
+   "attention_on_this_customer": 0.051768381148576736,
+   "share_of_store_that_is_this_customer": 0.05199919898538148,
+   "read": [
+    "zendesk 2025Q2 [acct-14]: Hi Jodi, It reproduced again at 11:42, same request pattern. We captured the pay",
+    "zendesk 2025Q2 [acct-2]: Hi Claudia, Request req_346af3b09c is in our traces, so this is on our side rath",
+    "zendesk 2025Q2 [acct-2]: Hi Jodi, It reproduced again at 16:05, same request pattern. We captured the pay",
+    "zendesk 2025Q2 [acct-7]: It reproduced again at 06:37, same request pattern. We captured the payload if t",
+    "zendesk 2025Q2 [acct-14]: Hi Vincent, Could you export the failing rows from SAML metadata endpoint and at",
+    "zendesk 2025Q2 [acct-2]: /v1/api-gateway/records returning 409 for everyone in the finance group - billin"
+   ]
+  },
+  {
+   "question": "How many support tickets did Malachite Fabrication open in Q1 2027?",
+   "answer": "three to five",
+   "attention_on_this_customer": 0.12936443090438843,
+   "share_of_store_that_is_this_customer": 0.1129430612108671,
+   "read": [
+    "zendesk 2025Q2 [acct-2]: Hi Claudia, Request req_346af3b09c is in our traces, so this is on our side rath",
+    "zendesk 2025Q2 [acct-2]: Hi Jodi, It reproduced again at 16:05, same request pattern. We captured the pay",
+    "zendesk 2025Q2 [acct-2]: Hi Claudia, For billing portal, do you have one attempt from 16:05 that worked n",
+    "zendesk 2025Q2 [acct-14]: Hi Jodi, Exported and attached. You will see the last page is missing, which is ",
+    "zendesk 2025Q2 [acct-2]: /v1/api-gateway/records returning 409 for everyone in the finance group - billin",
+    "zendesk 2025Q2 [acct-7]: It reproduced again at 06:37, same request pattern. We captured the payload if t"
+   ]
+  }
+ ]
+}
