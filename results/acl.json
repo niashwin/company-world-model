@@ -1,0 +1,318 @@
+{
+ "policy": [
+  [
+   "Slack, public channels (including customer channels)",
+   "everyone"
+  ],
+  [
+   "Slack, private channels (leadership, exec-staff)",
+   "leadership"
+  ],
+  [
+   "Slack, direct and group messages",
+   "their members"
+  ],
+  [
+   "Jira (issues)",
+   "everyone"
+  ],
+  [
+   "Zendesk (support tickets)",
+   "support, success, engineering, product, leadership"
+  ],
+  [
+   "Salesforce (CRM)",
+   "sales, success, finance, leadership"
+  ],
+  [
+   "Gong (call transcripts)",
+   "sales, success, product, leadership"
+  ],
+  [
+   "Gmail",
+   "the sender, plus sales, success, support, leadership"
+  ],
+  [
+   "Google Calendar",
+   "the organizer, plus leadership"
+  ]
+ ],
+ "canary_customers": [
+  "acct-5",
+  "acct-11",
+  "acct-14",
+  "acct-10",
+  "acct-7"
+ ],
+ "canary_records": 150,
+ "codenames": [
+  "kestrelwind",
+  "marlowgate",
+  "tessaline",
+  "corvanthe",
+  "brightfenn"
+ ],
+ "secret": "privately we expect them to churn to a competitor next quarter",
+ "readers": {
+  "ceo": {
+   "user": "user-0",
+   "visible_share": 1.0,
+   "visible_records": 21972,
+   "visible_share_by_system": {
+    "calendar": 1.0,
+    "gmail": 1.0,
+    "gong": 1.0,
+    "jira": 1.0,
+    "salesforce": 1.0,
+    "slack": 1.0,
+    "zendesk": 1.0
+   },
+   "sees_canaries": true,
+   "placement_open_encoder": {
+    "customer_acc": 0.7558702944465151,
+    "state_acc": 0.2506522549385017,
+    "n_test": 5366
+   },
+   "placement_own_encoder": {
+    "customer_acc": 0.7558702944465151,
+    "state_acc": 0.2506522549385017,
+    "n_test": 5366
+   }
+  },
+  "account_executive": {
+   "user": "user-9",
+   "visible_share": 0.8094847988348808,
+   "visible_records": 17786,
+   "visible_share_by_system": {
+    "calendar": 0.5868263473053892,
+    "gmail": 1.0,
+    "gong": 1.0,
+    "jira": 1.0,
+    "salesforce": 1.0,
+    "slack": 1.0,
+    "zendesk": 0.0
+   },
+   "sees_canaries": true,
+   "placement_open_encoder": {
+    "customer_acc": 0.7809851088201604,
+    "state_acc": 0.23688430698739976,
+    "n_test": 4365
+   },
+   "placement_own_encoder": {
+    "customer_acc": 0.7638029782359679,
+    "state_acc": 0.21580756013745706,
+    "n_test": 4365
+   }
+  },
+  "support_engineer": {
+   "user": "user-3",
+   "visible_share": 0.85800109229929,
+   "visible_records": 18852,
+   "visible_share_by_system": {
+    "calendar": 0.24550898203592814,
+    "gmail": 1.0,
+    "gong": 0.0,
+    "jira": 1.0,
+    "salesforce": 0.0,
+    "slack": 1.0,
+    "zendesk": 1.0
+   },
+   "sees_canaries": false,
+   "placement_open_encoder": {
+    "customer_acc": 0.7537987227482933,
+    "state_acc": 0.2243999119136754,
+    "n_test": 4541
+   },
+   "placement_own_encoder": {
+    "customer_acc": 0.741907068927549,
+    "state_acc": 0.20259854657564413,
+    "n_test": 4541
+   },
+   "leak": {
+    "codenames_in_own_vocabulary": 0,
+    "built_in_without_secrets_retrained": true,
+    "open": {
+     "with": {
+      "codename_precision": 1.0,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.8,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": 0.9261514655015474,
+      "secret_advantage": 0.5619047619047619
+     },
+     "without": {
+      "codename_precision": 0.06000000000000001,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": -0.01384853449845258,
+      "secret_advantage": 0.16190476190476194
+     },
+     "codename_advantage": 0.94,
+     "secret_advantage": 0.4
+    },
+    "filtered": {
+     "with": {
+      "codename_precision": 1.0,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.8,
+      "secret_chance@5": 0.25,
+      "codename_advantage": 0.9312009335879482,
+      "secret_advantage": 0.55
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.06879906641205177,
+      "secret_advantage": 0.15000000000000002
+     },
+     "codename_advantage": 1.0,
+     "secret_advantage": 0.4
+    },
+    "built_in": {
+     "with": {
+      "codename_precision": 0.16,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.25,
+      "codename_advantage": 0.09120093358794823,
+      "secret_advantage": 0.15000000000000002
+     },
+     "without": {
+      "codename_precision": 0.16,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.25,
+      "codename_advantage": 0.09120093358794823,
+      "secret_advantage": 0.15000000000000002
+     },
+     "codename_advantage": 0.0,
+     "secret_advantage": 0.0
+    }
+   }
+  },
+  "software_engineer": {
+   "user": "user-8",
+   "visible_share": 0.2154105224831604,
+   "visible_records": 4733,
+   "visible_share_by_system": {
+    "calendar": 0.011976047904191617,
+    "gmail": 0.005649717514124294,
+    "gong": 0.0,
+    "jira": 1.0,
+    "salesforce": 0.0,
+    "slack": 1.0,
+    "zendesk": 1.0
+   },
+   "sees_canaries": false,
+   "placement_open_encoder": {
+    "customer_acc": 0.6554770318021201,
+    "state_acc": 0.303886925795053,
+    "n_test": 1132
+   },
+   "placement_own_encoder": {
+    "customer_acc": 0.2765017667844523,
+    "state_acc": 0.13780918727915195,
+    "n_test": 1132
+   },
+   "leak": {
+    "codenames_in_own_vocabulary": 0,
+    "built_in_without_secrets_retrained": false,
+    "open": {
+     "with": {
+      "codename_precision": 1.0,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.8,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": 0.9261514655015474,
+      "secret_advantage": 0.5619047619047619
+     },
+     "without": {
+      "codename_precision": 0.06000000000000001,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": -0.01384853449845258,
+      "secret_advantage": 0.16190476190476194
+     },
+     "codename_advantage": 0.94,
+     "secret_advantage": 0.4
+    },
+    "filtered": {
+     "with": {
+      "codename_precision": 1.0,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.6,
+      "secret_chance@5": 0.25,
+      "codename_advantage": 0.8589055567293471,
+      "secret_advantage": 0.35
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.2,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.14109444327065285,
+      "secret_advantage": -0.04999999999999999
+     },
+     "codename_advantage": 1.0,
+     "secret_advantage": 0.39999999999999997
+    },
+    "built_in": {
+     "with": {
+      "codename_precision": 0.04,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.2,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.10109444327065284,
+      "secret_advantage": -0.04999999999999999
+     },
+     "without": {
+      "codename_precision": 0.04,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.2,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.10109444327065284,
+      "secret_advantage": -0.04999999999999999
+     },
+     "codename_advantage": 0.0,
+     "secret_advantage": 0.0
+    }
+   }
+  },
+  "financial_analyst": {
+   "user": "user-4",
+   "visible_share": 0.09097942836337157,
+   "visible_records": 1999,
+   "visible_share_by_system": {
+    "calendar": 0.0,
+    "gmail": 0.02323446327683616,
+    "gong": 0.0,
+    "jira": 1.0,
+    "salesforce": 1.0,
+    "slack": 1.0,
+    "zendesk": 0.0
+   },
+   "sees_canaries": false,
+   "placement_open_encoder": {
+    "customer_acc": 0.6450304259634888,
+    "state_acc": 0.3407707910750507,
+    "n_test": 493
+   },
+   "placement_own_encoder": {
+    "customer_acc": 0.23123732251521298,
+    "state_acc": 0.12373225152129817,
+    "n_test": 493
+   }
+  }
+ },
+ "non_interference": {
+  "reader": "support_engineer",
+  "training_data_identical": true,
+  "max_abs_diff_embeddings": 0.0,
+  "max_abs_diff_queries": 0.0,
+  "open_encoder_training_data_changed": true
+ }
+}

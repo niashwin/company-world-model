@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the paper below."
+title: "Toward World Models of Organizations: Every System Sees the Same Company"
+type: software
+authors:
+  - family-names: Gopinath
+    given-names: Ashwin
+    affiliation: Sentra
+date-released: 2026-11-07
+license: MIT
+preferred-citation:
+  type: report
+  title: "Toward World Models of Organizations: Every System Sees the Same Company"
+  authors:
+    - family-names: Gopinath
+      given-names: Ashwin
+      affiliation: Sentra
+  year: 2026

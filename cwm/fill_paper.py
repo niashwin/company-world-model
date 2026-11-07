@@ -21,6 +21,11 @@ def load(name):
 PRH, XA, XB, ST, M2, M2S, M2L, E3B = (load(n) for n in ("prh.json", "extras_a.json", "extras_b.json", "state.json",
                                                          "memory2.json", "memory2_seeds.json", "memory2_minilm.json",
                                                          "e3b.json"))
+ACL = load("acl.json")
+RTAG = {"ceo": "CEO", "account_executive": "AE", "support_engineer": "SUP", "software_engineer": "ENG",
+        "financial_analyst": "FIN"}
+RNAME = {"ceo": "CEO", "account_executive": "Account executive", "support_engineer": "Support engineer",
+         "software_engineer": "Software engineer", "financial_analyst": "Financial analyst"}
 HO = {}
 for _n in ("extras_c.json", "extras_d.json"):
     for _k, _v in load(_n).get("heldout", {}).items():
@@ -108,12 +113,77 @@ def fill(text):
         sub["E3BUNROT"] = pct(st["query_by_new_encoder_unrotated"])
         sub["E3BOLD"] = pct(st["query_by_old_encoder"])
         sub["E3BNHIDDEN"] = f"{E3B.get('n_hidden_from_retraining', 0):,}".replace(",", "{,}")
+    if ACL:
+        R = ACL["readers"]
+        sub["ACLCANARYN"] = str(ACL["canary_records"])
+        for r, tag in RTAG.items():
+            if r not in R:
+                continue
+            sub[f"ACLVIS{tag}"] = pct(R[r]["visible_share"], 0)
+            sub[f"ACLCOST{tag}OPEN"] = pct(R[r]["placement_open_encoder"]["customer_acc"], 0)
+            sub[f"ACLCOST{tag}OWN"] = pct(R[r].get("placement_own_encoder", R[r]["placement_open_encoder"])["customer_acc"], 0)
+            for conf, ctag in (("open", "OPEN"), ("filtered", "FILT"), ("built_in", "BUILT")):
+                if "leak" in R[r]:
+                    L = R[r]["leak"][conf]
+                    sub[f"ACL{tag}{ctag}CODE"] = pct(L["with"]["codename_precision"], 0)
+                    sub[f"ACL{tag}{ctag}SECRET"] = pct(L["with"]["secret_precision@5"], 0)
+                    if "without" in L:
+                        sub[f"ACL{tag}{ctag}NOCODE"] = pct(L["without"]["codename_precision"], 0)
+                        sub[f"ACL{tag}{ctag}NOSECRET"] = pct(L["without"]["secret_precision@5"], 0)
+            if "leak" in R[r]:
+                sub[f"ACL{tag}CODECHANCE"] = pct(R[r]["leak"]["built_in"]["with"]["codename_chance"], 0)
+                sub[f"ACL{tag}SECRETCHANCE"] = pct(R[r]["leak"]["built_in"]["with"]["secret_chance@5"], 0)
+        ni = ACL.get("non_interference", {})
+        sub["ACLNIDIFF"] = f"{max(ni.get('max_abs_diff_embeddings', float('nan')), ni.get('max_abs_diff_queries', 0.0)):g}"
+        sub["ACLPOLICYTABLE"] = acl_policy_table()
+        sub["ACLSECRETSENTENCE"] = ACL["secret"].capitalize() + "."
+        sub["ACLLEAKTABLE"] = acl_leak_table()
     sub["APPSEEDTABLE"] = seed_table()
     sub["APPSTATETABLE"] = state_table()
     sub["APPMEMTABLE"] = memory_table()
     for k in sorted(sub, key=len, reverse=True):
         text = text.replace(k, sub[k])
     return text
+
+
+def acl_policy_table():
+    R = ACL["readers"]
+    systems = ["slack", "gmail", "zendesk", "salesforce", "gong", "jira", "calendar"]
+    rows = ["\\begin{tabular}{p{0.5\\linewidth}p{0.42\\linewidth}}", "\\toprule", "Records & Who may read them \\\\",
+            "\\midrule"]
+    rows += [f"{a} & {b} \\\\" for a, b in ACL["policy"]]
+    rows += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{6pt}", "",
+             "\\setlength{\\tabcolsep}{4pt}\\begin{tabular}{l" + "c" * (len(systems) + 1) + "}", "\\toprule",
+             "Reader & all & " + " & ".join(systems) + " \\\\", "\\midrule"]
+    for r in RTAG:
+        if r in R:
+            v = R[r]["visible_share_by_system"]
+            rows.append(f"{RNAME[r]} & {100 * R[r]['visible_share']:.0f}\\% & "
+                        + " & ".join(f"{100 * v.get(sy, 0):.0f}\\%" for sy in systems) + " \\\\")
+    rows += ["\\bottomrule", "\\end{tabular}"]
+    return "\n".join(rows)
+
+
+def acl_leak_table():
+    R = ACL["readers"]
+    rows = ["\\setlength{\\tabcolsep}{5pt}\\begin{tabular}{llcccc}", "\\toprule",
+            "& & \\multicolumn{2}{c}{Codename search, precision@10} & \\multicolumn{2}{c}{Secret sentence, precision@5} \\\\",
+            "\\cmidrule(lr){3-4}\\cmidrule(lr){5-6}",
+            "Reader & Configuration & with secrets & without & with secrets & without \\\\", "\\midrule"]
+    for r in ("support_engineer", "software_engineer"):
+        if r not in R or "leak" not in R[r]:
+            continue
+        L = R[r]["leak"]
+        for conf, name in (("open", "no access control"), ("filtered", "search and states filtered"),
+                           ("built_in", "\\textbf{built in}")):
+            first = RNAME[r] if conf == "open" else ""
+            w, wo = L[conf]["with"], L[conf].get("without", {})
+            rows.append(f"{first} & {name} & {w['codename_precision']:.2f} & {wo.get('codename_precision', float('nan')):.2f} & "
+                        f"{w['secret_precision@5']:.2f} & {wo.get('secret_precision@5', float('nan')):.2f} \\\\")
+        rows.append("\\addlinespace[3pt]")
+    rows[-1] = "\\bottomrule"
+    rows.append("\\end{tabular}")
+    return "\n".join(rows)
 
 
 def heldout_table():
@@ -222,5 +292,5 @@ if __name__ == "__main__":
     out = fill(open(src).read())
     open(dst, "w").write(out)
     left = [w for w in ("E1GOOD", "E1BAD", "E1NTP", "MASK", "NOISE", "APPSEED", "APPSTATE", "APPMEM", "HOGOOD", "HOTF",
-                        "HOBAD", "HONTP", "HOREF", "HONTEST", "HOTABLE", "E3B") if w in out]
+                        "HOBAD", "HONTP", "HOREF", "HONTEST", "HOTABLE", "E3B", "ACL") if w in out]
     print("unfilled:", left or "none")

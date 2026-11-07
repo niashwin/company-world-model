@@ -303,10 +303,67 @@ def fig_persistence():
     json.dump(out, open(os.path.join(RES, "persistence.json"), "w"), indent=1)
 
 
+# ---------------------------------------------------------------------------------------------- access control
+READER_NAME = {"ceo": "CEO", "account_executive": "Account\nexecutive", "support_engineer": "Support\nengineer",
+               "software_engineer": "Software\nengineer", "financial_analyst": "Financial\nanalyst"}
+
+
+def fig_acl():
+    a = load("acl.json")
+    if not a or "readers" not in a:
+        return
+    R = a["readers"]
+    short = {"ceo": "CEO", "account_executive": "Account\nexec.", "support_engineer": "Support\neng.",
+             "software_engineer": "Software\neng.", "financial_analyst": "Financial\nanalyst"}
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.6), gridspec_kw=dict(width_ratios=[1.1, 1]))
+    ax = axes[0]
+    confs = [("open", "No access control", "#52514e", None), ("filtered", "Search and states filtered", "#b9b8b2", "////"),
+             ("built_in", "Built in (this paper)", C["good"], None)]
+    groups = [(r, t) for r in ("support_engineer", "software_engineer") if "leak" in R.get(r, {})
+              for t in ("codename", "secret")]
+    w = 0.26
+    for j, (conf, name, col, hatch) in enumerate(confs):
+        ys = [R[r]["leak"][conf].get(f"{t}_advantage", 0.0) for r, t in groups]
+        xs = np.arange(len(groups)) + (j - 1) * w
+        ax.bar(xs, ys, w * 0.92, color=col, hatch=hatch, edgecolor="white", lw=0, label=name)
+        for x, y in zip(xs, ys):
+            ax.text(x, y + 0.02, f"{y:.1f}" if y else "0", ha="center", va="bottom", fontsize=6.5, color=INK)
+    ax.axhline(0, color=INK2, lw=0.8)
+    ax.set_xticks(np.arange(len(groups)), [f"{short[r]}\n{t}" for r, t in groups])
+    for lab in ax.get_xticklabels():
+        lab.set_fontsize(6.8)
+    ax.set_ylim(0, 1.5)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_ylabel("Access advantage")
+    ax.set_title("Planted secrets found without access", loc="left")
+    ax.legend(loc="upper left", frameon=False, fontsize=6.8, handlelength=1.2, borderaxespad=0.1)
+    ax.tick_params(axis="x", length=0); ax.grid(axis="x", visible=False)
+    ax = axes[1]
+    readers = [r for r in short if r in R]
+    xs = np.arange(len(readers))
+    o = [R[r]["placement_open_encoder"]["customer_acc"] for r in readers]
+    b = [R[r].get("placement_own_encoder", R[r]["placement_open_encoder"])["customer_acc"] for r in readers]
+    ax.bar(xs - 0.2, o, 0.38, color="#b9b8b2", label="Encoder trained on everything")
+    ax.bar(xs + 0.2, b, 0.38, color=C["good"], label="Reader's own encoder")
+    ax.set_xticks(xs, [f"{short[r]}\n{100 * R[r]['visible_share']:.0f}%" for r in readers])
+    for lab in ax.get_xticklabels():
+        lab.set_fontsize(6.8)
+    ax.tick_params(axis="x", length=0)
+    ax.set_ylim(0, 1.25)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_ylabel("Held-out records, right customer")
+    ax.set_title("Cost (under each reader: share readable)", loc="left")
+    ax.legend(loc="upper right", frameon=False, fontsize=6.8, handlelength=1.2, borderaxespad=0.1)
+    ax.grid(axis="x", visible=False)
+    fig.tight_layout(w_pad=1.5)
+    fig.savefig(os.path.join(FIG, "acl.pdf"))
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     import sys
-    which = sys.argv[1:] or ["e1", "maps", "e2", "e3", "robust", "persist"]
+    which = sys.argv[1:] or ["e1", "maps", "e2", "e3", "robust", "persist", "acl"]
     for w in which:
         {"e1": fig_e1, "maps": tsne_maps, "e2": fig_e2, "e3": fig_e3, "robust": fig_robust,
-         "persist": fig_persistence}[w]()
+         "persist": fig_persistence, "acl": fig_acl}[w]()
         print("made", w)

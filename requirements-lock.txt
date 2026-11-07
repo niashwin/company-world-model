@@ -1,0 +1,9 @@
+# Exact versions the results in results/ were produced with (Python 3.13, CPU only).
+numpy==2.5.3
+torch==2.15.0
+scikit-learn==1.9.1
+matplotlib==3.11.2
+requests==2.34.2
+sentence-transformers==6.2.0
+transformers==5.22.2
+pytest==9.1.1

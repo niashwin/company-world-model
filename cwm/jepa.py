@@ -143,7 +143,7 @@ def train_jepa(c, views="good", modality=None, steps=1500, batch=256, n_global=2
         torch.nn.utils.clip_grad_norm_(dense, 1.0)
         opt_s.step(); opt_d.step()
         if step % 250 == 0 or step == steps - 1:
-            hist.append((step, float(inv), float(sig)))
+            hist.append((step, float(inv.detach()), float(sig.detach())))
             if log:
                 log(f"  [{views} m={modality}] step {step} inv {float(inv):.4f} sigreg {float(sig):.3f} ({time.time()-t0:.0f}s)")
     return enc, hist

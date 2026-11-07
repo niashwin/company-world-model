@@ -1,6 +1,8 @@
+# Minimum versions; requirements-lock.txt has the exact versions used for the paper.
 numpy>=1.26
 torch>=2.2
 scikit-learn>=1.4
 matplotlib>=3.8
 requests>=2.31
+pytest>=8
 sentence-transformers>=2.7   # only for the memory-reader experiment (run_memory2.py)

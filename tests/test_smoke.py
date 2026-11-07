@@ -1,0 +1,97 @@
+"""Fast checks that run without Era data: a tiny synthetic company, a few training steps, the metrics, the access
+policy, and non-interference of an encoder trained on one reader's records."""
+import json
+import os
+import sys
+
+import numpy as np
+import pytest
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cwm"))
+
+from acl import EVERYONE, members, record_readers  # noqa: E402
+from data import build_pools, load  # noqa: E402
+from jepa import train_jepa  # noqa: E402
+from metrics import knn_precision, procrustes  # noqa: E402
+
+TOPICS = {"acct-0": "invoice export mismatch billing portal", "acct-1": "sso login token refresh outage",
+          "acct-2": "renewal pricing discount negotiation"}
+SYSTEMS = ["gmail", "zendesk", "salesforce"]
+QUARTER_TS = [1.735e9, 1.743e9, 1.751e9]          # three different calendar quarters (2025)
+
+
+def write_company(path, secret=None):
+    rng = np.random.default_rng(0)
+    rows = []
+    for a, topic in TOPICS.items():
+        for q, ts in enumerate(QUARTER_TS):
+            for s in SYSTEMS:
+                for j in range(6):
+                    words = topic.split()
+                    rng.shuffle(words)
+                    text = f"update {j} on {' '.join(words)} for quarter {q}"
+                    if secret and s == "salesforce" and a == "acct-1":
+                        text += f" {secret}"
+                    rows.append(dict(system=s, kind="x", ts=ts + 3600 * (j + 7 * SYSTEMS.index(s)),
+                                     author="jodid@northwind.com" if s == "gmail" else "x", text=text,
+                                     account_id=a, thread=f"{a}-{q}-{s}-{j // 2}", channel=None,
+                                     src_id=f"{a}-{q}-{s}-{j}", meta={}))
+    with open(path, "w") as f:
+        for r in rows:
+            f.write(json.dumps(r, sort_keys=True) + "\n")
+
+
+def test_train_and_metrics(tmp_path):
+    p = tmp_path / "obs.jsonl"
+    write_company(p)
+    c = load(str(p))
+    assert len(c.states) == 9 and len(c.accounts) == 3
+    enc, hist = train_jepa(c, "good", steps=40, batch=32, seed=0)
+    X = enc.embed(c.tok)
+    assert X.shape == (len(c.obs), 256) and np.isfinite(X).all()
+    q = np.arange(len(c.obs))
+    prec = knn_precision(X, c.account, c.system, c.thread, q, k=5)
+    assert 0.0 <= prec <= 1.0
+
+
+def test_procrustes_recovers_rotation():
+    rng = np.random.default_rng(1)
+    A = rng.normal(size=(200, 16))
+    Q, _ = np.linalg.qr(rng.normal(size=(16, 16)))
+    R = procrustes(A, A @ Q.T)          # R minimises ||A - (A Q^T) R||
+    assert np.allclose(A @ Q.T @ R, A, atol=1e-8)
+
+
+def test_access_policy():
+    emails = {"jodid@northwind.com": "user-3"}
+    assert record_readers({"system": "slack", "channel": "general"}, emails) == EVERYONE
+    assert record_readers({"system": "slack", "channel": "D-user-0-user-3"}, emails) == {"user-0", "user-3"}
+    assert record_readers({"system": "slack", "channel": "leadership"}, emails) == members({"leadership"})
+    crm = record_readers({"system": "salesforce"}, emails)
+    assert "user-3" not in crm and "user-9" in crm                  # support cannot read the CRM; sales can
+    mail = record_readers({"system": "gmail", "author": "Jodi <jodid@northwind.com>"}, emails)
+    assert "user-3" in mail
+
+
+def _reader_view(path, steps=20):
+    """Train on the records a support engineer may read; return its embeddings of those records."""
+    c = load(str(path))
+    emails = {"jodid@northwind.com": "user-3"}
+    vis = [i for i, o in enumerate(c.obs) if "user-3" in record_readers(o, emails)]
+    sub = path.parent / (path.stem + "_visible.jsonl")
+    with open(sub, "w") as f:
+        for i in vis:
+            f.write(json.dumps(c.obs[i], sort_keys=True) + "\n")
+    cs = load(str(sub))
+    build_pools(cs)
+    enc, _ = train_jepa(cs, "good", steps=steps, batch=16, seed=0)
+    return enc.embed(cs.tok)
+
+
+@pytest.mark.parametrize("secret", ["codename zephyrine churn risk"])
+def test_non_interference(tmp_path, secret):
+    a, b = tmp_path / "clean.jsonl", tmp_path / "secret.jsonl"
+    write_company(a)
+    write_company(b, secret=secret)          # the secret lives only in CRM records support cannot read
+    Xa, Xb = _reader_view(a), _reader_view(b)
+    assert np.array_equal(Xa, Xb)
