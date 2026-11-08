@@ -1,7 +1,119 @@
 # Responses to the reviews
 
+- [The "corporate AI" review](#response-to-the-corporate-ai-review) → version 4
 - [Review of version 2](#response-to-the-review-of-version-2) → version 3
 - [Review of version 1](#response-to-the-review-of-version-1) → version 2
+
+# Response to the "corporate AI" review
+
+The review asked for four things: action-conditioned dynamics, counterfactual decision simulation, the two-channel
+test on queries without names, and an abstract framed around corporate AI. Version 4 does all four on the same
+Northwind data, with no new simulator runs (`cwm/run_actions.py`, `results/actions.json`, §6.11 and Tables 12–13).
+The results are reported as they came out, after an independent check of the claims against the results. They do
+not show that conditioning on logged actions unlocks dynamics. They do show, at least in part, why it doesn't, and
+that points to what a decision layer needs.
+
+## 1. Action-conditioned dynamics, s(t+1) = h(s(t), a(t))
+
+**Done.** For each customer and month we read six actions from the records and Era's ground truth:
+
+| Action | Share of customer-months |
+| --- | --- |
+| Sales call held | 21% |
+| A leader (CEO or head of engineering) writing to or about the customer | 71% |
+| CRM task logged | 56% |
+| Engineering escalation (a Jira issue for the customer) | 15% |
+| Support agents replying on the customer's tickets | 43% |
+| Employees writing on the customer's email threads | 78% |
+
+The ridge predictor of Table 10 was then conditioned on these actions (leave one customer out, ridge strength tuned by
+nested validation), in four representations: link-trained views, bad views, the pretrained encoder and both channels.
+Error changes below are shares of the state-only predictor's error; positive means worse.
+
+**Result.**
+- **This month's actions add nothing.** The error changes by −0.1% to +0.6% (link-trained views: +0.4%, 95% interval
+  −1.6% to +2.3%). Shuffling the actions across months costs 1.0–1.4%.
+- **In two of the four spaces, the state already holds them.** A logistic regression on the month's state predicts
+  each action with AUROC 0.63–0.88 for link-trained views and 0.77–0.98 for bad views. In the pretrained and
+  two-channel spaces they are harder to read (0.49–0.86 and 0.45–0.88) and still add nothing, so redundancy is not
+  the whole explanation.
+- **Next month's actions help, mostly as a description of next month's records.** They lower the error by 9–19%
+  (link-trained views: 8.7%, interval 6.9% to 10.7%). But a Jira record is an escalation, and each other action is a
+  kind of record of one system. Next month's mix of systems lowers the error by about as much on average (10–24%),
+  though unevenly across customers (every interval includes zero). With the mix in the model, next month's actions
+  add 3–5% (the interval excludes zero only for link-trained views).
+- **Outcomes: actions add signal, mostly through ticket persistence.** Adding the month's actions raises next-month
+  AUROC by +0.02 to +0.07 for deal progress (the interval excludes zero in one of four representations) and +0.02 to
+  +0.26 for urgent tickets (three of four). Adding support replies alone does as well as all six actions
+  (differences −0.02 to +0.02, every interval including zero). A support reply marks a month with a ticket (99% of
+  months with a ticket have one, 6% without), and the indicator of any ticket this month ranks next month's urgent
+  tickets as well as the reply indicator does (AUROC 0.79). The reply mostly marks that persistence rather than the
+  effect of a decision.
+- **Event windows** (14 days before and after each action, with all records of the action's kind left out):
+  - around engineering escalations the state moves more than at matched times (+0.011, interval +0.004 to +0.020),
+    but those windows hold more records (median 64 against 46). With record counts accounted for, the difference is
+    +0.009 (interval −0.003 to +0.017), no longer detectable;
+  - around sales calls it is 0.000 (−0.008 to +0.010), and around leaders' messages −0.024 (−0.065 to +0.022);
+  - knowing which action was taken changes the error of a linear predictor by +0.02%.
+
+So the missing action term was not why dynamics failed in Table 10.
+
+## 2. Counterfactual decision simulation
+
+**Done** (Table 13). For the 29 customer-months in trouble (an urgent or high ticket during an open deal), we
+compare "intervene" (a sales call or engineering escalation that month) with "do not" in four ways:
+- the outcomes observed in those months;
+- case-based simulation: the most similar states of other customers (up to 15 per decision, from the 60 nearest),
+  split by what the company did, in each of the four state spaces;
+- all other customers' months, without matching on state;
+- an outcome model with the decision as an input.
+
+Intervals resample customers, repeating the neighbour search and refitting the outcome model.
+
+**Result.** The machinery works, but the answers are not effects:
+- **The logs barely contain the alternative.** The company intervened in 25 of the 29 troubled months, which come
+  from eight customers (12 from one).
+- **Decisions follow situations that the state does not fully capture.** The month's state predicts whether the company
+  intervened (AUROC 0.68–0.94). Yet among the most similar states, those where it intervened were themselves in
+  trouble 19–24% of the time and had an urgent ticket 57–62% of the time, against 0.2–4% and 17–35% where it did
+  not, in all four state spaces.
+- **So the comparison sets troubled months against calm ones.** Intervening appears to be followed by more urgent
+  tickets (+29 points with link-trained views, interval +6 to +45). That is what one would see if calls and
+  escalations are made when problems are severe, whatever their effect.
+- **The estimates are not stable.** They move with the state space (+12 to +15 points for deal progress, +8 to +29 for
+  urgent tickets, six of eight intervals include zero). The outcome model attributes little to the decision (0 and
+  +5 points).
+- **A monthly indicator mixes cause and response.** The first call or escalation came before the month's first urgent
+  ticket in 13 of the 25 months and after it in 12.
+
+The paper argues that learning from decisions needs actions whose assignment is known: decisions logged with their
+reasons, deliberately varied, or replayed in a simulator.
+
+## 3. The two-channel store on queries without names
+
+**Done in version 3** (Table 8). Each question comes with one record of its customer instead of the name.
+- **Names kept.** Placing that record with the state channel and reading its customer's records answers 63.8%,
+  against 54.9% with the pretrained encoder. The paired difference is +8.9 points (95% interval +3.9 to +13.8).
+- **Names masked.** Only the record's own link helps clearly.
+
+The figures the review predicted (53% vs 76%) are held-out placement accuracies from Table 3, not answer accuracies.
+
+## 4. Framing around corporate AI
+
+**Done.** The abstract, introduction and §7 now say that corporate AI is missing an operational world model.
+- **Training economics, as measured.** Every encoder and head we timed trains in 2–7 minutes on a CPU, without a GPU,
+  including each reader's encoder. At this scale a company could retrain its state space and each access scope's
+  model daily, or whenever an access rule changes; a new §7 paragraph covers this.
+- **What we did not claim.** We did not measure what fine-tuning a large language model on the same data costs, so
+  the paper says only that it would typically need GPUs. Whether training stays this cheap with millions of records
+  is untested.
+- **The active thesis follows the data:**
+  - the state space works;
+  - memory should route through it before reading;
+  - the decision layer is built and tested; on logged data it learns little about what decisions do, and we argue
+    it needs actions whose assignment is known.
+
+We did not write that action-conditioned transitions unlock decision learning, because on this data they did not.
 
 # Response to the review of version 2
 

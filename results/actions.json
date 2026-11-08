@@ -1,0 +1,742 @@
+{
+ "table": {
+  "month_states": 466,
+  "transitions": 396,
+  "support_agents": 4,
+  "action_share": {
+   "call": 0.20600858369098712,
+   "leader": 0.7124463519313304,
+   "crm_task": 0.5622317596566524,
+   "eng_escalation": 0.15236051502145923,
+   "support_reply": 0.4270386266094421,
+   "outbound_email": 0.7832618025751072
+  },
+  "outcome_rate_next_month": {
+   "deal_progress": 0.1691919191919192,
+   "escalation": 0.25
+  },
+  "trouble_transitions": 29,
+  "after_action": {
+   "call": {
+    "deal_progress|this_month": [
+     0.29545454545454547,
+     0.1331168831168831
+    ],
+    "deal_progress|next_month": [
+     0.5368421052631579,
+     0.053156146179401995
+    ],
+    "escalation|this_month": [
+     0.3181818181818182,
+     0.2305194805194805
+    ],
+    "escalation|next_month": [
+     0.3157894736842105,
+     0.2292358803986711
+    ]
+   },
+   "leader": {
+    "deal_progress|this_month": [
+     0.17475728155339806,
+     0.14942528735632185
+    ],
+    "deal_progress|next_month": [
+     0.18322981366459629,
+     0.10810810810810811
+    ],
+    "escalation|this_month": [
+     0.22006472491909385,
+     0.3563218390804598
+    ],
+    "escalation|next_month": [
+     0.2329192546583851,
+     0.32432432432432434
+    ]
+   },
+   "crm_task": {
+    "deal_progress|this_month": [
+     0.17333333333333334,
+     0.16374269005847952
+    ],
+    "deal_progress|next_month": [
+     0.17194570135746606,
+     0.1657142857142857
+    ],
+    "escalation|this_month": [
+     0.2088888888888889,
+     0.30409356725146197
+    ],
+    "escalation|next_month": [
+     0.2398190045248869,
+     0.26285714285714284
+    ]
+   },
+   "eng_escalation": {
+    "deal_progress|this_month": [
+     0.25,
+     0.1536144578313253
+    ],
+    "deal_progress|next_month": [
+     0.2647058823529412,
+     0.14939024390243902
+    ],
+    "escalation|this_month": [
+     0.5625,
+     0.1897590361445783
+    ],
+    "escalation|next_month": [
+     0.7941176470588235,
+     0.13719512195121952
+    ]
+   },
+   "support_reply": {
+    "deal_progress|this_month": [
+     0.22702702702702704,
+     0.11848341232227488
+    ],
+    "deal_progress|next_month": [
+     0.22580645161290322,
+     0.11904761904761904
+    ],
+    "escalation|this_month": [
+     0.4864864864864865,
+     0.04265402843601896
+    ],
+    "escalation|next_month": [
+     0.532258064516129,
+     0.0
+    ]
+   },
+   "outbound_email": {
+    "deal_progress|this_month": [
+     0.1695906432748538,
+     0.16666666666666666
+    ],
+    "deal_progress|next_month": [
+     0.16997167138810199,
+     0.16279069767441862
+    ],
+    "escalation|this_month": [
+     0.26608187134502925,
+     0.14814814814814814
+    ],
+    "escalation|next_month": [
+     0.2776203966005666,
+     0.023255813953488372
+    ]
+   }
+  },
+  "support_reply_given_ticket": [
+   0.9941860465116279,
+   0.0625
+  ],
+  "ticket_this_month_auroc_for_escalation_next": 0.7895622895622896,
+  "transitions_with_prospects": 398
+ },
+ "dynamics": {
+  "transitions": 396,
+  "actions": [
+   "call",
+   "leader",
+   "crm_task",
+   "eng_escalation",
+   "support_reply",
+   "outbound_email"
+  ],
+  "good_month": {
+   "no_change": 0.0,
+   "shrink": 0.11604657293500154,
+   "state": 0.048175422015550695,
+   "state+actions": 0.04402488833023943,
+   "state+next_actions": 0.1309849252196259,
+   "state+mix": 0.04610754240491044,
+   "state+next_mix": 0.1405188606647444,
+   "state+next_mix+next_actions": 0.17298084086345533,
+   "state+shuffled_actions": 0.03498235940907746,
+   "actions_vs_state": -0.004360607806640493,
+   "actions_vs_state_ci": [
+    -0.022555057805029883,
+    0.016145676433045954
+   ],
+   "next_actions_vs_state": 0.08700080363487739,
+   "next_actions_vs_state_ci": [
+    0.06949868911110568,
+    0.10691586362964954
+   ],
+   "actions_vs_shrink": -0.08147678644552192,
+   "mix_vs_state": -0.002172542775706887,
+   "next_mix_vs_state": 0.09701728741312488,
+   "next_mix_vs_state_ci": [
+    -0.015005122345584243,
+    0.160423651613923
+   ],
+   "next_mix_vs_next_actions": 0.010970966697589235,
+   "next_mix_vs_next_actions_ci": [
+    -0.11036293234368287,
+    0.07500680938023234
+   ],
+   "next_actions_beyond_next_mix": 0.0377692758026289,
+   "next_actions_beyond_next_mix_ci": [
+    0.00900135624194175,
+    0.08729524714872805
+   ],
+   "shuffled_vs_state": -0.013860813128413231
+  },
+  "bad": {
+   "no_change": 0.0,
+   "shrink": 0.27702048114970135,
+   "state": 0.27739852780027896,
+   "state+actions": 0.27522094849060397,
+   "state+next_actions": 0.4174827132419807,
+   "state+mix": 0.27213859889823633,
+   "state+next_mix": 0.4496917378651153,
+   "state+next_mix+next_actions": 0.4770418333525219,
+   "state+shuffled_actions": 0.2703338939111841,
+   "actions_vs_state": -0.003013527363909141,
+   "actions_vs_state_ci": [
+    -0.0220157616860438,
+    0.017133035919977203
+   ],
+   "next_actions_vs_state": 0.19386091895891355,
+   "next_actions_vs_state_ci": [
+    0.14399589958368547,
+    0.23930843164754048
+   ],
+   "actions_vs_shrink": -0.002489050674573834,
+   "mix_vs_state": -0.007279156083131788,
+   "next_mix_vs_state": 0.23843462363887347,
+   "next_mix_vs_state_ci": [
+    -0.21648273567830167,
+    0.44805623389366883
+   ],
+   "next_mix_vs_next_actions": 0.055292821956225424,
+   "next_mix_vs_next_actions_ci": [
+    -0.46892476851968157,
+    0.3039942034594424
+   ],
+   "next_actions_beyond_next_mix": 0.04969959088257858,
+   "next_actions_beyond_next_mix_ci": [
+    -0.016407938687396324,
+    0.11926600482791323
+   ],
+   "shuffled_vs_state": -0.009776666891625476
+  },
+  "minilm": {
+   "no_change": 0.0,
+   "shrink": 0.28909777449251817,
+   "state": 0.3065139273031787,
+   "state+actions": 0.3073211066031569,
+   "state+next_actions": 0.3943059859705078,
+   "state+mix": 0.299492767667938,
+   "state+next_mix": 0.4107768950495776,
+   "state+next_mix+next_actions": 0.4269096800829536,
+   "state+shuffled_actions": 0.29894607058877387,
+   "actions_vs_state": 0.0011639444997637582,
+   "actions_vs_state_ci": [
+    -0.0071409808948682705,
+    0.009439791478544757
+   ],
+   "next_actions_vs_state": 0.12659527296045647,
+   "next_actions_vs_state_ci": [
+    0.09932650627786106,
+    0.15357266685433313
+   ],
+   "actions_vs_shrink": 0.025634090676295185,
+   "mix_vs_state": -0.010124442164983982,
+   "next_mix_vs_state": 0.1503461595716582,
+   "next_mix_vs_state_ci": [
+    -0.12397864572025565,
+    0.28848284820256254
+   ],
+   "next_mix_vs_next_actions": 0.027193448668072606,
+   "next_mix_vs_next_actions_ci": [
+    -0.2881730531557342,
+    0.17864518655710404
+   ],
+   "next_actions_beyond_next_mix": 0.027379756322918447,
+   "next_actions_beyond_next_mix_ci": [
+    -0.006304304990982212,
+    0.07045984394857163
+   ],
+   "shuffled_vs_state": -0.010912773900382818
+  },
+  "good_month+minilm": {
+   "no_change": 0.0,
+   "shrink": 0.2124927181663392,
+   "state": 0.2458837550061579,
+   "state+actions": 0.24143146241527325,
+   "state+next_actions": 0.35370632123024315,
+   "state+mix": 0.23522739241409685,
+   "state+next_mix": 0.3790006285884264,
+   "state+next_mix+next_actions": 0.40415510082147765,
+   "state+shuffled_actions": 0.23590086836143842,
+   "actions_vs_state": -0.005903987111325337,
+   "actions_vs_state_ci": [
+    -0.018000008895220826,
+    0.00452640716891021
+   ],
+   "next_actions_vs_state": 0.14297870777862065,
+   "next_actions_vs_state_ci": [
+    0.11185502922887627,
+    0.173562984044203
+   ],
+   "actions_vs_shrink": 0.03674727195099958,
+   "mix_vs_state": -0.014130928305553292,
+   "next_mix_vs_state": 0.17652036336036692,
+   "next_mix_vs_state_ci": [
+    -0.12010978703200513,
+    0.3279597482379483
+   ],
+   "next_mix_vs_next_actions": 0.039137482214481545,
+   "next_mix_vs_next_actions_ci": [
+    -0.30673861269085195,
+    0.20634062616728738
+   ],
+   "next_actions_beyond_next_mix": 0.040506437511963145,
+   "next_actions_beyond_next_mix_ci": [
+    -0.0066366694268101545,
+    0.10501534929680571
+   ],
+   "shuffled_vs_state": -0.013237861816384802
+  },
+  "action_from_state_auroc": {
+   "good_month": {
+    "call": 0.626512691853601,
+    "leader": 0.8779154112264256,
+    "crm_task": 0.7114749837556855,
+    "eng_escalation": 0.7591302710843373,
+    "support_reply": 0.7725118483412322,
+    "outbound_email": 0.8011695906432749
+   },
+   "bad": {
+    "call": 0.9776047815820542,
+    "leader": 0.9405200312465127,
+    "crm_task": 0.7650682261208578,
+    "eng_escalation": 0.8386201054216867,
+    "support_reply": 0.9823235557832714,
+    "outbound_email": 0.9200238249945853
+   },
+   "minilm": {
+    "call": 0.8570321723730815,
+    "leader": 0.7482795818919019,
+    "crm_task": 0.5492137751786874,
+    "eng_escalation": 0.5935617469879517,
+    "support_reply": 0.49309593954143716,
+    "outbound_email": 0.6535087719298245
+   },
+   "good_month+minilm": {
+    "call": 0.7216278040141677,
+    "leader": 0.8838671279247108,
+    "crm_task": 0.5956595191682912,
+    "eng_escalation": 0.485363328313253,
+    "support_reply": 0.44618931727936467,
+    "outbound_email": 0.8222871994801819
+   }
+  },
+  "outcomes": {
+   "deal_progress": {
+    "base_rate": 0.1691919191919192,
+    "actions": 0.5628771038424897,
+    "good_month": {
+     "state": 0.623327133330309,
+     "state+actions": 0.6535408066052715,
+     "difference": 0.030213673274962494,
+     "difference_ci": [
+      -0.005646825453431273,
+      0.06382295955481394
+     ],
+     "state+support_reply": 0.6593476387061653,
+     "all_actions_minus_support_reply": -0.005806832100893833,
+     "all_actions_minus_support_reply_ci": [
+      -0.027540180912005018,
+      0.011360888923186232
+     ]
+    },
+    "bad": {
+     "state": 0.631356893344826,
+     "state+actions": 0.649911536542213,
+     "difference": 0.018554643197386977,
+     "difference_ci": [
+      -0.040007348622308224,
+      0.07678249522889799
+     ],
+     "state+support_reply": 0.6641564215397179,
+     "all_actions_minus_support_reply": -0.01424488499750487,
+     "all_actions_minus_support_reply_ci": [
+      -0.05076933949793434,
+      0.014894412787328557
+     ]
+    },
+    "minilm": {
+     "state": 0.5764641836410651,
+     "state+actions": 0.6229188404482149,
+     "difference": 0.046454656807149775,
+     "difference_ci": [
+      -0.008882429442354045,
+      0.10156213440185476
+     ],
+     "state+support_reply": 0.6347593340289435,
+     "all_actions_minus_support_reply": -0.011840493580728584,
+     "all_actions_minus_support_reply_ci": [
+      -0.029722222222222296,
+      0.0028483079778886446
+     ]
+    },
+    "good_month+minilm": {
+     "state": 0.4968924375085061,
+     "state+actions": 0.563353445538266,
+     "difference": 0.06646100802975996,
+     "difference_ci": [
+      0.0067147719546919865,
+      0.1304647731766686
+     ],
+     "state+support_reply": 0.5817719911082884,
+     "all_actions_minus_support_reply": -0.018418545570022316,
+     "all_actions_minus_support_reply_ci": [
+      -0.05289736003181323,
+      0.008174178177409222
+     ]
+    },
+    "support_reply_only": 0.5961076078573697,
+    "support_reply_only_heldout": 0.5034251236220115
+   },
+   "escalation": {
+    "base_rate": 0.25,
+    "actions": 0.7768765091997415,
+    "good_month": {
+     "state": 0.7113899942182771,
+     "state+actions": 0.804747814848825,
+     "difference": 0.09335782063054787,
+     "difference_ci": [
+      0.02791352608777947,
+      0.17448163569897146
+     ],
+     "state+support_reply": 0.8023671053974084,
+     "all_actions_minus_support_reply": 0.0023807094514165517,
+     "all_actions_minus_support_reply_ci": [
+      -0.016612690881205934,
+      0.019251847957195346
+     ]
+    },
+    "bad": {
+     "state": 0.7844097541067239,
+     "state+actions": 0.8017889331020644,
+     "difference": 0.017379178995340583,
+     "difference_ci": [
+      -0.022199990512602585,
+      0.08019415621882224
+     ],
+     "state+support_reply": 0.7858721899125939,
+     "all_actions_minus_support_reply": 0.01591674318947056,
+     "all_actions_minus_support_reply_ci": [
+      -0.005505642535435437,
+      0.0365186976862291
+     ]
+    },
+    "minilm": {
+     "state": 0.5749413325170901,
+     "state+actions": 0.7991361425704859,
+     "difference": 0.2241948100533958,
+     "difference_ci": [
+      0.09245555767454754,
+      0.36551649463645164
+     ],
+     "state+support_reply": 0.7943407135326327,
+     "all_actions_minus_support_reply": 0.004795429037853238,
+     "all_actions_minus_support_reply_ci": [
+      -0.014871036189642731,
+      0.024246569347488645
+     ]
+    },
+    "good_month+minilm": {
+     "state": 0.5221576029656837,
+     "state+actions": 0.7827772676257524,
+     "difference": 0.2606196646600687,
+     "difference_ci": [
+      0.1330004128752265,
+      0.39641039397814515
+     ],
+     "state+support_reply": 0.7767234635921504,
+     "all_actions_minus_support_reply": 0.006053804033602006,
+     "all_actions_minus_support_reply_ci": [
+      -0.02586504306797308,
+      0.037849994366678845
+     ]
+    },
+    "support_reply_only": 0.7946127946127947,
+    "support_reply_only_heldout": 0.6763425500799238
+   }
+  }
+ },
+ "events": {
+  "call": {
+   "events": 216,
+   "matched": 216,
+   "customers": 20,
+   "shift_event": 0.027187746432092454,
+   "shift_matched": 0.02992322047551473,
+   "records_before_event": 37.5,
+   "records_before_matched": 28.0,
+   "difference": -0.0027354740434222743,
+   "difference_ci": [
+    -0.013105480206398831,
+    0.009410237951822492
+   ],
+   "adjusted_difference": -5.57209268823258e-05,
+   "adjusted_difference_ci": [
+    -0.008254019984027413,
+    0.010475580547093846
+   ]
+  },
+  "eng_escalation": {
+   "events": 101,
+   "matched": 101,
+   "customers": 11,
+   "shift_event": 0.03716785187768464,
+   "shift_matched": 0.02568156058245366,
+   "records_before_event": 64.0,
+   "records_before_matched": 46.0,
+   "difference": 0.011486291295230981,
+   "difference_ci": [
+    0.0035613059797025364,
+    0.019543133386091538
+   ],
+   "adjusted_difference": 0.009262774540066479,
+   "adjusted_difference_ci": [
+    -0.002767713982097996,
+    0.0168603368633936
+   ]
+  },
+  "leader": {
+   "events": 66,
+   "matched": 29,
+   "customers": 19,
+   "shift_event": 0.07464311700878722,
+   "shift_matched": 0.10112200728778181,
+   "records_before_event": 6.5,
+   "records_before_matched": 6.0,
+   "difference": -0.026478890278994596,
+   "difference_ci": [
+    -0.070324853412587,
+    0.02184684586262911
+   ],
+   "adjusted_difference": -0.024436953475020444,
+   "adjusted_difference_ci": [
+    -0.06549313929198691,
+    0.02181624777538518
+   ]
+  },
+  "prediction": {
+   "pairs": 729,
+   "state_vs_no_change": 0.02491257080611553,
+   "state+action_vs_no_change": 0.024757555733533332,
+   "action_vs_state": -0.0001589755625404088,
+   "action_vs_state_ci": [
+    -0.00035476827481844555,
+    5.694934015723901e-05
+   ]
+  }
+ },
+ "simulate": {
+  "trouble": 29,
+  "intervened_in_trouble": 25,
+  "k": 15,
+  "pool": 60,
+  "bootstrap": 300,
+  "customers_in_trouble": 8,
+  "most_trouble_months_one_customer": 12,
+  "decision": "intervene = a sales call or an engineering escalation in the month of trouble",
+  "intervention_before_ticket": 13,
+  "intervention_after_ticket": 12,
+  "intervention_from_state_auroc": {
+   "good_month": 0.6776897594699698,
+   "bad": 0.9383839838686447,
+   "minilm": 0.8132507561572807,
+   "good_month+minilm": 0.7446636900475299
+  },
+  "deal_progress": {
+   "observed_in_trouble": [
+    0.44,
+    0.25
+   ],
+   "case": [
+    0.3057844454396179,
+    0.18762157382847042
+   ],
+   "case_difference": 0.1181628716111475,
+   "case_difference_ci": [
+    -0.14041063797313794,
+    0.2883701662210434
+   ],
+   "unmatched": [
+    0.24871394902900798,
+    0.12522542747983614
+   ],
+   "unmatched_difference": 0.12348852154917184,
+   "unmatched_difference_ci": [
+    0.04189469613948118,
+    0.20255352175351707
+   ],
+   "model": [
+    0.3019710152728176,
+    0.3040021439278955
+   ],
+   "model_difference": -0.002031128655077874,
+   "model_difference_ci": [
+    -0.09536162574890208,
+    0.05877155870023025
+   ],
+   "balance_in_trouble": [
+    0.23569935811315126,
+    0.0022988505747126436
+   ],
+   "balance_urgent_ticket_this_month": [
+    0.5988331591779865,
+    0.16693191865605658
+   ],
+   "case_bad": [
+    0.27356321839080466,
+    0.12207792207792209
+   ],
+   "case_bad_difference": 0.15148529631288257,
+   "case_bad_difference_ci": [
+    0.028479122303135443,
+    0.29372905525846704
+   ],
+   "balance_in_trouble_bad": [
+    0.2275862068965518,
+    0.04022988505747126
+   ],
+   "balance_urgent_ticket_this_month_bad": [
+    0.6183908045977012,
+    0.34797731004627547
+   ],
+   "case_minilm": [
+    0.2579259820639132,
+    0.11034482758620692
+   ],
+   "case_minilm_difference": 0.14758115447770628,
+   "case_minilm_difference_ci": [
+    -0.0009340277777777964,
+    0.36001368729309874
+   ],
+   "balance_in_trouble_minilm": [
+    0.21119110774283198,
+    0.009195402298850575
+   ],
+   "balance_urgent_ticket_this_month_minilm": [
+    0.5736958443854998,
+    0.3160919540229885
+   ],
+   "case_good_month+minilm": [
+    0.27096332785987964,
+    0.13946360153256707
+   ],
+   "case_good_month+minilm_difference": 0.13149972632731258,
+   "case_good_month+minilm_difference_ci": [
+    -0.07237987987987997,
+    0.28404690905527014
+   ],
+   "balance_in_trouble_good_month+minilm": [
+    0.19137931034482764,
+    0.011494252873563218
+   ],
+   "balance_urgent_ticket_this_month_good_month+minilm": [
+    0.5839080459770113,
+    0.18620689655172415
+   ]
+  },
+  "escalation": {
+   "observed_in_trouble": [
+    0.68,
+    0.75
+   ],
+   "case": [
+    0.5026073543314923,
+    0.2083112290008841
+   ],
+   "case_difference": 0.29429612533060817,
+   "case_difference_ci": [
+    0.06079058441558441,
+    0.45264255791970737
+   ],
+   "unmatched": [
+    0.35905299388487505,
+    0.1555251948727006
+   ],
+   "unmatched_difference": 0.20352779901217444,
+   "unmatched_difference_ci": [
+    0.07427508097011483,
+    0.2865380728688937
+   ],
+   "model": [
+    0.16921523731608035,
+    0.12183551855532343
+   ],
+   "model_difference": 0.04737971876075692,
+   "model_difference_ci": [
+    -0.005306228009829825,
+    0.1539752774400784
+   ],
+   "balance_in_trouble": [
+    0.23569935811315126,
+    0.0022988505747126436
+   ],
+   "balance_urgent_ticket_this_month": [
+    0.5988331591779865,
+    0.16693191865605658
+   ],
+   "case_bad": [
+    0.45057471264367815,
+    0.3744140916554709
+   ],
+   "case_bad_difference": 0.07616062098820725,
+   "case_bad_difference_ci": [
+    -0.06459875650665112,
+    0.31019607843137254
+   ],
+   "balance_in_trouble_bad": [
+    0.2275862068965518,
+    0.04022988505747126
+   ],
+   "balance_urgent_ticket_this_month_bad": [
+    0.6183908045977012,
+    0.34797731004627547
+   ],
+   "case_minilm": [
+    0.450789440444613,
+    0.34568965517241373
+   ],
+   "case_minilm_difference": 0.10509978527219926,
+   "case_minilm_difference_ci": [
+    -0.07422232529375392,
+    0.3011778846153846
+   ],
+   "balance_in_trouble_minilm": [
+    0.21119110774283198,
+    0.009195402298850575
+   ],
+   "balance_urgent_ticket_this_month_minilm": [
+    0.5736958443854998,
+    0.3160919540229885
+   ],
+   "case_good_month+minilm": [
+    0.4386152162014232,
+    0.264367816091954
+   ],
+   "case_good_month+minilm_difference": 0.1742474001094692,
+   "case_good_month+minilm_difference_ci": [
+    -0.03301410847606489,
+    0.4097796055180964
+   ],
+   "balance_in_trouble_good_month+minilm": [
+    0.19137931034482764,
+    0.011494252873563218
+   ],
+   "balance_urgent_ticket_this_month_good_month+minilm": [
+    0.5839080459770113,
+    0.18620689655172415
+   ]
+  }
+ }
+}

@@ -10,7 +10,7 @@ It is the first layer of a **world model of an organization**.
 
 ![The idea](paper/figures/idea.png)
 
-Every company will come to run on an *operational world model*: a model of how the company actually functions,
+We expect every company to come to run on an *operational world model*: a model of how the company actually functions,
 which people and AI agents can understand the company through, learn on the way a new employee learns it, and use
 to try changes before making them. This repository builds the first layers of such a model and tests, honestly,
 how far the rest of it gets on the same data.
@@ -22,8 +22,8 @@ the same customer in the same time window. We train small text JEPAs on those li
 [Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents), compare them with corruption-based views and
 next-token prediction on identical text, and repeat the key comparisons with a frozen pretrained encoder.
 
-**Paper:** [`paper/main.pdf`](paper/main.pdf) (version 3; source in [`paper/`](paper)).
-**What changed and why:** [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) (both reviews, point by point) and
+**Paper:** [`paper/main.pdf`](paper/main.pdf) (version 4; source in [`paper/`](paper)).
+**What changed and why:** [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) (every review, point by point) and
 [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Results at a glance
@@ -93,13 +93,23 @@ checked byte for byte).
 | Linear dynamics (state → next state) | With its regularization tuned by nested cross-validation, a ridge map beats "no change" in every space (2–31% less error) but never by more than 3.4 points beyond one shrink-toward-the-mean factor: it learns mean reversion, not dynamics. |
 | **Drift** (weekly state jump vs escalations and deal-stage changes, 279 event weeks) | AUROC 0.47–0.54, within about two standard errors of chance; record volume alone 0.57. |
 | **Cross-team misalignment** (sales vs support state distance vs at-risk months) | AUROC 0.48–0.57, within noise. |
+| **Decisions: action-conditioned dynamics** (six company actions per customer-month, read from the company's logs and Era's ground truth: sales calls, leaders' messages, CRM tasks, engineering escalations, support replies, outbound email) | This month's actions add nothing to predicting next month's state (error change −0.1% to +0.6% of the state-only error; positive is worse). In the link-trained space the state already encodes most of them (each action is predicted from the state with AUROC 0.63–0.88). Next month's actions lower the error by 9–19%, mostly as a description of next month's records: with next month's mix of systems in the model they add 3–5%. Next-month outcomes: actions add +0.02 to +0.26 AUROC, and adding support replies alone does as well as all six; replies mark months with tickets, and tickets persist. |
+| **Decisions: around single actions** (14-day windows, records of the action's kind left out) | No action moves the state detectably more than matched times once each window's record count is accounted for: engineering escalations +0.009 (95% interval −0.003 to +0.017; +0.011 before the adjustment), sales calls 0.000, leaders' messages −0.024. Knowing the action does not help predict where the state goes. |
+| **Decisions: simulating intervene vs not for customers in trouble** (29 customer-months) | The machinery works (similar states of other customers, split by what the company did), but the logs barely contain the alternative: the company intervened in 25 of 29. Among similar states, those where it intervened were in trouble 19–24% of the time vs 0.2–4% where it did not, in all four state spaces, so intervening appears to be followed by more urgent tickets (+29 points), as one would see if calls and escalations are made when problems are severe; estimates move with the state space and the outcome model attributes little to the decision. **Learning from decisions needs actions whose assignment is known.** |
 | **Similar situations across customers** | 18% of the 5 nearest other-customer states share the situation vs 8% chance (every representation does about as well); still 17% vs 7% when restricted to other quarters. For customers in trouble, the detail channel finds others in trouble (bad views 35%, pretrained 25% vs 12% base rate); the state channel does not (4%). |
 
 The experiments point to a division of labor. The **state space** can be learned from links alone, places records
 without links, can be shared across encoders through rotations and can carry access control. A **memory** should find a
 question's records through the state space (or by name, when the question has one) and read them from the store;
 once the right records are found, their provenance carries most of the answer. A **predictor** of
-how states change did not emerge from a space trained for static similarity, and remains the open problem.
+how states change did not emerge from a space trained for static similarity, and conditioning it on the company's
+logged actions does not change that. The company intervened in situations unlike those where it held back, so its logs
+show the situations in which it acted rather than the effect of acting. A **decision layer** needs actions whose
+assignment is known (logged with reasons, deliberately varied, or replayed in a simulator).
+
+Every encoder and head we timed trains in **2–7 minutes on a CPU**, without a GPU, so at this scale a company could
+retrain its state space and each access scope's model daily, or whenever an access rule changes. We have not tested
+how training time grows with millions of records.
 
 ## Reproduce
 
@@ -151,7 +161,10 @@ CORPUS=plain  PREP=1 python cwm/run_memory_anchor.py
 CORPUS=masked python cwm/run_memory_anchor.py          # all eleven stores, four seeds
 CORPUS=plain  python cwm/run_memory_anchor.py
 
-# 5. Figures and paper (every number in the paper is filled from results/ by cwm/fill_paper.py)
+# 5. Version-4 experiments: decisions (actions, action-conditioned dynamics, event windows, decision simulation)
+python cwm/run_actions.py table dynamics events simulate
+
+# 6. Figures and paper (every number in the paper is filled from results/ by cwm/fill_paper.py)
 make all
 ```
 
@@ -182,11 +195,12 @@ and thread count, not across thread counts; the version-2 runs used `THREADS=1 O
 | `cwm/memory.py`, `cwm/run_memory2.py` | Memory-token reader over the store: state-only, detail-only, concatenated and routed stores |
 | `cwm/run_memory_anchor.py` | Questions that come with a record of the customer instead of its name: nearest-neighbour, placement and link-oracle stores, names masked or kept |
 | `cwm/memory_retrieval.py` | Which records the named-question stores retrieve |
+| `cwm/run_actions.py` | Decisions: the company's actions per customer and month, action-conditioned dynamics, event windows, decision simulation |
 | `cwm/make_minilm.py` | Caches the frozen backbone's features for every linked record |
 | `cwm/run_v2.py` | Version-2 experiments: pretrained baselines, monthly windows, access control with a shared backbone, two channels, dynamics, drift, misalignment, similar situations, scope diagnostic |
 | `cwm/make_figures.py`, `cwm/fill_paper.py` | Figures, and every number and generated table in the paper from `results/` |
 | `tests/` | Smoke tests run by GitHub Actions on every push |
-| `results/` | Every result reported in the paper, as JSON (`v2_*.json`, `extras_e.json` and `memory2_{minilm4,dual,route}.json` are new in version 2; `memory_anchor_*.json`, `memory2_q_*.json` in version 3; files ending `_a`, `_b`, ... are parallel runs merged by `fill_paper.py`) |
+| `results/` | Every result reported in the paper, as JSON (`v2_*.json`, `extras_e.json` and `memory2_{minilm4,dual,route}.json` are new in version 2; `memory_anchor_*.json`, `memory2_q_*.json` in version 3; `actions.json` in version 4; files ending `_a`, `_b`, ... are parallel runs merged by `fill_paper.py`) |
 | `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, PDF |
 | `docs/REVIEW_RESPONSE.md` | Point-by-point answers to the reviews of versions 1 and 2 |
 | `docs/ARXIV_ABSTRACT.txt` | A shorter abstract that fits arXiv's 1,920-character limit |
@@ -213,7 +227,7 @@ Era's terms before sharing it. Code is MIT-licensed (see `LICENSE`).
   title  = {Toward World Models of Organizations: Every System Sees the Same Company},
   author = {Gopinath, Ashwin},
   year   = {2026},
-  note   = {Technical report, version 3}
+  note   = {Technical report, version 4}
 }
 ```
 

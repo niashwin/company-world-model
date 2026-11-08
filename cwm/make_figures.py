@@ -83,7 +83,6 @@ def fig_e1():
         ax.tick_params(axis="x", length=0)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("Precision@10, other systems")
-    ident = load("extras_b.json").get("mask", {})
     from_ident = 0.163  # identity-only ceiling on the unmasked corpus (run_extras.identity_only_state_precision)
     axes[1].axhline(from_ident, color=INK2, lw=0.9, ls=(0, (3, 2)))
     axes[1].text(1.25, from_ident + 0.025, "knowing only the customer", ha="center", va="bottom", fontsize=7, color=INK2)

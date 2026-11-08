@@ -184,6 +184,8 @@ def evaluate():
             "max_abs_diff_queries": float(np.abs(a["Q"] - b["Q"]).max()),
             "open_encoder_training_data_changed": True}
         print("non-interference", res["non_interference"], flush=True)
+    # training time of each encoder (its records' embedding, a fraction of a second, included)
+    res["timing"] = {name: {"seconds": float(v["seconds"])} for name, v in sorted(z.items()) if "seconds" in v.files}
     json.dump(res, open(os.path.join(OUT, "acl.json"), "w"), indent=1)
 
 

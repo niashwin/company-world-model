@@ -5,6 +5,7 @@ python fill_paper.py paper/main.in.tex paper/main.tex
 """
 import json
 import os
+import re
 import sys
 
 import numpy as np
@@ -85,6 +86,11 @@ def pm(vals, digits=3):
 
 def pct(x, digits=1):
     return f"{100 * x:.{digits}f}\\%"
+
+
+def minus(text):
+    """Replace a leading hyphen-minus on numbers with a typographic minus ($-$)."""
+    return re.sub(r"(?<![\w$-])-(?=\d)", "$-$", text)
 
 
 def signed(x):
@@ -179,11 +185,12 @@ def fill(text):
         sub["ACLLEAKTABLE"] = acl_leak_table()
     fill_v2(sub)
     fill_anchor(sub)
+    fill_actions(sub)
     sub["APPSEEDTABLE"] = seed_table()
     sub["APPSTATETABLE"] = state_table()
     sub["APPMEMTABLE"] = memory_table()
     for k in sorted(sub, key=len, reverse=True):
-        text = text.replace(k, sub[k])
+        text = text.replace(k, minus(sub[k]))
     return text
 
 
@@ -577,6 +584,221 @@ def fill_anchor(sub):
         sub["ANCHOTHERSYS"] = pct(float(np.mean(oth)), 0)
 
 
+WORDS = {0: "none", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight"}
+
+
+def pp(x):
+    """Percentage points, signed, with no sign on zero."""
+    v = round(100 * x)
+    return "0" if v == 0 else f"{v:+d}"
+
+
+def pct_small(x):
+    """A percentage with one decimal below 1%, none above."""
+    return f"{100 * x:.1f}\\%" if abs(x) < 0.01 else pct(x, 0)
+
+
+def rng_(vals, fmt="{:.2f}", sep="--"):
+    return f"{fmt.format(min(vals))}{sep}{fmt.format(max(vals))}"
+
+
+def fill_actions(sub):
+    """Section 6.11: actions read from records, action-conditioned dynamics, event windows, decision simulation.
+    Error changes are printed as a share of the reference model's error, positive meaning worse."""
+    AC = load("actions.json")
+    if not AC:
+        return
+    T, D, EV, SI = AC.get("table", {}), AC.get("dynamics", {}), AC.get("events", {}), AC.get("simulate", {})
+    names = {"call": "CALL", "leader": "LEADER", "crm_task": "CRMTASK", "eng_escalation": "ENGESC",
+             "support_reply": "SUPPORT", "outbound_email": "OUTBOUND"}
+    for a, tag in names.items():
+        sub[f"ACTSHARE{tag}"] = pct(T["action_share"][a], 0)
+    sub["ACTMONTHS"] = str(T["month_states"]); sub["ACTTRANS"] = str(T["transitions"])
+    sub["SUPPORTAGENTS"] = WORDS.get(T["support_agents"], str(T["support_agents"]))
+    sub["ACTTRANSPROSPECTS"] = str(T["transitions_with_prospects"])
+    sub["ACTPROGRESSRATE"] = pct(T["outcome_rate_next_month"]["deal_progress"], 0)
+    sub["ACTESCRATE"] = pct(T["outcome_rate_next_month"]["escalation"], 0)
+    sub["ACTCALLPROGNEXT"] = pct(T["after_action"]["call"]["deal_progress|next_month"][0], 0)
+    sub["ACTNOCALLPROGNEXT"] = pct(T["after_action"]["call"]["deal_progress|next_month"][1], 0)
+    sub["ACTSUPTICKET"] = pct(T["support_reply_given_ticket"][0], 0)
+    sub["ACTSUPNOTICKET"] = pct(T["support_reply_given_ticket"][1], 0)
+    sub["ACTTICKETAUC"] = f"{T['ticket_this_month_auroc_for_escalation_next']:.2f}"
+    reps_ = [("good_month", "Good views"), ("bad", "Bad views"), ("minilm", "Pretrained encoder"),
+             ("good_month+minilm", "Two channels")]
+    err = lambda gain: -100 * gain  # noqa: E731  (a gain relative to a reference -> change in error, % of it)
+    if D:
+        o = D["outcomes"]
+        rows = ["\\setlength{\\tabcolsep}{4.5pt}\\begin{tabular}{lcccccc}", "\\toprule",
+                "& \\multicolumn{6}{c}{Squared error of next month's state, relative to predicting no change} \\\\",
+                "\\cmidrule(lr){2-7}",
+                "& & & \\multicolumn{2}{c}{+ this month's actions} & \\multicolumn{2}{c}{+ next month's} \\\\",
+                "\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}",
+                "Representation & shrink & state & actual & shuffled & actions & system mix \\\\", "\\midrule"]
+        for k, n in reps_:
+            r = D[k]
+            rows.append(f"{n} & {signed(-r['shrink'])} & {signed(-r['state'])} & {signed(-r['state+actions'])} & "
+                        f"{signed(-r['state+shuffled_actions'])} & {signed(-r['state+next_actions'])} & "
+                        f"{signed(-r['state+next_mix'])} \\\\")
+        rows += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{8pt}", "",
+                 "\\setlength{\\tabcolsep}{4.5pt}\\begin{tabular}{lcccc}", "\\toprule",
+                 "& \\multicolumn{4}{c}{Next month's outcome from this month, AUROC} \\\\", "\\cmidrule(lr){2-5}",
+                 "& \\multicolumn{2}{c}{Deal advances or is won} & \\multicolumn{2}{c}{Urgent or high ticket} \\\\",
+                 "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}",
+                 "Representation & state & + actions & state & + actions \\\\", "\\midrule"]
+        for k, n in reps_:
+            cells = []
+            for yk in ("deal_progress", "escalation"):
+                v = o[yk][k]
+                lo, hi = v["difference_ci"]
+                star = "$^{*}$" if lo > 0 or hi < 0 else ""
+                cells += [f"{v['state']:.2f}", f"{v['state+actions']:.2f}{star}"]
+            rows.append(f"{n} & " + " & ".join(cells) + " \\\\")
+        rows += ["\\midrule",
+                 f"Actions alone & \\multicolumn{{2}}{{c}}{{{o['deal_progress']['actions']:.2f}}} & "
+                 f"\\multicolumn{{2}}{{c}}{{{o['escalation']['actions']:.2f}}} \\\\",
+                 f"Support reply indicator & \\multicolumn{{2}}{{c}}{{{o['deal_progress']['support_reply_only']:.2f}}} & "
+                 f"\\multicolumn{{2}}{{c}}{{{o['escalation']['support_reply_only']:.2f}}} \\\\",
+                 "\\bottomrule", "\\end{tabular}"]
+        sub["ACTDYNTABLE"] = "\n".join(rows)
+        lag = [err(D[k]["actions_vs_state"]) for k, _ in reps_]
+        shuf = [err(D[k]["shuffled_vs_state"]) for k, _ in reps_]
+        mix = [err(D[k]["mix_vs_state"]) for k, _ in reps_]
+        nxt = [100 * D[k]["next_actions_vs_state"] for k, _ in reps_]
+        nmix = [100 * D[k]["next_mix_vs_state"] for k, _ in reps_]
+        sub["ACTLAGRANGE"] = f"{min(lag):+.1f}\\% to {max(lag):+.1f}\\%"
+        sub["ACTSHUFRANGE"] = f"{min(shuf):.1f}--{max(shuf):.1f}\\%"
+        sub["ACTMIXRANGE"] = f"{min(mix):+.1f}\\% to {max(mix):+.1f}\\%"
+        sub["ACTNEXTRANGE"] = f"{min(nxt):.0f}--{max(nxt):.0f}\\%"
+        sub["ACTNEXTMIXRANGE"] = f"{min(nmix):.0f}--{max(nmix):.0f}\\%"
+        nice = dict(reps_)
+
+        def sig_text(key, what="interval"):
+            """Which representations' 95% intervals exclude zero, in words."""
+            ex = [nice[k].lower() for k, _ in reps_ if D[k][key + "_ci"][0] > 0 or D[k][key + "_ci"][1] < 0]
+            if not ex:
+                return f"every {what} includes zero"
+            if len(ex) == len(reps_):
+                return f"every {what} excludes zero"
+            return f"the {what} excludes zero only for " + " and ".join(ex)
+        sub["ACTNEXTMIXSIG"] = sig_text("next_mix_vs_state")
+        beyond = [100 * D[k]["next_actions_beyond_next_mix"] for k, _ in reps_]
+        sub["ACTNEXTBEYONDRANGE"] = f"{min(beyond):.0f}--{max(beyond):.0f}\\%"
+        sub["ACTNEXTBEYONDSIG"] = sig_text("next_actions_beyond_next_mix")
+        g = D["good_month"]
+        lo, hi = g["actions_vs_state_ci"]
+        sub["ACTGOODLAG"] = f"{err(g['actions_vs_state']):+.1f}\\%"
+        sub["ACTGOODLAGCI"] = f"{err(hi):+.1f}\\% to {err(lo):+.1f}\\%"
+        sub["ACTGOODNEXT"] = f"{100 * g['next_actions_vs_state']:.1f}\\%"
+        lo, hi = g["next_actions_vs_state_ci"]
+        sub["ACTGOODNEXTCI"] = f"{100 * lo:.1f}--{100 * hi:.1f}\\%"
+        fs = D["action_from_state_auroc"]
+        for k, tag in (("good_month", "GOOD"), ("bad", "BAD"), ("minilm", "MINI"), ("good_month+minilm", "TWO")):
+            sub[f"ACTFROMSTATE{tag}"] = rng_(list(fs[k].values()))
+        for yk, tag in (("deal_progress", "PROG"), ("escalation", "ESC")):
+            sub[f"ACTAUC{tag}STATERANGE"] = rng_([o[yk][k]["state"] for k, _ in reps_])
+            sub[f"ACTAUC{tag}DIFFRANGE"] = rng_([o[yk][k]["difference"] for k, _ in reps_], "{:+.2f}", " to ")
+            nsig = sum(o[yk][k]["difference_ci"][0] > 0 for k, _ in reps_)
+            sub[f"ACTAUC{tag}NSIG"] = WORDS[nsig]
+            sub[f"ACTAUC{tag}ACT"] = f"{o[yk]['actions']:.2f}"
+            sub[f"ACTSUPONLY{tag}"] = f"{o[yk]['support_reply_only']:.2f}"
+            sub[f"ACTAUC{tag}STATEMAX"] = f"{max(o[yk][k]['state'] for k, _ in reps_):.2f}"
+        gaps = [o[yk][k]["all_actions_minus_support_reply"] for yk in o for k, _ in reps_]
+        cis = [o[yk][k]["all_actions_minus_support_reply_ci"] for yk in o for k, _ in reps_]
+        sub["ACTSUPVSALLRANGE"] = rng_(gaps, "{:+.2f}", " to ")
+        nex = sum(lo > 0 or hi < 0 for lo, hi in cis)
+        sub["ACTSUPVSALLSIG"] = "every interval including zero" if nex == 0 else \
+            f"{WORDS[nex]} of the {WORDS[len(cis)]} intervals excluding zero"
+        sub["ACTSUPHELDOUTESC"] = f"{o['escalation']['support_reply_only_heldout']:.2f}"
+    if EV:
+        for k, tag in (("call", "CALL"), ("eng_escalation", "ENGESC"), ("leader", "LEADER")):
+            e = EV[k]
+            sub[f"EV{tag}N"] = str(e["events"]); sub[f"EV{tag}CUST"] = str(e["customers"])
+            sub[f"EV{tag}MATCHN"] = str(e["matched"])
+            sub[f"EV{tag}SHIFT"] = f"{e['shift_event']:.3f}"; sub[f"EV{tag}MATCH"] = f"{e['shift_matched']:.3f}"
+            sub[f"EV{tag}RECEV"] = f"{e['records_before_event']:.0f}"
+            sub[f"EV{tag}RECMATCH"] = f"{e['records_before_matched']:.0f}"
+            lo, hi = e["difference_ci"]
+            sub[f"EV{tag}DIFF"] = f"{e['difference']:+.3f} (interval {lo:+.3f} to {hi:+.3f})"
+            lo, hi = e["adjusted_difference_ci"]
+            v = e["adjusted_difference"]
+            sub[f"EV{tag}ADJ"] = f"{0 if abs(v) < 5e-4 else v:+.3f} (interval {lo:+.3f} to {hi:+.3f})".replace("+0.000", "0.000")
+        pr = EV["prediction"]
+        sub["EVPRED"] = f"{err(pr['action_vs_state']):+.2f}\\%"
+        sub["EVPAIRS"] = str(pr["pairs"])
+    if SI:
+        sub["SIMTROUBLE"] = str(SI["trouble"]); sub["SIMINTERV"] = str(SI["intervened_in_trouble"])
+        sub["SIMNOT"] = str(SI["trouble"] - SI["intervened_in_trouble"]); sub["SIMK"] = str(SI["k"])
+        sub["SIMBOOT"] = str(SI["bootstrap"]); sub["SIMPOOL"] = str(SI["pool"]); sub["SIMCUST"] = WORDS.get(SI["customers_in_trouble"], str(SI["customers_in_trouble"]))
+        sub["SIMMAXCUST"] = str(SI["most_trouble_months_one_customer"])
+        sub["SIMBEFORE"] = str(SI["intervention_before_ticket"]); sub["SIMAFTER"] = str(SI["intervention_after_ticket"])
+        P = SI["intervention_from_state_auroc"]
+        sub["SIMPROPGOOD"] = f"{P['good_month']:.2f}"; sub["SIMPROPBAD"] = f"{P['bad']:.2f}"
+        sub["SIMPROPRANGE"] = rng_(list(P.values()))
+        bt, be = SI["escalation"]["balance_in_trouble"], SI["escalation"]["balance_urgent_ticket_this_month"]
+        sub["SIMBALTROUBLEON"], sub["SIMBALTROUBLEOFF"] = pct_small(bt[0]), pct_small(bt[1])
+        sub["SIMBALESCON"], sub["SIMBALESCOFF"] = pct_small(be[0]), pct_small(be[1])
+        sfx = ["", "_bad", "_minilm", "_good_month+minilm"]
+        num = lambda x: (f"{100 * x:.1f}" if x < 0.01 else f"{100 * x:.0f}")  # noqa: E731
+        for key, tag in (("balance_in_trouble", "TROUBLE"), ("balance_urgent_ticket_this_month", "ESC")):
+            for j, side in ((0, "ON"), (1, "OFF")):
+                v = [SI["escalation"][key + x][j] for x in sfx]
+                sub[f"SIMBAL{tag}{side}R"] = f"{num(min(v))}--{num(max(v))}\\%"
+        rows = ["\\setlength{\\tabcolsep}{4pt}\\begin{tabular}{lcccccc}", "\\toprule",
+                "& \\multicolumn{3}{c}{Deal advances or is won next month} & \\multicolumn{3}{c}{Urgent or high ticket next month} \\\\",
+                "\\cmidrule(lr){2-4}\\cmidrule(lr){5-7}",
+                "Estimate & intervene & not & difference & intervene & not & difference \\\\", "\\midrule"]
+        lab = [("observed_in_trouble", f"Observed in trouble ({SI['intervened_in_trouble']} vs "
+                                       f"{SI['trouble'] - SI['intervened_in_trouble']})"),
+               ("case", f"Similar states, good views ($k = {SI['k']}$)"),
+               ("case_bad", "Similar states, bad views"),
+               ("case_minilm", "Similar states, pretrained"),
+               ("case_good_month+minilm", "Similar states, two channels"),
+               ("unmatched", "All months of other customers"),
+               ("model", "Outcome model (good views)")]
+        for key, n in lab:
+            cells = []
+            for yk in ("deal_progress", "escalation"):
+                v = SI[yk][key]
+                ci = SI[yk].get(key + "_difference_ci")
+                dcell = pp(v[0] - v[1]) + (f" [{pp(ci[0])}, {pp(ci[1])}]" if ci else "")
+                cells += [pct(v[0], 0), pct(v[1], 0), dcell]
+            rows.append(f"{n} & " + " & ".join(cells) + " \\\\")
+        rows += ["\\bottomrule", "\\end{tabular}"]
+        sub["SIMTABLE"] = "\n".join(rows)
+        case_keys = ("case", "case_bad", "case_minilm", "case_good_month+minilm")
+        nzero = 0
+        for yk, tag in (("deal_progress", "PROG"), ("escalation", "ESC")):
+            for key, t2 in (("case", "CASE"), ("unmatched", "UNM"), ("model", "MODEL")):
+                v = SI[yk][key]
+                sub[f"SIM{tag}{t2}"] = pp(v[0] - v[1])
+            ci = SI[yk]["case_difference_ci"]
+            sub[f"SIM{tag}CASECI"] = f"{pp(ci[0])} to {pp(ci[1])}"
+            ds = [SI[yk][k][0] - SI[yk][k][1] for k in case_keys]
+            sub[f"SIM{tag}CASERANGE"] = f"{pp(min(ds))} to {pp(max(ds))}"
+            nzero += sum(SI[yk][k + "_difference_ci"][0] <= 0 <= SI[yk][k + "_difference_ci"][1] for k in case_keys)
+        sub["SIMCASENZERO"] = WORDS[nzero]
+    # one encoder or head per timing: E2 in prh.json times two per-system encoders and their evaluation together
+    secs = [v for f in ("prh.json", "extras_a.json", "extras_b.json", "extras_c.json", "extras_d.json", "extras_e.json",
+                        "v2_pretrained.json", "v2_monthly.json", "acl.json")
+            for v in _seconds({k: x for k, x in load(f).items() if not (f == "prh.json" and k == "E2")})]
+    if secs:
+        sub["TRAINMINLO"] = f"{min(secs) / 60:.0f}"; sub["TRAINMINHI"] = f"{max(secs) / 60:.0f}"
+    mem = [v for f in sorted(os.listdir(RES)) if f.startswith("memory") and f.endswith(".json") for v in _seconds(load(f))]
+    if mem:
+        sub["MEMREADERMIN"] = f"{np.ceil(max(mem) / 60):.0f}"
+
+
+def _seconds(d):
+    out = []
+    if isinstance(d, dict):
+        for k, v in d.items():
+            if k in ("train_seconds", "seconds") and isinstance(v, (int, float)):
+                out.append(float(v))
+            else:
+                out += _seconds(v)
+    return out
+
+
 def acl_policy_table():
     R = ACL["readers"]
     systems = ["slack", "gmail", "zendesk", "salesforce", "gong", "jira", "calendar"]
@@ -741,7 +963,7 @@ if __name__ == "__main__":
                         "HOBAD", "HONTP", "HOREF", "HONTEST", "HOTABLE", "E3B", "ACL", "PTRAW", "PTHEAD", "MASKEMP",
                         "MON", "TIME", "DYN", "FCGOOD", "FCTWO", "FCBAD", "STATE2", "CALL", "NOWTWO", "NOWMINI",
                         "MEM2", "MEMGOOD", "MEMDUAL", "MEMMINI", "MEMROUTE", "SHRINK", "TUNED", "PRIM", "DRIFT", "MISR", "SIT", "ACL2",
-                        "TROUBLE", "SCOPE", "MONTABLE", "ANCH") if w in out]
+                        "TROUBLE", "SCOPE", "MONTABLE", "ANCH", "ACT", "SIM", "EVP", "EVC", "EVE", "EVL", "TRAINMIN") if w in out]
     print("unfilled:", left or "none")
     if left:
         sys.exit(1)

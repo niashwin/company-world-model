@@ -1,5 +1,32 @@
 # Changelog
 
+## v4 (November 2026)
+
+Answers the "corporate AI" review ([`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md)).
+
+- **Decisions** (`cwm/run_actions.py`, §6.11, Tables 12 and 13). Six company actions per customer and month, read
+  from the records and Era's ground truth (sales calls, leaders' messages, CRM tasks, engineering escalations, support
+  replies, outbound email), and outcomes (deal progress, urgent tickets). The dynamics, outcome and simulation
+  analyses run in four representations (link-trained views, bad views, the pretrained encoder, both channels); the
+  event windows use link-trained views.
+  - Action-conditioned dynamics: this month's actions add nothing to next month's state; in the link-trained space
+    the state already encodes most of them (AUROC of each action from the state). Next month's actions lower the
+    error by 9–19%, mostly as a description of next month's records: with next month's mix of systems in the model
+    they add 3–5%. Shuffled-action and system-mix controls are included.
+  - Next-month outcomes: adding support replies alone to the state does as well as adding all six actions; replies
+    mark months with tickets, and tickets persist.
+  - Event windows of 14 days around single actions, against matched times, with an adjustment for each window's
+    record count: no action moves the state detectably more than matched times once counts are accounted for.
+  - Decision simulation for 29 customer-months in trouble: case-based in four state spaces, unmatched, and
+    model-based, with intervals that resample customers, repeating the neighbour search and refitting the outcome
+    model; balance of the matched groups in all four spaces, propensity of intervening from the state, and the timing
+    of interventions relative to the first urgent ticket. The company intervened in 25 of 29, in situations unlike
+    those where it held back, so the estimates reflect the situations in which it acted, not what the action did.
+- **Abstract, introduction, §7 and conclusion reframed** around corporate AI, with training costs as measured (every
+  encoder and head we timed trains in 2–7 minutes on a CPU; `run_acl.py eval` now records each reader encoder's
+  training time) and the decision layer's requirement: actions whose assignment is known.
+- Typographic minus signs for every generated number.
+
 ## v3 (November 2026)
 
 Answers the review of v2 ([`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md)).
