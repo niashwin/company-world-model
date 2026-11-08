@@ -4,11 +4,15 @@
 
 A release for a general reader, with every reference checked and linked. The results did not change.
 
-- **Website for a general reader.** The page now opens with the idea in three steps. A company is a world of its
-  own. Every system is a view of that world. A model that predicts one view from another learns the state. This
-  follows the JEPA of Yann LeCun and the theorem of Randall Balestriero and Yann LeCun. Eight results follow, and each one
-  says what we tested, what happened and why it matters. The four layers of corporate AI, the comparison with
-  other work and the details for researchers come after them.
+- **Website for a general reader.** The page opens with the thesis: every company is a world, and we build its
+  world model. The idea follows in three steps. A company is a world of its own. Every system is a view of that
+  world. A model that predicts one view from another learns the state. This follows the JEPA of Yann LeCun and the
+  theorem of Randall Balestriero and Yann LeCun.
+- **The world model as a foundation.** A new section and figure show one world model under every capability:
+  search, memory, a memory reader, similar cases, prediction, and notes and skills. Each capability inherits the
+  permissions of the world model. A table sets each capability today against the same capability on one world
+  model, and tags what this study shows. Eight results follow, each with what we tested
+  and why it matters. The road to corporate AI and the details for researchers come after them.
 - **Sentra brand.** The Sentra logo, colors and the Geist fonts on the website, on the image for link previews and
   in the README.
 - **References.** Three independent checks compared all 56 entries with their sources. The venue of reference 36 is

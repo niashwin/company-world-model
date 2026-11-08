@@ -21,14 +21,14 @@ html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden;
 .logo { display: flex; align-items: center; gap: 8px; color: #fff; }
 .logo svg { display: block; height: 26px; width: auto; }
 .logo svg.word { height: 20px; }
-h1 { font-family: "Geist"; font-weight: 500; font-size: 66px; line-height: 1.02; letter-spacing: -0.035em; margin: 30px 0 0; max-width: 15ch; }
+h1 { font-family: "Geist"; font-weight: 500; font-size: 66px; line-height: 1.02; letter-spacing: -0.035em; margin: 28px 0 0; }
 p { font-family: "Geist"; font-size: 24px; color: rgba(255,255,255,0.82); margin: 16px 0 0; }
-.fig { position: absolute; left: 64px; right: 64px; bottom: 0; height: 268px; overflow: hidden;
+.fig { position: absolute; left: 64px; right: 64px; bottom: 0; height: 236px; overflow: hidden;
        border-radius: 12px 12px 0 0; background: #fff; box-shadow: 0 18px 48px -18px rgba(4,21,66,0.5); }
 .fig img { width: 100%; display: block; }
 </style></head><body><div class="card">
 <div class="logo">MARK WORD</div>
-<h1>Every system sees the same company</h1>
+<h1>Every company is a world.<br>We build its world model.</h1>
 <p>Toward world models of organizations. Research from Sentra, 2026.</p>
 <div class="fig"><img src="data:image/png;base64,IMG"></div>
 </div></body></html>"""

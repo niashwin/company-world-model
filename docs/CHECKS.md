@@ -54,7 +54,7 @@ The target was 90%.
 | --- | ---: | ---: |
 | `paper/main.tex` | 1,458 | 98.4% |
 | `README.md` | 333 | 100% |
-| `website/template.html` | 362 | 100% |
+| `website/template.html` | 367 | 100% |
 | `REPRODUCE.md` | 94 | 96.8% |
 | `docs/ARXIV_ABSTRACT.txt` | 17 | 100% |
 

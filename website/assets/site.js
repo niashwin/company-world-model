@@ -77,9 +77,9 @@
       ". Each line is one record, at the time that the system wrote it.",
     "Each system links its records to the customer. Two records of the same customer and quarter are two views of " +
       "one situation, from one system or from two. We call them good views.",
-    "A small model learns to predict one view from the other. It never reads the links. The links only choose " +
+    "The world model learns to predict one view from the other. It never reads the links. The links only choose " +
       "the pairs.",
-    "The model places each record by the situation that it describes. The records of this customer and quarter " +
+    "The world model places each record by the situation that it describes. The records of this customer and quarter " +
       "land close together, whichever system wrote them.",
     "For comparison, bad views pair a record with a damaged copy of itself. Then the same records spread out. Only " +
       "good views gather the records of a customer, whatever system wrote them."
@@ -186,7 +186,7 @@
         var q = pos(+k); g.beginPath(); g.arc(q[0], q[1], 3.4, 0, 6.2832); g.fill(); g.stroke();
       });
     }
-    $("hero-map-label").textContent = (heroStep === 5 ? "Bad-view space" : "Learned state space") +
+    $("hero-map-label").textContent = (heroStep === 5 ? "Bad views" : "World model") +
       (heroStep >= 4 ? ". Blue: Customer " + H.customer + " in " + quarterName(H.quarter) : "");
   }
   function animateHeroMap(toSpace) {
