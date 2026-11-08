@@ -230,7 +230,7 @@ def train_memory(store, Q, qs_train, answer_bank, kind_ix, variant, epochs=40, b
 @torch.no_grad()
 def evaluate(mem, store, Q, qs, answer_bank, kind_ix, batch=32):
     mem.eval()
-    correct = {}
+    correct, flags = {}, []
     for i in range(0, len(qs), batch):
         b = qs[i:i + batch]
         qi = torch.tensor([x["qi"] for x in b])
@@ -238,9 +238,11 @@ def evaluate(mem, store, Q, qs, answer_bank, kind_ix, batch=32):
         for j, x in enumerate(b):
             pred = int(logits[j, kind_ix[x["kind"]]].argmax())
             correct.setdefault(x["kind"], []).append(pred == x["answer_ix"])
+            flags.append(int(pred == x["answer_ix"]))
     mem.train()
     out = {k: float(np.mean(v)) for k, v in correct.items()}
     out["overall"] = float(np.mean([v for vs in correct.values() for v in vs]))
+    out["correct"] = flags                      # per question, in the order of qs (for paired comparisons)
     return out
 
 
@@ -278,7 +280,7 @@ def pretrain_memory(mem, store, sem, ts, acct, sysid, n_sys, account_queries, st
             if y is None:
                 continue
             if make_query is not None:
-                qs.append(make_query(a, t))
+                qs.append(make_query(a, t, r))
             else:
                 qs.append(np.concatenate([account_queries[a], time_code(np.array([t]), tdim)[0], np.zeros(n_sys, np.float32)]))
             tg.append(y)

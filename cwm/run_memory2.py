@@ -7,6 +7,9 @@
 Store rows = [state vector (good-view JEPA, PCA-112) ; time code (16) ; source one-hot (7)].
 STORE=minilm uses a pretrained sentence encoder instead; STORE=dual puts both side by side (two channels: state and
 detail) before the same PCA-112 map; STORE=route retrieves with the state channel and reads the detail channel.
+KEYS=row (the default, as in versions 1 and 2) retrieves by similarity of whole store rows, in which the time code
+outweighs the content; KEYS=quarter retrieves by similarity of the key channel's content alone, among records of the
+question's quarter (version 3).
 Writes results/memory2.json.
 """
 import json
@@ -39,6 +42,10 @@ def log(*a):
     LOG.write(s + "\n"); LOG.flush()
 
 
+def l2(A):
+    return A / (np.linalg.norm(A, axis=1, keepdims=True) + 1e-9)
+
+
 def rows(sem, ts, sysid, n_sys, tdim=16):
     oh = np.eye(n_sys, dtype=np.float32)[sysid] if sysid is not None else np.zeros((len(sem), n_sys), np.float32)
     return torch.from_numpy(np.concatenate([sem, time_code(ts, tdim), oh], 1).astype(np.float32))
@@ -65,7 +72,6 @@ def main():
         if STORE in ("minilm", "route"):
             emb_texts, X = mini, Xm
         else:   # two channels: the good-view state vector and the pretrained detail vector, side by side
-            l2 = lambda A: A / (np.linalg.norm(A, axis=1, keepdims=True) + 1e-9)  # noqa: E731
             emb_texts = lambda texts: np.concatenate([l2(enc.embed(tok(texts))), l2(mini(texts))], 1)  # noqa: E731
             X = np.concatenate([l2(np.load(f"{OUT}/emb_good_s0.npy")), l2(Xm)], 1)
     else:
@@ -78,10 +84,28 @@ def main():
     n_sys = len(c1.systems)
     S = rows(sem, c1.ts, c1.system, n_sys)
     d_content = S.size(1)
+    KEYS = os.environ.get("KEYS", "row")
     if STORE == "route":     # retrieval keys from the good-view state channel, appended after the content
         Xk = np.load(f"{OUT}/emb_good_s0.npy")
         fk = fit_store_map(Xk)
         key_texts = lambda texts: fk(enc.embed(tok(texts)))  # noqa: E731
+    else:
+        Xk, fk, key_texts = X, f, (lambda texts: f(emb_texts(texts)))  # noqa: E731
+    QUARTERS = sorted({s_[1] for s_ in c1.states} | {"2026Q4", "2027Q1"})
+    qidx = {q_: i for i, q_ in enumerate(QUARTERS)}
+
+    def qkey(sem, quarters):
+        """Content-only key, unit length, plus a block that ranks records of the question's quarter first."""
+        sem = np.asarray(sem, np.float32)
+        sem = sem / (np.linalg.norm(sem, axis=1, keepdims=True) + 1e-9)
+        block = np.zeros((len(sem), len(QUARTERS)), np.float32)
+        block[np.arange(len(sem)), [qidx[q_] for q_ in quarters]] = 10.0
+        return torch.from_numpy(np.concatenate([sem, block], 1))
+
+    rec_quarter = [c1.states[s_][1] for s_ in c1.state]
+    if KEYS == "quarter":
+        S = torch.cat([S, qkey(fk(Xk), rec_quarter)], 1)
+    elif STORE == "route":
         S = torch.cat([S, rows(fk(Xk), c1.ts, c1.system, n_sys)], 1)
 
     qs = make_questions(gt1, c1.states)
@@ -99,11 +123,21 @@ def main():
     acct_texts = [f"What happened with {names.get(a, a)}?" for a in c1.accounts]
     acct_q = f(emb_texts(acct_texts))
     make_query = None
-    if STORE == "route":
+    if KEYS == "quarter":
+        Q = torch.cat([Q, qkey(key_texts([q["text"] for q in qs]), [q["quarter"] for q in qs])], 1)
+        acct_k = key_texts(acct_texts)
+
+        def quarter_query(a, t, r=None):
+            tc = time_code(np.array([t]), 16)[0]
+            z = np.zeros(n_sys, np.float32)
+            q_ = quarter(t) if quarter(t) in qidx else rec_quarter[r]
+            return np.concatenate([acct_q[a], tc, z, qkey(acct_k[a:a + 1], [q_])[0].numpy()]).astype(np.float32)
+        make_query = quarter_query
+    elif STORE == "route":
         Q = torch.cat([Q, rows(key_texts([q["text"] for q in qs]), np.array([q["ts"] for q in qs]), None, n_sys)], 1)
         acct_k = key_texts(acct_texts)
 
-        def route_query(a, t):
+        def route_query(a, t, r=None):
             tc = time_code(np.array([t]), 16)[0]
             z = np.zeros(n_sys, np.float32)
             return np.concatenate([acct_q[a], tc, z, acct_k[a], tc, z]).astype(np.float32)
@@ -122,16 +156,29 @@ def main():
     seen = {o["src_id"] for o in c1.obs}
     new = [i for i, o in enumerate(c2.obs) if o["src_id"] not in seen and c2.account[i] >= 0]
     sys2 = np.array([c1.systems.index(c2.obs[i]["system"]) for i in new])
-    Xnew = emb_texts([c2.obs[i]["text"] for i in new]) if STORE in ("minilm", "dual", "route") else enc.embed([c2.tok[i] for i in new])
+    cache2 = os.path.join(OUT, "minilm_day2.npy")
+    if STORE in ("minilm", "dual", "route") and os.path.exists(cache2):    # cached features of the day-2 corpus
+        mini_new = np.load(cache2)[new]
+        Xnew = (np.concatenate([l2(enc.embed([c2.tok[i] for i in new])), l2(mini_new)], 1) if STORE == "dual"
+                else mini_new)
+    elif STORE in ("minilm", "dual", "route"):
+        Xnew = emb_texts([c2.obs[i]["text"] for i in new])
+    else:
+        Xnew = enc.embed([c2.tok[i] for i in new])
     new_rows = rows(f(Xnew), c2.ts[new], sys2, n_sys)
-    if STORE == "route":
+    if KEYS == "quarter":
+        Xk_new = enc.embed([c2.tok[i] for i in new]) if STORE == "route" else Xnew
+        new_rows = torch.cat([new_rows, qkey(fk(Xk_new), [c2.states[c2.state[i]][1] for i in new])], 1)
+    elif STORE == "route":
         new_rows = torch.cat([new_rows, rows(fk(enc.embed([c2.tok[i] for i in new])), c2.ts[new], sys2, n_sys)], 1)
     S2 = torch.cat([S, new_rows])
     q_new = make_questions(gt2, sorted({s for s in c2.states if s[1] in ("2026Q4", "2027Q1")}))
     for i, q in enumerate(q_new):
         q["qi"] = i
     Qn = rows(f(emb_texts([q["text"] for q in q_new])), np.array([q["ts"] for q in q_new]), None, n_sys)
-    if STORE == "route":
+    if KEYS == "quarter":
+        Qn = torch.cat([Qn, qkey(key_texts([q["text"] for q in q_new]), [q["quarter"] for q in q_new])], 1)
+    elif STORE == "route":
         Qn = torch.cat([Qn, rows(key_texts([q["text"] for q in q_new]), np.array([q["ts"] for q in q_new]), None, n_sys)], 1)
     maj_new = float(np.mean([q["answer_ix"] == max(set(a := [x["answer_ix"] for x in train_q if x["kind"] == q["kind"]]),
                                                    key=a.count) for q in q_new]))
@@ -148,7 +195,8 @@ def main():
                 continue
             t = time.time()
             torch.manual_seed(seed)
-            mem = Memory(d_content, bank.size(1), variant=variant, split=d_content if STORE == "route" else None)
+            split_keys = KEYS == "quarter" or STORE == "route"     # rows carry keys after the content
+            mem = Memory(d_content, bank.size(1), variant=variant, split=d_content if split_keys else None)
             if pre:
                 pretrain_memory(mem, S, sem, c1.ts, c1.account, c1.system, n_sys, acct_q, steps=PRE, seed=seed, log=log,
                                 make_query=make_query)

@@ -1,5 +1,26 @@
 # Changelog
 
+## v3 (November 2026)
+
+Answers the review of v2 ([`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md)).
+
+- **Questions that come with a record of the customer instead of its name** (`cwm/run_memory_anchor.py`, Table 8,
+  §6.8). Each question is anchored by one record from a held-out thread and another system; names masked or kept.
+  Records are found by nearest neighbours, by placement at the nearest customer, or by the anchor's link (oracle).
+  With names kept, placing the record with the state channel answers 63.8% against 54.9% with the pretrained encoder
+  (paired +8.9 points, 95% interval +3.9 to +13.8), 52.2% with no store and 68.7% for the oracle. With names masked,
+  only the oracle helps clearly. Reading only the found records' system and time codes does about as well as reading
+  their content.
+- **Memory retrieval fixed.** Store keys used to be whole rows, in which a time code outweighed the content; retrieval
+  now ranks records of the question's quarter by content alone (`KEYS=quarter` in `run_memory2.py`). Table 7 rerun:
+  detail only 71.2%, state only 65.8%, concatenated 72.2%, routed 70.1%; conclusions unchanged.
+- **Abstract, introduction, §7 and conclusion reframed** as a division of labor: a state space, a memory that finds
+  through the state space and reads from the store, and dynamics that did not emerge from static similarity.
+- `memory.py`: retrieval keys separate from content (`split`), per-question correctness for paired comparisons, and
+  pre-training queries that see the sampled record (restricted to training links in the anchored test);
+  `fill_paper.py` reports paired bootstrap intervals and merges parallel result files; a test for content/key
+  splitting; a short abstract for arXiv's form.
+
 ## v2 (November 2026)
 
 Answers a review of v1; [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) goes through each point and its result.

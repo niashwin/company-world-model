@@ -1,3 +1,97 @@
+# Responses to the reviews
+
+- [Review of version 2](#response-to-the-review-of-version-2) → version 3
+- [Review of version 1](#response-to-the-review-of-version-1) → version 2
+
+# Response to the review of version 2
+
+The review asked for one more experiment, questions where the state channel is actually needed, and for the
+abstract to present the negative results as boundary conditions. Both are done in version 3. The experiment gives a
+clear positive result with names kept and a clear null with names masked, though not exactly the one the reviewer
+predicted, and it sharpens the "division of labor". Numbers come from `results/memory_anchor_*.json`: four seeds
+each, 127 test questions, with paired bootstrap intervals over questions.
+
+## 1. The "smoking gun" for the routed two-channel store
+
+**Asked.** Evaluate the same questions where customer names are stripped from the stored records, and show that
+routing by the state channel and reading the detail channel beats both single channels.
+
+**Why the experiment needed a different shape.** If the stored records are masked but the question still names the
+customer, neither channel can match the name, so no store can find the customer. In version 3 the question
+therefore no longer names the customer. It comes instead with **one record of the customer (an anchor)**, as if
+asked by someone holding a support ticket: "was there a sales call with this customer this quarter?" The anchor
+comes from a thread hidden from the state encoder's training and the reader's pre-training, and from a different
+system than the one that answers the question. We ran it with every customer name, employee name and identifier
+masked, and with names kept (`cwm/run_memory_anchor.py`, Table 8 and §6.8 of the paper). A store finds 16 records of
+the question's quarter in one of three ways:
+- the anchor's nearest neighbours, by the content of one channel;
+- **placement**: the records of the customer whose centroid in one channel is nearest to the anchor;
+- an oracle that uses the anchor's own link.
+
+**Result** (accuracy; in brackets, the share of the 16 records found that belong to the anchor's customer):
+
+| How the records are found | Reading | Names masked | Names kept |
+| --- | --- | --- | --- |
+| No store | | 52.0% | 52.2% |
+| Neighbours, detail channel | detail | 54.7% (38%) | 58.3% (53%) |
+| Neighbours, state channel | detail | 57.7% (36%) | 60.0% (67%) |
+| Placement, detail channel | detail | 52.2% (18%) | 54.9% (41%) |
+| **Placement, state channel** | detail | 52.8% (25%) | **63.8% (66%)** |
+| Placement, both concatenated | detail | 55.1% (25%) | 64.2% (66%) |
+| Anchor's own link (oracle) | detail / state / system and time only | 67.1% / 69.9% / 68.1% | 68.7% / 69.9% / 67.5% |
+
+- **Names kept: finding with the state channel wins.** State placement beats detail placement by **+8.9 points**
+  (95% interval +3.9 to +13.8; positive in every seed) and no store by +11.6. It comes within 5 points of the oracle.
+  Neighbours point the same way less clearly (60.0% vs 58.3%). Placement reads a sample of the whole situation, which
+  more often contains a record from the system that answers the question (9.8% of records read, against 6.5% for the
+  state channel's neighbours and 3.2% for the detail channel's).
+- **Names masked: one record rarely finds its customer.** The state channel still places masked held-out records
+  with the right customer more often (33% vs 20%). Its neighbours help a little: +5.7 points over no store, with a
+  95% interval of +0.4 to +10.8. Placement does not help (+0.8), and only the oracle helps clearly.
+- **Reading matters little; finding matters.** Given the oracle's records, reading only each record's system and
+  time codes (67.5–68.1%) does about as well as reading its content (67.1–69.9%). For these counting questions, the
+  provenance of the right records carries most of the answer.
+
+**What this does and does not support.**
+- *Supported:* "find a question's records through the state space, then read them from the store."
+- *Not supported:* "routing *rather than blending*". Placing with the two channels concatenated works as well as the
+  state channel alone. The paper says so.
+
+**What an independent check changed.** Before release, a separate check of the first draft of this experiment found
+real problems, and all of them are fixed:
+1. *Time-dominated retrieval keys.* The neighbour stores ranked whole store rows, in which a time code outweighed the
+   content. That handicapped them, and it also affected the named-question test (Table 7): only 24–35% of retrieved
+   records belonged to the asked customer. Retrieval now ranks records of the question's quarter by content alone
+   (65–71% right customer), and Table 7 was rerun: detail only 71.2%, state only 65.8%, concatenated 72.2%, routed
+   70.1%. The conclusion is unchanged; no combination clearly beats the detail channel.
+2. *Pre-training links.* The reader's pre-training had used links of the held-out threads. It now uses training
+   threads only.
+3. *Untested provenance claim.* The claim that provenance carries the answer was untested. The provenance-only
+   oracle now tests it.
+4. *Single-number comparisons.* Comparisons are now paired over questions, with bootstrap intervals.
+
+The first, flawed draft (time-dominated keys, plus a variant restricted to other systems) is not in the paper.
+
+## 2. Reframe the abstract as boundary conditions
+
+Done. The abstract, introduction, §7 and conclusion now present the results as a **division of labor** among the
+three parts of a world model:
+- **State space:** learned from links alone; places records without links; shared across encoders and versions
+  through rotations; carries access control.
+- **Memory:** find a question's records through the state space, or by name when the question has one, then read
+  them from the store, whose records supply what they say and where they came from.
+- **Dynamics:** did not emerge here from a space trained for static similarity. Forecasts, linear dynamics, drift
+  and cross-team distances stay at chance or at simple baselines. We expect a predictor to need training on
+  transitions and actions, probably across many companies.
+
+We did not call it a "separation theorem". These lines are drawn on one simulated company, and the paper says they
+may move with more data.
+
+## Smaller corrections to the review's summary
+
+- The 398 monthly transitions are counted through day 2 (469 states); day 1 has 405 month states.
+- The "rotat rotation" typo was not in the source; version 2 already stops the word from being hyphenated.
+
 # Response to the review of version 1
 
 Version 2 of the paper ([`paper/main.pdf`](../paper/main.pdf)) runs every experiment the review asked for, on the

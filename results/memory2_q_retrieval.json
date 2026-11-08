@@ -1,0 +1,43 @@
+{
+ "test_questions": 144,
+ "good": {
+  "quarter": {
+   "same_customer": 0.6467013888888888,
+   "same_state": 0.6414930555555556
+  },
+  "row": {
+   "same_customer": 0.2417534722222222,
+   "same_state": 0.234375
+  }
+ },
+ "minilm": {
+  "quarter": {
+   "same_customer": 0.65234375,
+   "same_state": 0.6471354166666666
+  },
+  "row": {
+   "same_customer": 0.2981770833333333,
+   "same_state": 0.2847222222222222
+  }
+ },
+ "dual": {
+  "quarter": {
+   "same_customer": 0.7122395833333334,
+   "same_state": 0.70703125
+  },
+  "row": {
+   "same_customer": 0.3459201388888889,
+   "same_state": 0.33203125
+  }
+ },
+ "route": {
+  "quarter": {
+   "same_customer": 0.6467013888888888,
+   "same_state": 0.6414930555555556
+  },
+  "row": {
+   "same_customer": 0.2417534722222222,
+   "same_state": 0.234375
+  }
+ }
+}

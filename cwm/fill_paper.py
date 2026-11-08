@@ -23,11 +23,31 @@ PRH, XA, XB, ST, M2, M2S, M2L, E3B = (load(n) for n in ("prh.json", "extras_a.js
                                                          "e3b.json"))
 ACL = load("acl.json")
 V2 = {k: load(f"v2_{k}.json") for k in ("pretrained", "monthly", "acl", "state", "time", "primitives", "scope")}
+
+
+def merged(prefix):
+    """Merge result files written by parallel runs (prefix.json, prefix_a.json, ...): setup, runs and retrieval."""
+    import re
+    out = {}
+    for n in sorted(os.listdir(RES)) if os.path.isdir(RES) else []:
+        if re.fullmatch(re.escape(prefix) + r"(_[a-z])?\.json", n):
+            d = load(n)
+            out.setdefault("setup", d.get("setup", {}))
+            for k in ("runs", "retrieval"):
+                out.setdefault(k, {}).update(d.get(k, {}))
+            if "heldout_placement_customer" in d:
+                out["heldout_placement_customer"] = d["heldout_placement_customer"]
+    return out
+
+
+ANCH = {k: merged(f"memory_anchor_{k}") for k in ("masked", "plain", "masked_xsys", "plain_xsys")}
 XE = load("extras_e.json")
 MEM = {"good": [], "minilm": [], "dual": [], "route": []}
-for _d, _store in ((load("memory2.json"), "good"), (load("memory2_seeds.json"), "good"),
-                   (load("memory2_minilm4.json"), "minilm"), (load("memory2_dual.json"), "dual"),
-                   (load("memory2_route.json"), "route")):
+MEMQ = {k: load(f"memory2_q_{k}.json") for k in MEM}     # version 3: keys are content within the question's quarter
+_MEMSRC = ([(MEMQ[k], k) for k in MEM] if all(MEMQ.values()) else
+           [(load("memory2.json"), "good"), (load("memory2_seeds.json"), "good"), (load("memory2_minilm4.json"), "minilm"),
+            (load("memory2_dual.json"), "dual"), (load("memory2_route.json"), "route")])
+for _d, _store in _MEMSRC:
     for _k, _v in _d.get("runs", {}).items():
         _name, _seed = _k.split("/")
         if _name in ("closed_book", "top16_pretrained"):
@@ -158,6 +178,7 @@ def fill(text):
         sub["ACLSECRETSENTENCE"] = ACL["secret"].capitalize() + "."
         sub["ACLLEAKTABLE"] = acl_leak_table()
     fill_v2(sub)
+    fill_anchor(sub)
     sub["APPSEEDTABLE"] = seed_table()
     sub["APPSTATETABLE"] = state_table()
     sub["APPMEMTABLE"] = memory_table()
@@ -168,7 +189,8 @@ def fill(text):
 
 def mem_stats(store):
     rows = MEM[store]
-    cb = {s: v for s, n, v in (MEM["minilm"] if store == "route" else rows) if n == "closed_book"}
+    own_cb = any(n == "closed_book" for _, n, _ in rows)
+    cb = {s: v for s, n, v in (rows if own_cb else MEM["minilm"]) if n == "closed_book"}
     tk = {s: v for s, n, v in rows if n == "top16_pretrained"}
     seeds = sorted(set(cb) & set(tk))
     a, b = np.array([cb[x] for x in seeds]), np.array([tk[x] for x in seeds])
@@ -298,6 +320,16 @@ def fill_v2(sub):
             sub[f"MEMGAIN{k.upper()}"] = f"{100 * d.mean():.1f}"
         rows += ["\\bottomrule", "\\end{tabular}"]
         sub["MEM2TABLE"] = "\n".join(rows)
+        RQ = load("memory2_q_retrieval.json")
+        if RQ:
+            for k in ("good", "minilm", "dual"):
+                sub[f"MEMRETR{k.upper()}"] = pct(RQ[k]["quarter"]["same_customer"], 0)
+                sub[f"MEMRETRROW{k.upper()}"] = pct(RQ[k]["row"]["same_customer"], 0)
+        if all(MEMQ.values()):
+            sub["MEMPAIRDUALDETAIL"] = fmt_paired(paired(runs_by_seed(MEMQ["dual"], "top16_pretrained"),
+                                                         runs_by_seed(MEMQ["minilm"], "top16_pretrained")))
+            sub["MEMPAIRDETAILSTATE"] = fmt_paired(paired(runs_by_seed(MEMQ["minilm"], "top16_pretrained"),
+                                                          runs_by_seed(MEMQ["good"], "top16_pretrained")))
     PR = V2["primitives"]
     if PR:
         names = [("good", "Good views, quarter states"), ("good_month", "Good views, month states"), ("bad", "Bad views"),
@@ -400,6 +432,149 @@ def fill_v2(sub):
             sub[f"SCOPE{tag}N"] = f"{x['records']:,}".replace(",", "{,}")
     if A2:
         sub["ACL2PUBRECORDS"] = str(A2.get("public_records", ""))
+
+
+def paired(runs_a, runs_b, n_boot=2000, seed=0):
+    """Paired difference in accuracy (a - b) over the same questions: per-seed differences, and a bootstrap 95%
+    interval over questions of the seed-averaged difference."""
+    seeds = sorted(set(runs_a) & set(runs_b))
+    A = np.array([runs_a[s_]["correct"] for s_ in seeds], float)
+    B = np.array([runs_b[s_]["correct"] for s_ in seeds], float)
+    d_q = (A - B).mean(0)                                   # per question, averaged over seeds
+    rng = np.random.default_rng(seed)
+    boots = [d_q[rng.integers(0, len(d_q), len(d_q))].mean() for _ in range(n_boot)]
+    return {"mean": float(d_q.mean()), "per_seed": [float(x) for x in (A - B).mean(1)],
+            "ci": (float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5)))}
+
+
+def runs_by_seed(d, store):
+    return {k.split("/")[1]: v for k, v in d.get("runs", {}).items() if k.split("/")[0] == store and "correct" in v}
+
+
+def fmt_paired(p):
+    lo, hi = p["ci"]
+    return (f"{100 * p['mean']:+.1f} points (95\\% interval {100 * lo:+.1f} to {100 * hi:+.1f}; per seed "
+            + ", ".join(f"{100 * x:+.1f}" for x in p["per_seed"]) + ")")
+
+
+def anchor_stats(corpus, store):
+    runs = ANCH[corpus].get("runs", {})
+    acc = np.array([v["overall"] for k, v in runs.items() if k.split("/")[0] == store])
+    ret = [v for k, v in ANCH[corpus].get("retrieval", {}).items() if k.split("/")[0] == store]
+    mean = lambda key: float(np.mean([r[key] for r in ret])) if ret else None  # noqa: E731
+    return acc, {k: mean(k) for k in ("same_customer", "same_state", "same_state_answering_system")}
+
+
+def fill_anchor(sub):
+    M = ANCH["masked"]
+    if not M.get("runs"):
+        return
+    st = M["setup"]
+    sub["ANCHNTEST"] = str(st["test_questions"]); sub["ANCHNTRAIN"] = str(st["train_questions"])
+    sub["ANCHNALLTEST"] = str(st["questions_before_anchoring"]["test"])
+    rows_def = [("closed", "No store (closed book)", "--"),
+                ("state", "Neighbours, state channel", "state"),
+                ("detail", "Neighbours, detail channel", "detail"),
+                ("concat", "Neighbours, both concatenated", "both"),
+                ("routed", "Neighbours, state channel", "detail"),
+                ("place_detail", "Placement, detail channel", "detail"),
+                ("place_concat", "Placement, both concatenated", "detail"),
+                ("place_state", "Placement, state channel", "detail"),
+                ("link", "The anchor's own link (oracle)", "detail"),
+                ("link_state", "The anchor's own link (oracle)", "state"),
+                ("link_prov", "The anchor's own link (oracle)", "system, time")]
+    rows = ["\\setlength{\\tabcolsep}{3.5pt}\\begin{tabular}{llcccc}", "\\toprule",
+            "& & \\multicolumn{2}{c}{Names masked} & \\multicolumn{2}{c}{Names kept} \\\\",
+            "\\cmidrule(lr){3-4}\\cmidrule(lr){5-6}",
+            "Finding the records & Reading & accuracy & right customer & accuracy & right customer \\\\", "\\midrule"]
+    vals = [anchor_stats("plain", k)[0].mean() for k, _, _ in rows_def
+            if not k.startswith("link") and len(anchor_stats("plain", k)[0])]
+    best_kept = max(vals) if vals else None
+    f = lambda v: f"{v:.2f}" if v is not None else "--"  # noqa: E731
+    for k, n, rd in rows_def:
+        cells = []
+        for corpus in ("masked", "plain"):
+            acc, rt = anchor_stats(corpus, k)
+            if not len(acc):
+                cells += ["--", "--"]; continue
+            cell = (f"{acc.mean():.3f}{{\\scriptsize$\\,\\pm\\,${acc.std(ddof=1):.3f}}}" if len(acc) > 1 else f"{acc.mean():.3f}")
+            if corpus == "plain" and not k.startswith("link") and acc.mean() == best_kept:
+                cell = "\\textbf{" + cell + "}"
+            cells += [cell, f(rt["same_customer"])]
+            tag = ("ANCHM" if corpus == "masked" else "ANCHP") + k.replace("_", "").upper()
+            sub[f"{tag}ACC"] = pct(acc.mean(), 1)
+            if rt["same_customer"] is not None:
+                sub[f"{tag}CUST"] = pct(rt["same_customer"], 0)
+                sub[f"{tag}USE"] = pct(rt["same_state_answering_system"], 1)
+        if k in ("state", "place_detail", "link"):
+            rows.append("\\addlinespace[3pt]")
+        rows.append(f"{n} & {rd} & " + " & ".join(cells) + " \\\\")
+    rows += ["\\bottomrule", "\\end{tabular}"]
+    sub["ANCHORTABLE"] = "\n".join(rows)
+    for corpus, tag in (("masked", "ANCHM"), ("plain", "ANCHP")):
+        D = ANCH[corpus]
+        ps, pd_ = runs_by_seed(D, "place_state"), runs_by_seed(D, "place_detail")
+        if ps and pd_:
+            sub[f"{tag}PAIRSTATEDETAIL"] = fmt_paired(paired(ps, pd_))
+        knn = {k: anchor_stats(corpus, k)[0].mean() for k in ("state", "detail", "concat", "routed")
+               if len(anchor_stats(corpus, k)[0])}
+        if knn and ps:
+            kb = max(knn, key=knn.get)
+            sub[f"{tag}PAIRSTATEKNN"] = fmt_paired(paired(ps, runs_by_seed(D, kb)))
+        cl = runs_by_seed(D, "closed")
+        if cl and ps:
+            sub[f"{tag}PAIRSTATECLOSED"] = fmt_paired(paired(ps, cl))
+        if cl and runs_by_seed(D, "routed"):
+            sub[f"{tag}PAIRROUTEDCLOSED"] = fmt_paired(paired(runs_by_seed(D, "routed"), cl))
+    for corpus, tag in (("masked", "ANCHM"), ("plain", "ANCHP")):
+        knn = [anchor_stats(corpus, k)[0].mean() for k in ("state", "detail", "concat", "routed")
+               if len(anchor_stats(corpus, k)[0])]
+        if knn:
+            sub[f"{tag}KNNBEST"] = pct(max(knn), 1)
+            sub[f"{tag}KNNRANGE"] = f"{100 * min(knn):.1f}--{100 * max(knn):.1f}\\%"
+        hp = ANCH[corpus].get("heldout_placement_customer", {})
+        for ch in ("state", "detail"):
+            if ch in hp:
+                sub[f"{tag}HO{ch.upper()}"] = pct(hp[ch], 0)
+        nonoracle = [anchor_stats(corpus, k)[0].mean() for k, _, _ in rows_def
+                     if not k.startswith("link") and len(anchor_stats(corpus, k)[0])]
+        if nonoracle:
+            sub[f"{tag}NONORACLERANGE"] = f"{100 * min(nonoracle):.1f}--{100 * max(nonoracle):.1f}\\%"
+            la = anchor_stats(corpus, "link")[0]
+            if len(la):
+                sub[f"{tag}GAPORACLE"] = f"{100 * (la.mean() - max(nonoracle)):.1f}"
+    # retrieval among other systems only (appendix)
+    rows = ["\\setlength{\\tabcolsep}{4pt}\\begin{tabular}{llcccc}", "\\toprule",
+            "& & \\multicolumn{2}{c}{Names masked} & \\multicolumn{2}{c}{Names kept} \\\\",
+            "\\cmidrule(lr){3-4}\\cmidrule(lr){5-6}",
+            "Neighbours of the anchor & Reading & accuracy & right customer & accuracy & right customer \\\\", "\\midrule"]
+    xs = []
+    for k, n, rd in (("state", "state channel", "state"), ("detail", "detail channel", "detail"),
+                     ("concat", "both concatenated", "both"), ("routed", "state channel", "detail"),
+                     ("link", "the anchor's own link (oracle)", "detail")):
+        cells = []
+        for corpus in ("masked_xsys", "plain_xsys"):
+            acc, rt = anchor_stats(corpus, k)
+            if not len(acc):
+                cells += ["--", "--"]; continue
+            cells += [f"{acc.mean():.3f}{{\\scriptsize$\\,\\pm\\,${acc.std(ddof=1):.3f}}}", f(rt["same_customer"])]
+            if k != "link":
+                xs.append((corpus, rt["same_customer"]))
+        rows.append(f"{n} & {rd} & " + " & ".join(cells) + " \\\\")
+    rows += ["\\bottomrule", "\\end{tabular}"]
+    sub["ANCHORXTABLE"] = "\n".join(rows)
+    for corpus, tag in (("masked_xsys", "ANCHMX"), ("plain_xsys", "ANCHPX")):
+        v = [x for cc, x in xs if cc == corpus and x is not None]
+        if v:
+            sub[f"{tag}CUSTRANGE"] = f"{100 * min(v):.0f}--{100 * max(v):.0f}\\%"
+    thr = [v["anchor_thread"] for k, v in ANCH["masked"].get("retrieval", {}).items()
+           if k.split("/")[0] in ("state", "detail", "concat", "routed") and "anchor_thread" in v]
+    if thr:
+        sub["ANCHTHREAD"] = pct(float(np.mean(thr)), 0)
+    oth = [v["other_systems"] for k, v in ANCH["masked"].get("retrieval", {}).items()
+           if k.split("/")[0] in ("state", "detail", "concat", "routed") and "other_systems" in v]
+    if oth:
+        sub["ANCHOTHERSYS"] = pct(float(np.mean(oth)), 0)
 
 
 def acl_policy_table():
@@ -525,8 +700,12 @@ def memory_table():
     def mean(vals, f):
         return np.mean([f(v) for v in vals]) if vals else float("nan")
 
-    L4, DU, RO = load("memory2_minilm4.json"), load("memory2_dual.json"), load("memory2_route.json")
-    jc = collect(M2, M2S, key="closed_book"); jt = collect(M2, M2S, key="top16_pretrained")
+    if all(MEMQ.values()):        # version 3: retrieval by content within the question's quarter
+        G, L4, DU, RO = MEMQ["good"], MEMQ["minilm"], MEMQ["dual"], MEMQ["route"]
+        jc = collect(G, key="closed_book"); jt = collect(G, key="top16_pretrained")
+    else:
+        L4, DU, RO = load("memory2_minilm4.json"), load("memory2_dual.json"), load("memory2_route.json")
+        jc = collect(M2, M2S, key="closed_book"); jt = collect(M2, M2S, key="top16_pretrained")
     jm = collect(M2, key="memorilla_pretrained"); jn = collect(M2, key="memorilla_no_pretrain")
     lc = collect(L4, key="closed_book"); lt = collect(L4, key="top16_pretrained")
     dc = collect(DU, key="closed_book"); dt = collect(DU, key="top16_pretrained")
@@ -562,7 +741,7 @@ if __name__ == "__main__":
                         "HOBAD", "HONTP", "HOREF", "HONTEST", "HOTABLE", "E3B", "ACL", "PTRAW", "PTHEAD", "MASKEMP",
                         "MON", "TIME", "DYN", "FCGOOD", "FCTWO", "FCBAD", "STATE2", "CALL", "NOWTWO", "NOWMINI",
                         "MEM2", "MEMGOOD", "MEMDUAL", "MEMMINI", "MEMROUTE", "SHRINK", "TUNED", "PRIM", "DRIFT", "MISR", "SIT", "ACL2",
-                        "TROUBLE", "SCOPE", "MONTABLE") if w in out]
+                        "TROUBLE", "SCOPE", "MONTABLE", "ANCH") if w in out]
     print("unfilled:", left or "none")
     if left:
         sys.exit(1)

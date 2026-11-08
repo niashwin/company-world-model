@@ -22,8 +22,8 @@ the same customer in the same time window. We train small text JEPAs on those li
 [Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents), compare them with corruption-based views and
 next-token prediction on identical text, and repeat the key comparisons with a frozen pretrained encoder.
 
-**Paper:** [`paper/main.pdf`](paper/main.pdf) (version 2; source in [`paper/`](paper)).
-**What changed in version 2 and why:** [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) and
+**Paper:** [`paper/main.pdf`](paper/main.pdf) (version 3; source in [`paper/`](paper)).
+**What changed and why:** [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) (both reviews, point by point) and
 [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Results at a glance
@@ -81,22 +81,25 @@ checked byte for byte).
   "trained on everything" is the records a reader may not read at all. Knowledge from outside the company can make up
   part of it, as the backbone does for the analyst; beyond that, only a change in the access policy can.
 
-### The rest of a world model (mostly negative, reported as such)
+### The rest of a world model: a division of labor
 
 | Question | Result |
 | --- | --- |
-| **Two channels** (state + detail) on the 144 memory questions, 4 seeds | Detail only (pretrained) 70.8%, state only (good views) 66.1%, concatenated 69.6%, routed (retrieve by state, read detail) 69.3%. **Neither combination beats the detail channel alone**; these questions are all about one system's records. |
+| **Two channels** (state + detail) on the 144 memory questions, which name their customer, 4 seeds | Retrieval by content within the question's quarter. Detail only (pretrained) 71.2%, state only (good views) 65.8%, concatenated 72.2%, routed (retrieve by state, read detail) 70.1%. **No combination clearly beats the detail channel** (concatenated minus detail: +1.0 points, 95% interval −2.4 to +4.7). Both channels find the named customer's records equally often (65%), so the detail store's lead over the state store comes from reading, not finding. |
+| **Questions that come with one record of the customer instead of its name** (127 questions, 4 seeds) | Names kept: **placing the record with the state channel** and reading its customer's records **63.8%**, placing it with the pretrained encoder 54.9% (**paired +8.9 points, 95% interval +3.9 to +13.8**), nearest neighbours of the record 58–60%, no store 52.2%, the record's own link (oracle) 68.7%. Placement with both channels concatenated 64.2%. Names masked: only the oracle helps clearly (67.1%); the state channel's neighbours help a little (57.7% vs 52.0%). Given the right records, reading only their system and time codes answers 67.5–68.1%, about as well as reading their content. |
 | Two channels for state facts ("was there a sales call this quarter?") | Good views alone 72% (about the majority), with a pretrained detail channel 87%, with bad views 95%: the detail channel restores the facts, but no combination beats its better channel on average. |
-| **Monthly windows** (405 states, 398 transitions) | Held-out records placed in the right customer-month 17% vs 13% for "customer known, busiest month": finer windows help a little. |
+| **Monthly windows** (405 states on day 1; 398 transitions through day 2) | Held-out records placed in the right customer-month 17% vs 13% for "customer known, busiest month": finer windows help a little. |
 | Forecasting next month's facts | 46–54% for every representation vs 54% majority class and 72% for copying this month's facts: **no forecast**. |
 | Linear dynamics (state → next state) | With its regularization tuned by nested cross-validation, a ridge map beats "no change" in every space (2–31% less error) but never by more than 3.4 points beyond one shrink-toward-the-mean factor: it learns mean reversion, not dynamics. |
 | **Drift** (weekly state jump vs escalations and deal-stage changes, 279 event weeks) | AUROC 0.47–0.54, within about two standard errors of chance; record volume alone 0.57. |
 | **Cross-team misalignment** (sales vs support state distance vs at-risk months) | AUROC 0.48–0.57, within noise. |
 | **Similar situations across customers** | 18% of the 5 nearest other-customer states share the situation vs 8% chance (every representation does about as well); still 17% vs 7% when restricted to other quarters. For customers in trouble, the detail channel finds others in trouble (bad views 35%, pretrained 25% vs 12% base rate); the state channel does not (4%). |
 
-The state channel finds *which situation* a record belongs to; the detail channel keeps *what it says*. A memory
-should serve each question from the channel suited to it, and the predictor of how states move, the second half of
-a world model, remains the open problem.
+The experiments point to a division of labor. The **state space** can be learned from links alone, places records
+without links, can be shared across encoders through rotations and can carry access control. A **memory** should find a
+question's records through the state space (or by name, when the question has one) and read them from the store;
+once the right records are found, their provenance carries most of the answer. A **predictor** of
+how states change did not emerge from a space trained for static similarity, and remains the open problem.
 
 ## Reproduce
 
@@ -136,7 +139,19 @@ STORE=minilm SEEDS=0,1,2,3 VARIANTS=closed_book,top16_pretrained SUFFIX=_minilm4
 STORE=dual   SEEDS=0,1,2,3 VARIANTS=closed_book,top16_pretrained SUFFIX=_dual    python cwm/run_memory2.py
 STORE=route  SEEDS=0,1,2,3 VARIANTS=top16_pretrained            SUFFIX=_route   python cwm/run_memory2.py
 
-# 4. Figures and paper (every number in the paper is filled from results/ by cwm/fill_paper.py)
+# 4. Version-3 experiments
+# the named-question stores again, retrieving by content within the question's quarter (Table 7)
+for s in jepa_good minilm dual route; do
+  KEYS=quarter STORE=$s SEEDS=0,1,2,3 VARIANTS=closed_book,top16_pretrained SUFFIX=_q_${s#jepa_} python cwm/run_memory2.py
+done
+python cwm/memory_retrieval.py                 # which records those stores retrieve
+# questions that come with a record of the customer instead of its name (Table 8)
+CORPUS=masked PREP=1 python cwm/run_memory_anchor.py   # state encoder (held-out threads hidden) and features
+CORPUS=plain  PREP=1 python cwm/run_memory_anchor.py
+CORPUS=masked python cwm/run_memory_anchor.py          # all eleven stores, four seeds
+CORPUS=plain  python cwm/run_memory_anchor.py
+
+# 5. Figures and paper (every number in the paper is filled from results/ by cwm/fill_paper.py)
 make all
 ```
 
@@ -165,13 +180,16 @@ and thread count, not across thread counts; the version-2 runs used `THREADS=1 O
 | `cwm/run_state.py` | State tracking and forecasting probes |
 | `cwm/acl.py`, `cwm/run_acl.py` | Access policy, per-reader encoders, leak tests, cost and non-interference |
 | `cwm/memory.py`, `cwm/run_memory2.py` | Memory-token reader over the store: state-only, detail-only, concatenated and routed stores |
+| `cwm/run_memory_anchor.py` | Questions that come with a record of the customer instead of its name: nearest-neighbour, placement and link-oracle stores, names masked or kept |
+| `cwm/memory_retrieval.py` | Which records the named-question stores retrieve |
 | `cwm/make_minilm.py` | Caches the frozen backbone's features for every linked record |
 | `cwm/run_v2.py` | Version-2 experiments: pretrained baselines, monthly windows, access control with a shared backbone, two channels, dynamics, drift, misalignment, similar situations, scope diagnostic |
 | `cwm/make_figures.py`, `cwm/fill_paper.py` | Figures, and every number and generated table in the paper from `results/` |
 | `tests/` | Smoke tests run by GitHub Actions on every push |
-| `results/` | Every result reported in the paper, as JSON (`v2_*.json`, `extras_e.json` and `memory2_{minilm4,dual,route}.json` are new in version 2) |
+| `results/` | Every result reported in the paper, as JSON (`v2_*.json`, `extras_e.json` and `memory2_{minilm4,dual,route}.json` are new in version 2; `memory_anchor_*.json`, `memory2_q_*.json` in version 3; files ending `_a`, `_b`, ... are parallel runs merged by `fill_paper.py`) |
 | `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, PDF |
-| `docs/REVIEW_RESPONSE.md` | Point-by-point answer to the review of version 1 |
+| `docs/REVIEW_RESPONSE.md` | Point-by-point answers to the reviews of versions 1 and 2 |
+| `docs/ARXIV_ABSTRACT.txt` | A shorter abstract that fits arXiv's 1,920-character limit |
 
 ## Moving to real data
 
@@ -195,7 +213,7 @@ Era's terms before sharing it. Code is MIT-licensed (see `LICENSE`).
   title  = {Toward World Models of Organizations: Every System Sees the Same Company},
   author = {Gopinath, Ashwin},
   year   = {2026},
-  note   = {Technical report, version 2}
+  note   = {Technical report, version 3}
 }
 ```
 
