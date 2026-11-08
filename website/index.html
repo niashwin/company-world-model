@@ -3,36 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>World Models of Organizations</title>
-<meta name="description" content="Every system sees the same company. We learn one state space for a whole company from the links that its systems already keep, with access control built in.">
+<title>Every system sees the same company: world models of organizations</title>
+<meta name="description" content="A company is a world of its own. We show that AI can learn the state of every customer and project from the links that a company's systems already keep, with the method of world models.">
 <meta property="og:title" content="Every system sees the same company">
-<meta property="og:description" content="Toward world models of organizations: one state space for a whole company, learned from the links that its systems already keep.">
+<meta property="og:description" content="Toward world models of organizations. Research from Sentra: AI that learns the state of a company from the links between its systems.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://niashwin.github.io/company-world-model/">
 <meta property="og:image" content="https://niashwin.github.io/company-world-model/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Every system sees the same company: the records of one customer in seven systems, and where an encoder places them">
+<meta property="og:image:alt" content="Every system sees the same company: the records of one customer in seven systems, and where the model places them">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#041542">
 <link rel="canonical" href="https://niashwin.github.io/company-world-model/">
-<link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2317212c'/%3E%3Cg stroke='%232a78d6' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M7 9h18M7 16h18M7 23h18'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%23fbfcfd'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/geist-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="sentra-mark" viewBox="0 0 20.4139 20"><path id="Vector" d="M16.6072 0.746254C16.7447 0.711083 17.3317 0.709387 17.4537 0.746519C17.9034 0.853782 18.1562 0.917963 18.5631 1.18982C18.6417 1.24236 18.8192 1.39688 18.857 1.41916C18.9041 1.46441 19.0823 1.63151 19.108 1.67937C19.3485 1.9765 19.5463 2.32829 19.649 2.69813C19.6529 2.71224 19.6514 2.70694 19.658 2.72395C19.7437 3.10171 19.7539 3.30224 19.7363 3.69192C19.6379 4.30833 19.4734 4.74921 19.056 5.23177C18.9397 5.37011 18.8186 5.47642 18.6833 5.59269C18.2495 5.9366 17.8399 6.11075 17.287 6.18771C17.1769 6.20085 16.8494 6.19837 16.7348 6.19227C16.5023 6.19674 16.3168 6.19779 16.0852 6.22124C16.0011 6.23898 15.8955 6.23982 15.8207 6.26506C15.7567 6.2721 15.5338 6.31309 15.4829 6.34392C15.4153 6.35105 15.3596 6.37505 15.2963 6.39703C14.8338 6.55748 14.4129 6.82031 14.0578 7.15624C13.8509 7.35185 13.6799 7.60165 13.5181 7.83462C13.335 8.13399 13.1866 8.44026 13.0965 8.78044C13.0781 8.8498 13.0532 8.91903 13.048 8.99012C12.9914 9.15133 12.9976 9.36972 12.9635 9.51843C12.9648 9.57901 12.9542 9.64023 12.9517 9.70226C12.9435 9.89882 12.9297 10.1472 12.8856 10.3401C12.8687 10.4062 12.8533 10.4726 12.8386 10.5393C12.7701 10.8491 12.6215 11.1483 12.4471 11.411C12.4138 11.4594 12.3041 11.6186 12.2664 11.6485C12.0569 11.9019 11.8071 12.119 11.5271 12.2912C11.3595 12.3983 11.2297 12.4518 11.0466 12.5201C10.7939 12.6162 10.5282 12.674 10.2584 12.6915C10.095 12.7026 9.91777 12.6917 9.75609 12.6988C9.52808 12.7089 9.20825 12.7347 8.98664 12.7905C8.82127 12.8296 8.74205 12.8498 8.57669 12.9067C7.98171 13.126 7.45696 13.5019 7.05778 13.9946C6.94988 14.1268 6.87908 14.2431 6.78217 14.3758C6.57139 14.7752 6.41797 15.11 6.3402 15.5644C6.31591 15.7063 6.30663 15.9686 6.27618 16.0854C6.2823 16.1423 6.25438 16.631 6.23668 16.6847C6.22742 16.7577 6.22002 16.8707 6.20045 16.9355C6.15742 17.0935 6.1329 17.2093 6.06891 17.3691C5.82147 17.9868 5.39587 18.4753 4.83184 18.8247C4.7377 18.8831 4.50411 18.9773 4.4494 19.0148C4.34322 19.0325 4.20866 19.0923 4.09368 19.1203C3.82348 19.186 3.32943 19.2308 3.05861 19.1656C2.97965 19.1467 2.79398 19.1054 2.7209 19.0941C2.42338 18.9932 2.37234 18.9809 2.08675 18.8243C2.05073 18.7987 2.00785 18.7746 1.96858 18.7479C1.3762 18.3443 0.95546 17.6817 0.840615 16.969C0.792296 16.7551 0.792906 16.2623 0.841028 16.0454C0.903823 15.6177 1.06754 15.211 1.31864 14.8592C1.63983 14.4005 2.08705 14.0449 2.60618 13.8351C2.73939 13.7802 2.88703 13.7271 3.02871 13.7027C3.16304 13.6486 3.4811 13.6307 3.62815 13.6251C4.06172 13.6082 4.48907 13.631 4.91737 13.5438C5.0238 13.5221 5.17087 13.497 5.26917 13.4521C5.32616 13.4384 5.3856 13.4191 5.44083 13.3984C6.1934 13.1178 6.81337 12.5214 7.14315 11.7914C7.19959 11.6665 7.25978 11.5138 7.29094 11.3817C7.30862 11.3351 7.3255 11.2456 7.33718 11.1953C7.4309 10.7925 7.41686 10.3728 7.44349 9.96257C7.45577 9.77329 7.48885 9.59923 7.52505 9.41323C7.58879 9.25985 7.60457 9.12905 7.69462 8.93804C7.94841 8.39963 8.33537 7.97069 8.83376 7.64785C8.9051 7.60164 9.05908 7.50709 9.13317 7.47965C9.49231 7.27841 10.1197 7.17278 10.5314 7.18356L10.5443 7.18206C10.5775 7.18576 10.6915 7.18007 10.7324 7.17976C10.9848 7.17784 11.3012 7.16488 11.5496 7.11367C11.6455 7.10546 11.8987 7.03753 11.991 6.99659C12.2852 6.94789 12.9221 6.5559 13.1344 6.34403C13.2252 6.2535 13.3421 6.12572 13.436 6.03409C13.4923 5.94303 13.5855 5.83121 13.6505 5.72825C13.848 5.41568 14.0242 5.04227 14.0913 4.67673C14.2321 4.16517 14.1834 3.60198 14.2676 3.08134C14.2751 3.03473 14.2828 2.98915 14.2939 2.9432C14.3191 2.87003 14.3496 2.74352 14.3784 2.65627C14.4719 2.37086 14.6105 2.10232 14.7892 1.86086C15.2412 1.25978 15.855 0.85311 16.6072 0.746254Z" fill="currentColor"/><path id="Vector_2" d="M5.87676 5.2888C6.21469 4.8609 6.45149 4.38205 6.55239 3.84364C6.62816 3.43938 6.61723 3.03091 6.65233 2.62336C6.71649 1.87839 7.09193 1.18175 7.64368 0.686523C8.05637 0.32122 8.56959 0.0888038 9.11637 0.0196083C10.6449 -0.161084 12.0922 0.926487 12.2305 2.47927C12.3408 3.71825 11.597 4.8602 10.4327 5.28202L10.4222 5.28566C10.21 5.35505 9.94358 5.42859 9.71871 5.43914L9.71034 5.43992C9.61177 5.45909 9.45497 5.45641 9.35059 5.45806C9.0768 5.46239 8.48731 5.46962 8.24236 5.5541C7.89185 5.64809 7.42559 5.8025 7.14432 6.03699C6.89576 6.18608 6.57501 6.50392 6.38628 6.73186C6.31175 6.82188 6.24024 6.94128 6.16519 7.03386C6.14819 7.06127 6.12874 7.09108 6.11279 7.11873L6.10611 7.13179C6.07614 7.18948 6.02525 7.25612 5.9877 7.32699C5.83416 7.61274 5.72208 7.91888 5.65484 8.23621C5.56969 8.63289 5.57893 9.06065 5.54295 9.46501C5.48278 10.1412 5.20369 10.7342 4.72244 11.2114C4.61632 11.3167 4.52594 11.4041 4.40084 11.4884C4.37236 11.5084 4.3414 11.529 4.31437 11.5505C4.2092 11.636 4.05731 11.7145 3.93369 11.7704C3.93306 11.7709 3.93244 11.7713 3.93181 11.7717C3.88849 11.7902 3.76777 11.8389 3.73333 11.8587C3.66322 11.8775 3.58635 11.9095 3.51326 11.9328C3.45519 11.9513 3.41839 11.9547 3.37314 11.9679C3.26812 12.0085 3.04289 12.0329 2.93235 12.0413C2.17523 12.0982 1.42383 11.8524 0.862771 11.3358C0.297759 10.8157 0.0545864 10.1788 0 9.42765V9.18388C0.0177839 8.99393 0.0394046 8.77963 0.0927204 8.59671C0.200723 8.2262 0.385679 7.84639 0.625663 7.54653C1.15836 6.87276 1.95255 6.45743 2.80983 6.40431C3.28252 6.37745 3.7442 6.44117 4.2155 6.32377C4.84752 6.16632 5.46864 5.79912 5.87676 5.2888Z" fill="currentColor"/><path id="Vector_3" d="M17.2515 7.93772C17.7738 7.85463 18.2881 7.9101 18.7801 8.1202C18.8002 8.12878 18.7747 8.11952 18.8053 8.12983L18.822 8.13999C18.978 8.23308 19.1339 8.29453 19.2857 8.40877C19.9158 8.88302 20.3507 9.61069 20.3978 10.4057C20.3999 10.4421 20.4048 10.564 20.4139 10.5946V10.6096C20.3968 10.6931 20.3844 11.039 20.3577 11.1062C20.3357 11.2062 20.2967 11.3453 20.2814 11.4399C20.2355 11.5045 20.1749 11.7255 20.1239 11.8229C19.809 12.4244 19.3043 12.9558 18.6768 13.2305C18.4818 13.327 18.267 13.371 18.0593 13.4209C17.9727 13.4343 17.8255 13.4579 17.74 13.461C17.4901 13.4733 17.2304 13.4648 16.9792 13.4684C16.8166 13.4708 16.6583 13.4963 16.5029 13.5011C16.4267 13.5106 16.3759 13.5171 16.3027 13.5369C16.2404 13.5473 16.1632 13.5579 16.104 13.5771C16.0111 13.5889 15.8444 13.6465 15.7552 13.6808C15.264 13.8658 14.834 14.1841 14.5133 14.5996C14.1916 15.0141 13.915 15.6295 13.8674 16.1562C13.7976 16.4605 13.8289 16.9542 13.7898 17.2659C13.7691 17.4724 13.7448 17.6805 13.6903 17.8789C13.4369 18.8019 12.7291 19.5929 11.8049 19.8755C11.7076 19.9053 11.6135 19.9209 11.5177 19.9471C11.3449 19.985 10.9396 20.0194 10.7636 19.9873C10.4924 19.9679 10.1329 19.9111 9.88687 19.7852C9.84307 19.7732 9.79849 19.7526 9.7575 19.7328C9.02041 19.3769 8.48608 18.6465 8.279 17.8644C8.26053 17.7945 8.24872 17.7232 8.23177 17.6528C8.17204 17.4318 8.16293 16.8168 8.24313 16.6094C8.31282 16.2197 8.48706 15.8979 8.70852 15.5781C8.88267 15.3288 9.14002 15.0837 9.38602 14.9064C9.72398 14.6684 9.92304 14.617 10.2952 14.5047C10.6497 14.4033 11.1238 14.4366 11.4903 14.4241C11.694 14.4172 11.9093 14.3822 12.1127 14.3556C12.1963 14.3273 12.3985 14.2956 12.5187 14.2582C12.9239 14.132 13.3225 13.9165 13.6463 13.6434C14.1799 13.1943 14.5677 12.5966 14.7606 11.9264C14.7903 11.8195 14.8271 11.686 14.8367 11.577C14.8554 11.4983 14.8569 11.4164 14.8677 11.3367C14.9094 11.029 14.8893 10.7187 14.9319 10.4117C14.9497 10.2839 14.9705 10.158 14.9959 10.0316C15.0303 9.94202 15.0509 9.83409 15.0848 9.74089C15.3614 8.98272 15.9643 8.36653 16.7189 8.07855C16.8935 8.01188 17.0696 7.97917 17.2515 7.93772Z" fill="currentColor"/></symbol><symbol id="sentra-word" viewBox="0 0 63.7002 15.8828"><path id="Vector" d="M58.7982 3.80844C58.829 3.80431 58.8757 3.79868 58.9065 3.79898C60.186 3.81162 61.6477 4.07851 62.6031 4.99462C63.0902 5.47205 63.425 6.10859 63.571 6.77197C63.6426 7.09724 63.6836 7.45977 63.6909 7.78954C63.7085 8.56567 63.6939 9.34484 63.6972 10.1207C63.7052 11.9325 63.6767 13.7463 63.7002 15.5577C63.0899 15.558 62.3511 15.5762 61.7517 15.5401C61.7885 15.0239 61.7507 14.4849 61.7944 13.9392C60.8781 14.7488 60.5371 15.3916 59.2214 15.693C56.9689 16.2091 54.479 15.7658 53.8518 13.1997L53.8488 13.1848C53.6713 12.2654 53.7839 11.2663 54.3313 10.4963C55.6957 8.57755 59.3631 8.56792 61.5262 8.16237C61.4921 7.16988 61.1099 6.2131 60.0397 5.96401C58.5257 5.61164 56.7014 5.98076 56.2374 7.68517C55.6208 7.3874 54.6923 7.24189 54.1906 6.98281C54.335 6.4419 54.7476 5.67885 55.132 5.2689C56.2013 4.12928 57.3322 3.89247 58.7982 3.80844ZM56.5199 13.6622C57.3123 14.1519 58.1329 14.1454 59.0343 13.966C59.8231 13.8091 60.546 13.218 60.9765 12.5599C61.2351 12.1641 61.713 10.4194 61.4742 10.0361C61.4166 10.0244 61.3934 10.0157 61.3345 10.0261C59.8496 10.2809 57.2378 10.371 56.1964 11.5961C55.7394 12.1333 55.9321 13.2248 56.5199 13.6622Z" fill="currentColor"/><path id="Vector_2" d="M5.27612 0.040893C7.61039 -0.20918 10.1425 0.684548 11.3257 2.80881C11.6336 3.36156 11.7911 3.86358 11.9656 4.46587C11.1884 4.59576 10.3741 4.75093 9.59761 4.8604C9.35584 4.10095 9.26722 3.6913 8.65082 3.1084C8.17639 2.65976 7.68125 2.41186 7.08105 2.23422C5.53269 1.77595 2.89887 2.32546 2.8996 4.31539C2.90016 5.94505 5.24403 6.2504 6.42898 6.62365C7.99922 7.11829 9.70729 7.35702 10.97 8.49167C12.5179 9.90871 12.3298 12.725 10.9184 14.1752C9.75593 15.3706 8.04237 15.8341 6.41762 15.8725C4.65876 15.8778 3.22048 15.5631 1.80903 14.4354C0.883763 13.6961 0.122376 12.372 0 11.1903C0.766305 11.0585 1.525 10.9749 2.28946 10.8247C2.42602 11.6163 2.88175 12.3066 3.47921 12.8337C4.94669 14.1285 7.99346 14.202 9.30954 12.6421C9.6438 12.2464 9.80845 11.7349 9.76775 11.2187C9.64566 9.81866 8.25338 9.46976 7.14479 9.14029L5.09117 8.53555C3.05789 7.94256 0.9085 7.42873 0.609261 4.92619C0.252739 1.94462 2.53848 0.268433 5.27612 0.040893Z" fill="currentColor"/><path id="Vector_3" d="M18.6392 3.80772C19.621 3.69351 21.0626 4.08414 21.8809 4.65168C23.8457 6.01435 24.232 8.24894 24.1512 10.4799C22.1735 10.4153 20.1329 10.502 18.1478 10.4698C17.3749 10.4573 16.4456 10.4358 15.6807 10.4776L15.6439 10.5389C15.6234 10.8586 15.7764 11.3772 15.8668 11.6891C16.0755 12.407 16.5902 13.1143 17.2661 13.453C18.2774 13.9598 19.5943 13.9305 20.5815 13.3778C21.2121 13.0248 21.5347 12.5802 21.8527 11.9666C22.0472 12.0438 22.2749 12.1145 22.4752 12.1818C22.9118 12.325 23.3671 12.4503 23.8046 12.5935C23.9086 12.6275 23.9078 12.6257 23.9429 12.7214C23.906 13.0617 23.3951 13.7503 23.1619 14.0229C22.2311 15.0992 20.9087 15.7594 19.4886 15.8567C15.1963 16.1855 12.7381 12.7871 13.3504 8.74162C13.8048 5.73868 15.625 4.02447 18.6392 3.80772ZM15.6517 8.74652C16.7182 8.77988 17.8943 8.75761 18.969 8.75751C19.7654 8.75817 21.1672 8.79705 21.921 8.74057C21.5852 6.8231 20.8471 5.6081 18.6608 5.7596C16.7384 5.88925 16.0116 7.0337 15.6517 8.74652Z" fill="currentColor"/><path id="Vector_4" d="M31.092 3.8414C32.2855 3.66267 33.7273 4.05839 34.5846 4.92625C36.3238 6.68653 36.0536 9.16127 36.0529 11.4222L36.0596 15.5592C35.336 15.5488 34.5717 15.5764 33.8534 15.5447V11.9707C33.8531 10.6956 33.9458 9.30334 33.623 8.06729C33.1017 6.07183 31.6192 5.58966 29.7871 6.10515C28.903 6.49962 28.2893 7.34372 28.1466 8.29639C27.9601 9.54131 28.0277 10.9278 28.0296 12.1976C28.0311 13.2568 27.9731 14.5021 28.0639 15.5434C27.6335 15.5806 26.2366 15.5642 25.7951 15.5407C25.8246 14.3201 25.7997 12.998 25.7991 11.7705L25.8019 4.12898C26.4327 4.1076 27.1314 4.11743 27.764 4.12574C27.7627 4.48671 27.745 5.03996 27.7807 5.38472C27.8642 5.39084 27.9707 5.29726 28.0272 5.23696C28.8678 4.34038 29.8455 3.91775 31.092 3.8414Z" fill="currentColor"/><path id="Vector_5" d="M39.373 0.954619C40.0618 0.931818 40.8579 0.949556 41.5576 0.94489C41.5964 2.00098 41.5311 3.08864 41.5758 4.15023C42.0428 4.10621 42.6984 4.12025 43.1749 4.11962C43.7465 4.11889 44.4035 4.10155 44.9694 4.12905C44.9976 4.60545 44.9704 5.38025 44.9754 5.89025C44.6343 5.91149 44.1369 5.89621 43.7863 5.89554L41.5695 5.89018C41.5377 6.62871 41.5719 7.49452 41.5642 8.24417C41.5513 9.47202 41.5722 10.7137 41.5669 11.9429C41.5642 12.4841 41.6414 12.9627 42.0517 13.3569C42.7948 14.0706 44.082 13.7204 44.9837 13.7035L44.9714 14.3092C44.9678 14.7234 44.9718 15.1375 44.9834 15.5514C43.5717 15.8892 41.3596 15.9069 40.2459 14.8129C39.1462 13.7327 39.3608 11.9094 39.3604 10.4926L39.3588 5.88366C38.6273 5.89478 37.8954 5.89789 37.1639 5.89296C37.1384 5.35865 37.155 4.66876 37.1639 4.12729C37.8905 4.11608 38.617 4.11786 39.3436 4.13265C39.4091 3.1215 39.3018 1.94548 39.373 0.954619Z" fill="currentColor"/><path id="Vector_6" d="M51.9428 4.07074C52.2239 4.01233 52.8303 4.06382 53.1197 4.10482C53.1478 4.59585 53.1405 5.74901 53.1134 6.2358C52.3892 5.91378 51.361 6.1081 50.6953 6.50091C48.8836 7.56981 49.1757 9.98608 49.1747 11.791C49.1697 13.0468 49.1714 14.3027 49.1797 15.5585C48.4468 15.5462 47.7024 15.5565 46.9666 15.5495L46.9643 15.0704L46.9676 4.12474C47.5193 4.1028 48.373 4.11042 48.9201 4.12749C48.9273 4.74841 48.9386 5.30126 48.871 5.92245C49.1416 5.69828 49.0916 5.68527 49.2933 5.43982C50.0092 4.56782 50.8566 4.2084 51.9428 4.07074Z" fill="currentColor"/></symbol></svg>
 <a class="skip" href="#main">Skip to the content</a>
 <header class="bar">
   <div class="bar-inner">
-    <a class="brand" href="#top">World models of organizations</a>
+    <span class="brand">
+      <a class="logo" href="https://www.sentra.app" aria-label="Sentra"><svg class="mark" viewBox="0 0 20.4139 20" aria-hidden="true"><use href="#sentra-mark"/></svg><svg class="wordmark" viewBox="0 0 63.7002 15.8828" aria-hidden="true"><use href="#sentra-word"/></svg></a>
+      <span class="divider" aria-hidden="true"></span>
+      <a class="title" href="#top">World models of organizations</a>
+    </span>
     <nav class="nav" aria-label="Sections">
-      <a href="#findings">Findings</a>
-      <a href="#why">Corporate AI</a>
-      <a href="#state">State</a>
-      <a href="#access">Access</a>
-      <a href="#memory">Memory</a>
-      <a href="#decisions">Decisions</a>
+      <a href="#idea">The idea</a>
+      <a href="#findings">Results</a>
+      <a href="#why">Why it matters</a>
       <a href="#compare">Compare</a>
-      <a href="#reproduce">Reproduce</a>
+      <a href="#details">Details</a>
       <a href="#cite">Cite</a>
     </nav>
     <div class="bar-actions">
@@ -43,26 +46,27 @@
 </header>
 
 <main id="main">
-<section class="section hero" id="top">
-  <h1>Every system sees the same company</h1>
-  <p class="subtitle">Toward world models of organizations</p>
-  <p class="byline">Ashwin Gopinath, Sentra, San Francisco. November 2026.</p>
-  <div class="prose">
-    <p class="lead">A company keeps its records in many systems: email, chat, the CRM, support tickets, call recordings, calendars and issue trackers. Each system records a part of what happens with a customer. No system records the situation itself.</p>
-    <p class="lead">We learn that situation from the links that the systems already keep. The result is one state space for the whole company, with permissions built in. It is the first learned layer of a world model of the organization. We test it on a simulated company with exact ground truth.</p>
+<section class="hero" id="top">
+  <div class="hero-band">
+    <div class="hero-inner">
+      <h1>Every system sees the same company</h1>
+      <p class="lead">A company is a world of its own. Its email, chat, CRM and support systems each see a part of what happens with every customer, and none of them sees the whole. We show that AI can learn the whole situation from the links that these systems already keep.</p>
+      <p class="sub">The method comes from world models of the physical world, such as Yann LeCun's <a href="https://openreview.net/forum?id=BZ5a1r-kVsf">JEPA</a>. A 2026 <a href="https://arxiv.org/abs/2610.39302">proof</a> by Randall Balestriero and Yann LeCun explains why it works. In a simulated company, the model placed <b>76%</b> of records whose link it never saw with the right customer. A keyword search placed 53%.</p>
+      <div class="actions">
+        <a class="button primary" data-link="paper" href="https://github.com/niashwin/company-world-model/blob/main/paper/main.pdf">Read the paper</a>
+        <a class="button" href="#findings">See the results</a>
+        <a class="button" href="https://github.com/niashwin/company-world-model">Code on GitHub</a>
+      </div>
+      <p class="byline">Ashwin Gopinath, Sentra, San Francisco. Technical report, November 2026.</p>
+    </div>
   </div>
-  <div class="actions">
-    <a class="button primary" data-link="paper" href="https://github.com/niashwin/company-world-model/blob/main/paper/main.pdf">Read the paper</a>
-    <a class="button" href="#why">What it means for corporate AI</a>
-    <a class="button" href="https://github.com/niashwin/company-world-model">Get the code</a>
-  </div>
-
+  <div class="hero-figure">
   <figure id="fig-hero">
     <div class="frame">
       <div class="lanes-wrap">
         <div><svg class="lanes" id="lanes" viewBox="0 0 700 330" role="img" aria-label="Records of one customer and quarter in seven systems"></svg></div>
         <div class="map-side canvas-wrap">
-          <canvas id="hero-map" width="420" height="330" role="img" aria-label="Where the encoder places the records"></canvas>
+          <canvas id="hero-map" width="420" height="330" role="img" aria-label="Where the model places the records"></canvas>
           <span class="map-label" id="hero-map-label">Learned state space</span>
         </div>
       </div>
@@ -73,39 +77,156 @@
           <button class="button" id="step-next" aria-label="Next step">&#8594;</button>
           <button class="button" id="step-play">Play</button>
         </div>
-        <p class="step-text" id="step-text" aria-live="polite">The encoder places each record by the situation that it describes. The records of this customer and quarter land close together, whichever system wrote them.</p>
+        <p class="step-text" id="step-text" aria-live="polite">The model places each record by the situation that it describes. The records of this customer and quarter land close together, whichever system wrote them.</p>
       </div>
     </div>
-    <figcaption><b>Figure 1.</b> Left: the 510 records of Customer 9 in 2026 Q3, in the seven systems that wrote them. Each line is one record. Right: where an encoder places the 75 of these records that are among the 3,000 linked records of the paper's Figure 2. Use the steps to follow the method.</figcaption>
+    <figcaption><b>Figure 1.</b> One customer in one quarter. Left: the 510 records of Customer 9 in 2026 Q3, in the seven systems that wrote them. Each line is one record. Right: where the model places the 75 of these records that are among the 3,000 records of Figure 3, further down this page. Step through to see how the model learns.</figcaption>
   </figure>
+  </div>
+</section>
+
+<section class="section" id="idea">
+  <h2>The idea in three steps</h2>
+  <ol class="idea-steps">
+    <li>
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="A company with customers, deals and projects. Each has a state that nobody sees directly.">
+        <circle cx="160" cy="98" r="82" class="paper-f rule" fill="none" stroke-width="1.5"/>
+        <path d="M114 72 L198 78 M114 72 L156 140 M198 78 L156 140" class="ink2" stroke-width="1" fill="none"/>
+        <circle cx="114" cy="72" r="17" class="paper-f ink" stroke-width="1.5"/><circle cx="114" cy="72" r="6.5" class="sig-f"/>
+        <circle cx="198" cy="78" r="17" class="paper-f ink" stroke-width="1.5"/><circle cx="198" cy="78" r="6.5" class="sig-f"/>
+        <circle cx="156" cy="140" r="17" class="paper-f ink" stroke-width="1.5"/><circle cx="156" cy="140" r="6.5" class="sig-f"/>
+        <text x="114" y="44" text-anchor="middle">Customer</text>
+        <text x="226" y="82" text-anchor="start">Deal</text>
+        <text x="156" y="172" text-anchor="middle">Project</text>
+        <circle cx="236" cy="168" r="4.5" class="sig-f"/><text x="246" y="172">its state</text>
+      </svg>
+      <span class="step-n">Step 1</span>
+      <h3>A company is a world of its own</h3>
+      <p>Every customer, deal and project has a state: how things stand right now. Is the customer happy? Is the deal at risk? Nobody sees this state directly. Each person and each tool sees only a part of it.</p>
+    </li>
+    <li>
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Six company systems around one situation. Each system sees the same situation from a different side.">
+        <g class="ink2" stroke-width="1" stroke-dasharray="3 4" fill="none">
+          <path d="M96 40 L160 100 M224 40 L160 100 M74 100 L160 100 M246 100 L160 100 M96 160 L160 100 M224 160 L160 100"/>
+        </g>
+        <circle cx="160" cy="100" r="22" class="sig-f" opacity="0.14"/>
+        <circle cx="160" cy="100" r="9" class="sig-f"/>
+        <g class="paper-f ink" stroke-width="1.3">
+          <rect x="62" y="26" width="68" height="26" rx="6"/><rect x="190" y="26" width="68" height="26" rx="6"/>
+          <rect x="16" y="87" width="68" height="26" rx="6"/><rect x="236" y="87" width="68" height="26" rx="6"/>
+          <rect x="62" y="148" width="68" height="26" rx="6"/><rect x="190" y="148" width="68" height="26" rx="6"/>
+        </g>
+        <text x="96" y="43" text-anchor="middle">Email</text><text x="224" y="43" text-anchor="middle">Chat</text>
+        <text x="50" y="104" text-anchor="middle">CRM</text><text x="270" y="104" text-anchor="middle">Tickets</text>
+        <text x="96" y="165" text-anchor="middle">Calls</text><text x="224" y="165" text-anchor="middle">Calendar</text>
+      </svg>
+      <span class="step-n">Step 2</span>
+      <h3>Every system is a view of that world</h3>
+      <p>An email, a support ticket and a CRM update about one customer in one week are three views of one situation. The systems already link many records to their customer. These links are free training data, and nobody has to label anything.</p>
+    </li>
+    <li>
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Two linked records, an email and a ticket. The model learns to predict one from the other, and both land at the same place in the learned space.">
+        <g class="paper-f ink" stroke-width="1.3"><rect x="20" y="28" width="104" height="56" rx="7"/><rect x="20" y="116" width="104" height="56" rx="7"/></g>
+        <text x="32" y="47">Email</text><text x="32" y="135">Ticket</text>
+        <g class="ink2" stroke-width="2" stroke-linecap="round"><path d="M32 60 H108 M32 70 H92 M32 148 H108 M32 158 H86"/></g>
+        <path d="M72 88 V112" class="sig" stroke-width="1.6" fill="none"/>
+        <path d="M67 93 L72 87 L77 93 M67 107 L72 113 L77 107" class="sig" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="80" y="104" class="small">predict</text>
+        <rect x="170" y="22" width="134" height="156" rx="10" class="rule" fill="none" stroke-width="1.3"/>
+        <g class="ink2-f" opacity="0.55"><circle cx="196" cy="54" r="3"/><circle cx="204" cy="60" r="3"/><circle cx="192" cy="64" r="3"/>
+          <circle cx="270" cy="150" r="3"/><circle cx="279" cy="143" r="3"/><circle cx="283" cy="155" r="3"/>
+          <circle cx="198" cy="150" r="3"/><circle cx="207" cy="156" r="3"/><circle cx="191" cy="158" r="3"/></g>
+        <g class="sig-f"><circle cx="248" cy="80" r="4"/><circle cx="257" cy="88" r="4"/><circle cx="242" cy="92" r="4"/><circle cx="252" cy="98" r="4"/></g>
+        <path d="M128 56 C180 56 210 74 236 82 M128 144 C184 144 214 104 238 96" class="sig" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+        <text x="258" y="120" text-anchor="middle">same place</text>
+      </svg>
+      <span class="step-n">Step 3</span>
+      <h3>Predict one view from another, and the state appears</h3>
+      <p>World models learn about the physical world this way. Yann LeCun's <a href="https://openreview.net/forum?id=BZ5a1r-kVsf">JEPA</a> learns to predict one view of a scene from another view of it. Randall Balestriero and Yann LeCun <a href="https://arxiv.org/abs/2610.39302">proved</a> that, with the right pairs of views, such models converge to the same picture of the true state. We give the model pairs of linked records.</p>
+    </li>
+  </ol>
+  <div class="callout">
+    <h3>Why this is fundamental</h3>
+    <p>World models changed how AI understands the physical world. Models such as <a href="https://arxiv.org/abs/2506.09985">V-JEPA 2</a> learn the state of a scene from video, and then plan actions. This work opens the same path for organizations: treat the company as a world, learn its state, and then learn how that state changes.</p>
+    <p>The theory makes a strong promise. The result depends mostly on which records count as views of the same situation, and much less on the details of the model. Companies already record those pairs as a side effect of their work.</p>
+    <p>We test the idea on Northwind Robotics, a company that <a href="https://arxiv.org/abs/2609.09853">Era by Eon</a> simulates with exact ground truth. It has 78,048 records in seven systems, and 21 customers. With a simulation, we can check every answer against the truth.</p>
+  </div>
 </section>
 
 <section class="section" id="findings">
-  <h2>What we found, and what it means</h2>
-  <div class="prose"><p>We test on a simulated company with exact ground truth: 78,048 records in seven systems, and 21 customers.</p></div>
-  <ul class="findings">
-    <li><span class="fig-n">76%</span><div><p>of records whose customer link we hid land with the right customer. Text similarity places 53%.</p><p class="means">A company's AI can place most records with the right customer, also a record without its link.</p><a href="#state">State space</a></div></li>
-    <li><span class="fig-n nowrap">53%&#8202;&#8594;&#8202;62%</span><div><p>The same training signal improves a pretrained text encoder on these records.</p><p class="means">It also improves an off-the-shelf text encoder, of the kind that companies already use.</p><a href="#state">State space</a></div></li>
-    <li><span class="fig-n">33%</span><div><p>of records whose link we hid still land with the right customer when we mask every name and identifier. A pretrained encoder places 20%.</p><p class="means">The model learns more than names. It recognizes a customer from what the records say.</p><a href="#state">State space</a></div></li>
-    <li><span class="fig-n">No leak</span><div><p>No result that a reader gets changes when we plant secrets in records that the reader may not read.</p><p class="means">Each person's AI can learn from the company and still not reveal what that person may not see. People who may read little get less accurate results.</p><a href="#access">Access control</a></div></li>
-    <li><span class="fig-n">63.8%</span><div><p>of questions answered when each question comes with one record of the customer instead of its name, with the names kept in the records. A pretrained encoder answers 54.9%, and no memory 52.2%.</p><p class="means">A question that starts from a ticket or an email more often reaches the right customer's records.</p><a href="#memory">Memory</a></div></li>
-    <li><span class="fig-n">13–21%</span><div><p>of the most similar situations of other customers share the situation, against 8% by chance.</p><p class="means">&#8220;Have we seen this before?&#8221; gets a first, rough answer, at about twice chance.</p><a href="#time">Similar situations</a></div></li>
-    <li><span class="fig-n">25 of 29</span><div><p>months in trouble in which the company intervened. The logs show where the company acted, not what the action did.</p><p class="means">To learn what works, a company must log why it decided, and vary some decisions on purpose.</p><a href="#decisions">Decisions</a></div></li>
-    <li><span class="fig-n">2&#8211;7 min</span><div><p>to train each encoder or head that we timed, on a CPU and without a GPU.</p><p class="means">At this scale, a company can train the model again each day, also with one model for each permission scope.</p><a href="#reproduce">Reproduce</a></div></li>
+  <h2>What we found, and why it matters</h2>
+  <p class="kicker">Eight results from the simulated company. Each one says what we tested, what happened, and what it could mean for a real company.</p>
+  <ul class="results">
+    <li>
+      <p class="result-n">76%</p>
+      <h3>Records find their customer, even without their link</h3>
+      <p>We hid the customer links of 5,366 records and asked the model where each one belongs. It put 76% with the right customer. A keyword search put 53% there. A guess of the largest customer gets 12%.</p>
+      <p class="why"><b>Why it matters.</b> AI can assemble one picture of each customer from every tool, also from records that lost their link.</p>
+      <a class="more" href="#state">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">33%</p>
+      <h3>It recognizes customers without their names</h3>
+      <p>We removed every name, email address and identifier from the records. The model still put 33% of the hidden records with the right customer. A small ready-made AI text model (<a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">MiniLM</a>) put 20% there, and a guess of the largest customer gets 12%.</p>
+      <p class="why"><b>Why it matters.</b> Names do much of the work, but not all of it. The model also learns what each customer's situation looks like.</p>
+      <a class="more" href="#state">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">53%&#8202;&#8594;&#8202;62%</p>
+      <h3>It also improves a ready-made AI text model</h3>
+      <p>We added the same training on top of a small ready-made AI text model, MiniLM. Its share of hidden records with the right customer rose from 53% to 62%.</p>
+      <p class="why"><b>Why it matters.</b> A company can add this training to a model that it already runs, and does not have to replace the model. We tested one small model. Larger models are a next step.</p>
+      <a class="more" href="#state">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">No leak</p>
+      <h3>Privacy is part of the model</h3>
+      <p>We planted secret codenames in 150 records that two employees may not read, and searched for them as each employee. A model trained on everything pointed to the right customer every time, even when we filtered the results to what the employee may read. Models trained only on what each employee may read gave the same results with and without the secrets.</p>
+      <p class="why"><b>Why it matters.</b> A permission filter on search results is not enough. When each group's model learns only from what the group may read, it cannot reveal the rest. People who may read little get less accurate results.</p>
+      <a class="more" href="#access">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">63.8%</p>
+      <h3>One email can stand in for the customer's name</h3>
+      <p>We asked questions that came with one email or ticket instead of the customer's name. With the learned space, the system gave the right answer 63.8% of the time. With the small ready-made model it did 54.9%, and with no memory 52.2%. A system that knows the email's true link gets 68.7%. The names stayed in the records for this test.</p>
+      <p class="why"><b>Why it matters.</b> People rarely ask with exact names. A forwarded email or a ticket can bring the right customer's records.</p>
+      <a class="more" href="#memory">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">13–21%</p>
+      <h3>&#8220;Have we seen this before?&#8221; gets a first answer</h3>
+      <p>For each customer and quarter, we found the five most similar quarters of other customers. Of these, 13–21% shared the situation, against 8% by chance. The share depends on the representation.</p>
+      <p class="why"><b>Why it matters.</b> A team can find earlier cases like the one in front of it. This is a first, rough answer, at about twice chance.</p>
+      <a class="more" href="#time">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">25 of 29</p>
+      <h3>Logs show what a company did, not what worked</h3>
+      <p>We studied 29 months in which a customer was in trouble. The company stepped in 25 times. So the logs hold almost no cases in which it did not act, and they cannot show which actions help.</p>
+      <p class="why"><b>Why it matters.</b> To let AI learn what works, a company must record its decisions and their reasons, and sometimes vary them on purpose.</p>
+      <a class="more" href="#decisions">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">2&#8211;7<small>min</small></p>
+      <h3>It is cheap to train</h3>
+      <p>Each model that we timed trained in 2 to 7 minutes on an ordinary computer, without a GPU.</p>
+      <p class="why"><b>Why it matters.</b> With 21,972 linked records, as here, a company can train the model again often. It can also keep a separate model for each group of people with the same access. We did not test a company with millions of records.</p>
+      <a class="more" href="#reproduce">How to run it</a>
+    </li>
   </ul>
 </section>
 
 <section class="section" id="why">
-  <h2>What this means for corporate AI</h2>
+  <h2>Why it matters: from a memory to a model of the company</h2>
   <div class="prose">
-    <p class="lead">At Sentra, we call it corporate AI: AI that understands how a company works, acts within its permissions and helps it decide.</p>
-    <p>Many AI assistants rebuild context from documents for each question, and then forget it. Two questions about the same customer can rebuild the situation differently. Corporate AI needs a model of the company itself, which stays current as the company works. We build it in four layers. Each layer is useful on its own, and each one makes the next one possible.</p>
+    <p class="lead">Most AI assistants answer from documents and then forget. They have no model of the company itself, so two questions about the same customer can get two different pictures of it.</p>
+    <p>We call the goal corporate AI: AI that understands how a company works, acts within each person's permissions and helps the company decide. We see four layers on the way there. Each layer is useful on its own, and each one makes the next one possible.</p>
   </div>
   <ol class="layers">
-    <li><span class="layer-n">1</span><div><h3>Memory that accumulates</h3><p>An organizational memory keeps what happened, who decided it and why, and where each fact came from. Sentra builds this kind of memory today.</p></div><span class="status">In place</span></li>
-    <li class="this"><span class="layer-n">2</span><div><h3>Representations that learn</h3><p>One state space for the whole company, learned from the links between its systems. It places each record with its customer, and permissions are part of it. This is the work on this page.</p></div><span class="status done">Shown in simulation</span></li>
-    <li><span class="layer-n">3</span><div><h3>Models that predict</h3><p>A predictor of how situations change, and of what decisions do. We build a first version on the state space, and we show what data it needs to learn the effects of decisions.</p></div><span class="status">Next</span></li>
-    <li><span class="layer-n">4</span><div><h3>Organizations that improve</h3><p>People and agents test a decision against the model before they act. Then they compare what the model predicted with what happened, and the model learns from the difference.</p></div><span class="status">Future</span></li>
+    <li><span class="layer-n">1</span><div><h3>Memory that accumulates</h3><p>A memory of the company keeps what happened, who decided it and why, and where each fact came from. Products such as <a href="https://www.sentra.app">Sentra</a> build this layer today.</p></div><span class="status">In place</span></li>
+    <li class="this"><span class="layer-n">2</span><div><h3>Representations that learn</h3><p>One learned picture of the whole company, from the links between its systems. It places most records with their customer, and permissions are part of it. This is the study on this page.</p></div><span class="status done">Shown in simulation</span></li>
+    <li><span class="layer-n">3</span><div><h3>Models that predict</h3><p>A model that predicts how situations change, and what decisions do. We build a first version on the learned space, and we show what data it needs.</p></div><span class="status">Next</span></li>
+    <li><span class="layer-n">4</span><div><h3>Organizations that improve</h3><p>People and AI agents test a decision against the model before they act. Then the model learns from what happened.</p></div><span class="status">Future</span></li>
   </ol>
   <figure id="fig-stack">
     <div class="frame panel">
@@ -113,12 +234,12 @@
         <div class="stack-col"><div class="node src"><b>Every system</b><span>Email, chat, CRM, tickets, calls, calendars and issues</span></div></div>
         <div class="arrow" aria-hidden="true"></div>
         <div class="stack-col">
-          <div class="node mem"><b>Organizational memory</b><span>Facts, decisions, sources, time and permissions</span></div>
-          <div class="node state"><b>State space</b><span>Where each record belongs, and which situations are alike. This work.</span></div>
+          <div class="node mem"><b>Memory of the company</b><span>Facts, decisions, sources, dates and permissions</span></div>
+          <div class="node state"><b>Learned state space</b><span>Where each record belongs, and which situations are alike. This study.</span></div>
         </div>
         <div class="arrow" aria-hidden="true"></div>
         <div class="stack-col">
-          <div class="node read"><b>Memory reader</b><span>Finds records by situation, and reads them by detail</span></div>
+          <div class="node read"><b>Memory reader</b><span>Finds records by situation, and reads their details</span></div>
           <div class="node pred"><b>Predictor</b><span>How situations change, and what decisions do. Next.</span></div>
         </div>
         <div class="arrow" aria-hidden="true"></div>
@@ -126,27 +247,45 @@
       </div>
       <p class="loop"><svg class="loop-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 7.5A5 5 0 1 1 11 3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11.6 1.2v3.2H8.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Decisions and their outcomes become new records. When some decisions vary on purpose, the model can learn what they do.</p>
     </div>
-    <figcaption><b>Figure 2.</b> How the layers fit together. The learned state space does not replace the memory. The memory keeps the facts, sources and permissions. The state space adds two things: a place for records without a link, and a measure of which situations are alike. We tested the memory reader on the state space. The full combination is a design, not yet a measured system.</figcaption>
+    <figcaption><b>Figure 2.</b> How the layers fit together. The learned space does not replace the memory. The memory keeps the facts, sources and permissions. The learned space adds two things: a place for records without a link, and a measure of which situations are alike. We tested the memory reader on the learned space. The full combination is a design, not yet a measured system.</figcaption>
   </figure>
 </section>
 
-<section class="section" id="idea">
-  <h2>The idea</h2>
+<section class="section" id="compare">
+  <h2>How this compares</h2>
   <div class="prose">
-    <p>A world model of an organization has a state space. Each point in this space is a situation, for example one customer in one quarter. Each record of the company lands at the situation that it describes, whichever system wrote it.</p>
-    <p>A recent result, the Platonic Representation Theorem, shows how to learn such a space. A model learns to predict one record of a situation from another record of the same situation. Such pairs are <em>good views</em>: two different observations of the same state. With good views, models of this kind (JEPAs) converge to the same space, up to a rotation.</p>
-    <p>Companies already keep good views. The CRM, the email system and the ticket system each link records to customers. Two records that two systems link to the same customer in the same quarter observe the same situation. Nobody has to label anything.</p>
-    <p>We test this idea on Northwind Robotics, a company that Era by Eon simulates with exact ground truth. The company has 78,048 records in seven systems. Of these, 21,972 have a link to one of 21 customers. The other 72% have no link, so the encoder must place them from their content alone. We cannot score these records directly, because they have no ground truth.</p>
+    <p>Other approaches give AI knowledge of a company in different ways, and they work best together. Most of them store or read what the company wrote. This work adds a layer that first organizes those records into situations.</p>
   </div>
+  <div class="compare-wrap" role="region" aria-label="Comparison of approaches" tabindex="0">
+  <table class="compare">
+    <thead><tr><th scope="col">Approach</th><th scope="col">What it does</th><th scope="col">Where it is strong</th><th scope="col">What it leaves open</th><th scope="col">How it fits with this work</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Enterprise search and RAG<span><a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html">Retrieval-augmented generation</a></span></th><td data-label="What it does">Finds documents for each question, and a language model reads them.</td><td data-label="Where it is strong">Current and simple, with permission filters on the results.</td><td data-label="What it leaves open">Builds the situation again for each question, from the documents that it finds.</td><td data-label="How it fits">The learned space can send a question to its situation before the search.</td></tr>
+      <tr><th scope="row">Company memory and knowledge graphs<span>For example, <a href="https://arxiv.org/abs/2404.16130">GraphRAG</a>, <a href="https://arxiv.org/abs/2501.13956">Zep</a>, <a href="https://arxiv.org/abs/2310.08560">MemGPT</a> and <a href="https://doi.org/10.3233/FAIA251160">Mem0</a></span></th><td data-label="What it does">Keeps entities, facts, decisions and their sources in a graph or a ledger.</td><td data-label="Where it is strong">Facts with sources, easy to audit and update.</td><td data-label="What it leaves open">Keeps facts, not a learned state of each situation.</td><td data-label="How it fits">The learned state is a view of this memory. The memory keeps the facts, and the state adds placement and similarity.</td></tr>
+      <tr><th scope="row"><a href="https://arxiv.org/abs/2610.21375">Memorilla</a><span>Stanford, 2026</span></th><td data-label="What it does">Turns a document collection into 16 memory tokens for each question, which a frozen language model reads.</td><td data-label="Where it is strong">Reads large collections with few tokens: 84.33% on FactKG, against 80.43% with the full context.</td><td data-label="What it leaves open">Organizes documents, not situations.</td><td data-label="How it fits">Our memory reader is a small version of this design. A reader of this kind could read situations instead of separate documents.</td></tr>
+      <tr><th scope="row"><a href="https://engram.com/blog/learning-in-a-world-of-notes">Engram</a><span>2026</span></th><td data-label="What it does">Studies a company's information ahead of time, keeps notes about it, and trains models to use the notes.</td><td data-label="Where it is strong">Better and cheaper answers. Engram reports a gain of 7 to 20 points when it trains models to use their notes, and the gain held as the notes changed.</td><td data-label="What it leaves open">Knowledge stays in notes, without a learned state of each situation.</td><td data-label="How it fits">Agents trained this way could act on a shared state that respects permissions. We did not test this.</td></tr>
+      <tr><th scope="row">Process mining<span><a href="https://doi.org/10.1007/978-3-662-49851-4">Van der Aalst, 2016</a></span></th><td data-label="What it does">Builds models of business processes from event logs that a case number links.</td><td data-label="Where it is strong">Shows how work flows, and where it stalls.</td><td data-label="What it leaves open">Needs structured events. It does not read the text of the work.</td><td data-label="How it fits">The same idea, links between records, applied to every record that has text.</td></tr>
+      <tr><th scope="row">World models of physical scenes<span><a href="https://arxiv.org/abs/2506.09985">V-JEPA 2</a> and <a href="https://arxiv.org/abs/2610.06805">H-JEPA</a></span></th><td data-label="What it does">Learn the state of a scene from video, and predict what actions do.</td><td data-label="Where it is strong">Prediction and planning for robots.</td><td data-label="What it leaves open">Built for cameras and sensors, not for company records and permissions.</td><td data-label="How it fits">This work brings the recipe to organizations. Prediction is its next layer.</td></tr>
+      <tr class="this"><th scope="row">This work</th><td data-label="What it does">Learns one state space for the whole company from the links between its systems.</td><td data-label="Where it is strong">Places records whose links it never saw, and has permissions built in.</td><td data-label="What it leaves open">Prediction of change, and the effects of decisions. Tested on one simulated company so far.</td><td data-label="How it fits">The layer that the others could keep, compress or read.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Adapted from Table 1 of the paper, which gives the references. The numbers for Memorilla and Engram come from their own reports.</p>
 </section>
+
+<div class="section-head" id="details"><div class="rule-line">
+  <h2>The results in detail</h2>
+  <p>This part is for readers who want the evidence. Each section shows one experiment, its numbers and an interactive figure. The <a data-link="paper" href="https://github.com/niashwin/company-world-model/blob/main/paper/main.pdf">paper</a> gives every detail.</p>
+</div></div>
+
 
 <section class="section" id="state">
   <h2>One state space for seven systems</h2>
   <p class="takeaway"><b>For a company:</b> one picture of each customer across every tool, also for a record without its link.</p>
   <div class="prose">
-    <p>We train small text encoders from scratch on the linked records, with three objectives on the same text. Good views pair two records of the same customer and quarter, from any system. Bad views pair a record with a damaged copy of itself. Next-token prediction learns to predict the next word.</p>
+    <p>An encoder is a model that turns each record into a point in a space. We train small encoders from scratch on the linked records, with three objectives on the same text. <em>Good views</em> pair two records of the same customer and quarter, from any system. <em>Bad views</em> pair a record with a damaged copy of itself. <em>Next-token prediction</em> learns to predict the next word, as most language models do.</p>
     <p>First, we measure on the training records. With good views, 95.1% of a record's ten nearest records from other systems belong to the same customer. Bad views and next-token prediction reach 13.6% and 13.2%.</p>
-    <p>The fairer test hides the links of some records. The encoder never sees their links, and their threads are not in the training data. A good-view encoder places 76% of these records with the right customer. TF-IDF places 53%, and a guess of the largest customer 12%. The same good views also raise a frozen pretrained encoder from 53% to 62%.</p>
+    <p>The fairer test hides the links of some records. The encoder never sees their links, and their threads are not in the training data. A good-view encoder places 76% of these records with the right customer. A keyword search (TF-IDF) places 53%, and a guess of the largest customer 12%. The same good views also raise a frozen pretrained encoder (<a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">MiniLM</a>) from 53% to 62%.</p>
     <p>The space learns more than names. With every name and identifier masked, it still places 33% of these records with the right customer, against 20% for the pretrained encoder. It finds the customer more sharply than the exact quarter, and monthly windows add some timing.</p>
   </div>
   <figure id="fig-map">
@@ -183,7 +322,7 @@
   <p class="takeaway"><b>For a company:</b> each person's model learns only from what that person may read, so it cannot reveal the rest.</p>
   <div class="prose">
     <p>A learned world model can leak through three paths: search results, states that combine records a reader may not open, and the encoder's own training. Filters on search results and states close only the first two paths.</p>
-    <p>To test this, we plant secrets in 150 records that a reader may not read. Then the reader searches for them. With an encoder trained on everything, the search finds the secrets, even when we filter the search and the states.</p>
+    <p>To test this, we plant secrets in 150 records that a reader may not read. Then the reader searches for them. With an encoder trained on everything, the search still points to the right customer, even when we filter the search and the states.</p>
     <p>When each reader's model trains only on the records that the reader may read, every result is the same with and without the secrets. The cost falls on people who may read little. A shared pretrained backbone, which holds no company data, recovers part of that cost for some of them.</p>
   </div>
   <figure id="fig-leak">
@@ -196,7 +335,7 @@
         <div class="legend"><span><i class="key dot" style="background:var(--bad)"></i>With the secrets planted</span><span><i class="key dot" style="background:var(--mute-2)"></i>Without the secrets</span></div>
       </div>
     </div>
-    <figcaption><b>Figure 5.</b> A search for a planted codename (precision@10) and for a planted secret sentence (precision@5). The distance between the two dots is the leak. With access control built in, the two dots are at the same place.</figcaption>
+    <figcaption><b>Figure 5.</b> Two searches for planted secrets. For a codename, the chart shows the share of the top 10 results that belong to the customer whose records hold the codename. For the secret sentence, it shows the share of the five most similar customers that are the five customers with secrets. The distance between the two dots is the leak. With access control built in, the two dots are at the same place.</figcaption>
   </figure>
   <figure id="fig-rescue">
     <div class="frame"><div class="figure-body"><svg class="chart" id="rescue"></svg>
@@ -212,7 +351,7 @@
   <p class="takeaway"><b>For a company:</b> a question that starts from a ticket or an email, not a name, more often reaches the right customer's records.</p>
   <div class="prose">
     <p>The state channel tells where a record belongs: which customer and which situation. The detail channel tells what the record says. A pretrained sentence encoder keeps these details. A memory of the company needs both channels.</p>
-    <p>We ask questions about customers, for example how many tickets a customer had in a quarter. A small reader answers from 16 records that a store finds. The reader is a small version of the Memorilla design.</p>
+    <p>We ask questions about customers, for example how many tickets a customer had in a quarter. A small reader answers from 16 records that a store finds. The reader is a small version of the <a href="https://arxiv.org/abs/2610.21375">Memorilla</a> design.</p>
     <p>When a question names the customer, a store of pretrained-encoder vectors, the detail channel, answers as well as any combination of channels.</p>
     <p>Sometimes a question comes with one record of the customer instead of the name. We call this record the anchor. A store first places the anchor with a customer, and the reader then reads that customer's records. With the names kept, placement with the state channel answers 63.8% of the questions, against 54.9% with the pretrained encoder and 52.2% with no store. With every name masked, the gain is smaller.</p>
   </div>
@@ -259,9 +398,9 @@
   <p class="takeaway"><b>For a company:</b> to learn what works, log decisions with their reasons, and vary some of them on purpose.</p>
   <div class="prose">
     <p>We read six kinds of action from the records: sales calls, messages from leaders, CRM tasks, engineering escalations, support replies and emails to customers. Then we add the actions to the predictor.</p>
-    <p>This month's actions add little to the prediction of next month's state, because the state already reflects most of them.</p>
+    <p>This month's actions add little to the prediction of next month's state. One reason is that the state already reflects most of them.</p>
     <p>We also simulate a decision for 29 customer-months in trouble: an urgent or high-priority ticket during an open deal. For each month, we find similar months of other customers. Then we compare the months in which the company intervened with the months in which it did not intervene.</p>
-    <p>The company intervened in 25 of the 29 months. The similar months in which it intervened were in trouble 19–24% of the time, against 0.2–4% for the months in which it did not intervene. So the comparison sets troubled months against calm months. It shows where the company acted, not what the action did.</p>
+    <p>The company intervened in 25 of the 29 months. The similar months in which it intervened were in trouble 19–24% of the time, against 0.2–4% for the months in which it did not intervene. So the comparison sets troubled months against calm months. It shows where the company acted, not what the action did. To learn the effect of a decision, the data must record why each decision happened. Similar cases must also get different decisions (<a href="https://doi.org/10.1017/CBO9780511803161">Pearl</a>; <a href="https://miguelhernan.org/whatifbook">Hern&#225;n and Robins</a>).</p>
   </div>
   <figure id="fig-sim">
     <div class="frame">
@@ -296,33 +435,11 @@
   </figure>
 </section>
 
-<section class="section" id="compare">
-  <h2>How this compares</h2>
-  <div class="prose">
-    <p>Enterprise AI gives models knowledge of a company in several ways. They are layers of one architecture more than rivals. Most of them keep or read what the company wrote. This work adds the layer that organizes those records into situations before anything reads them.</p>
-  </div>
-  <div class="compare-wrap" role="region" aria-label="Comparison of approaches" tabindex="0">
-  <table class="compare">
-    <thead><tr><th scope="col">Approach</th><th scope="col">What it does</th><th scope="col">Where it is strong</th><th scope="col">What it leaves open</th><th scope="col">How it fits with this work</th></tr></thead>
-    <tbody>
-      <tr><th scope="row">Enterprise search and RAG<span>Retrieval-augmented generation</span></th><td data-label="What it does">Finds documents for each question, and a language model reads them.</td><td data-label="Where it is strong">Current and simple, with permission filters on the results.</td><td data-label="What it leaves open">Builds the situation again for each question, from the documents that it finds.</td><td data-label="How it fits">The state space can send a question to its situation before the search.</td></tr>
-      <tr><th scope="row">Organizational memory and knowledge graphs<span>For example, Sentra's memory, GraphRAG, Zep, MemGPT and Mem0</span></th><td data-label="What it does">Keeps entities, facts, decisions and their sources in a graph or a ledger.</td><td data-label="Where it is strong">Facts with sources, easy to audit and update.</td><td data-label="What it leaves open">Keeps facts, not a learned state of each situation.</td><td data-label="How it fits">The learned state is a view of this memory. The memory keeps the facts, and the state adds placement and similarity.</td></tr>
-      <tr><th scope="row">Memorilla<span>Stanford, 2026</span></th><td data-label="What it does">Turns a document collection into 16 memory tokens for each question, which a frozen language model reads.</td><td data-label="Where it is strong">Reads large collections with few tokens: 84.33% on FactKG, against 80.43% with the full context.</td><td data-label="What it leaves open">Organizes documents, not situations.</td><td data-label="How it fits">Our memory reader is a small version of this design. A reader of this kind could read situations instead of separate documents.</td></tr>
-      <tr><th scope="row">Engram<span>2026</span></th><td data-label="What it does">Studies a company's information ahead of time, keeps notes about it, and trains models to use the notes.</td><td data-label="Where it is strong">Better and cheaper answers. Engram reports a gain of 7 to 20 points when it trains models to use their notes, and the gain held as the notes changed.</td><td data-label="What it leaves open">Knowledge stays in notes, without a learned state of each situation.</td><td data-label="How it fits">Agents trained this way could act on a shared state that respects permissions. We did not test this.</td></tr>
-      <tr><th scope="row">Process mining<span>Object-centric process mining</span></th><td data-label="What it does">Builds models of business processes from event logs that a case number links.</td><td data-label="Where it is strong">Shows how work flows, and where it stalls.</td><td data-label="What it leaves open">Needs structured events. It does not read the text of the work.</td><td data-label="How it fits">The same idea, links between records, applied to every record that has text.</td></tr>
-      <tr><th scope="row">World models of physical scenes<span>V-JEPA 2 and H-JEPA</span></th><td data-label="What it does">Learn latent states from video, and predict what actions do.</td><td data-label="Where it is strong">Prediction and planning for robots.</td><td data-label="What it leaves open">Built for sensors, not for company records and permissions.</td><td data-label="How it fits">This work brings the recipe to organizations. Prediction is its next layer.</td></tr>
-      <tr class="this"><th scope="row">This work</th><td data-label="What it does">Learns one state space for the whole company from the links between its systems.</td><td data-label="Where it is strong">Places records whose links it never saw, and has permissions built in.</td><td data-label="What it leaves open">Prediction of change, and the effects of decisions. Tested on one simulated company so far.</td><td data-label="How it fits">The layer that the others could keep, compress or read.</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="note">Sources: Memorilla (Fallahpour and others, <a href="https://arxiv.org/abs/2610.21375">arXiv:2610.21375</a>). Engram, <a href="https://engram.com/blog/learning-in-a-world-of-notes">Learning in a world of notes</a>, 4 November 2026. Process mining (van der Aalst, <i>Process Mining: Data Science in Action</i>, 2016). GraphRAG (<a href="https://arxiv.org/abs/2404.16130">arXiv:2404.16130</a>), Zep (<a href="https://arxiv.org/abs/2501.13956">arXiv:2501.13956</a>), MemGPT (<a href="https://arxiv.org/abs/2310.08560">arXiv:2310.08560</a>) and Mem0 (<a href="https://arxiv.org/abs/2504.19413">arXiv:2504.19413</a>). V-JEPA 2 (<a href="https://arxiv.org/abs/2506.09985">arXiv:2506.09985</a>) and H-JEPA (<a href="https://arxiv.org/abs/2610.06805">arXiv:2610.06805</a>). Table 1 of the paper gives the same comparison with references.</p>
-</section>
-
 <section class="section" id="next">
   <h2>What comes next</h2>
   <div class="prose">
     <p>The decisive next test is causal. It needs a simulator with a hidden state and known effects of actions. There, one customer can face different decisions: an engineering escalation, a discount or a call from an executive. A world model passes the test if it ranks those decisions by their true effects for customers that it never saw. It must also beat a memory with simple rules.</p>
-    <p>Organizations also change at several speeds. Tickets move in hours, deals in weeks and strategy in quarters. A hierarchy of state spaces, one for each timescale, is a direct extension of this work.</p>
+    <p>Organizations also change at several speeds. Tickets move in hours, deals in weeks and strategy in quarters. A hierarchy of state spaces, one for each timescale, is a direct extension of this work, in the manner of <a href="https://arxiv.org/abs/2610.06805">H-JEPA</a>.</p>
     <h3>Scope of this study</h3>
     <ul class="limits">
       <li>All results come from one simulated company, whose text is cleaner than real company text.</li>
@@ -347,12 +464,11 @@ pytest -q tests
 <span class="c"># every experiment, from the simulated company to the paper (several hours, Docker for Era)</span>
 bash scripts/reproduce.sh</pre>
   <div class="prose">
-    <p class="note">Era by Eon generates the company. The repository does not include the generated data. The script starts the seven simulators with Docker and exports every record. See REPRODUCE.md in the repository for the command that makes each table.</p>
+    <p class="note">Era by Eon generates the company. The repository does not include the generated data. The script starts the seven simulators with Docker and exports every record. See <a href="https://github.com/niashwin/company-world-model/blob/main/REPRODUCE.md">REPRODUCE.md</a> for the command that makes each table.</p>
   </div>
 </section>
-
 <section class="section" id="cite">
-  <h2>Cite</h2>
+  <h2>Cite this work</h2>
   <div class="cite-box">
 <pre id="bibtex">@techreport{gopinath2026organizations,
   title       = {Toward World Models of Organizations: Every System Sees the Same Company},
@@ -361,38 +477,78 @@ bash scripts/reproduce.sh</pre>
   address     = {San Francisco},
   year        = {2026},
   month       = nov,
-  note        = {Version 6},
+  note        = {Version 7},
   url         = {https://github.com/niashwin/company-world-model}
 }</pre>
     <button class="button" id="copy-bib" type="button">Copy</button>
   </div>
   <h3>References</h3>
+  <p class="note">All 56 references of the paper, in the order of the paper. Each title links to the source.</p>
   <ol class="refs">
-    <li>R. Balestriero and Y. LeCun. Proving and improving the Platonic Representation Hypothesis with JEPAs. <a href="https://arxiv.org/abs/2610.39302">arXiv:2610.39302</a>, 2026.</li>
-    <li>R. Balestriero and Y. LeCun. LeJEPA: provable and scalable self-supervised learning without the heuristics. <a href="https://arxiv.org/abs/2511.08544">arXiv:2511.08544</a>, 2025.</li>
-    <li>M. Huh, B. Cheung, T. Wang and P. Isola. The Platonic Representation Hypothesis. ICML, 2024.</li>
-    <li>B. Gruenbaum, D. Porat, A. Natanzon, R. Zavida, C. Dinachi and O. Itzahary. The Era by Eon benchmark: a generated enterprise estate with exact ground truth for benchmarking LLM agents. <a href="https://arxiv.org/abs/2609.09853">arXiv:2609.09853</a>, 2026.</li>
-    <li>A. Fallahpour, P. Idehpour, V. Kothapalli, N. Mounier, S. Wu, S. Pardis and J. Leskovec. Memorilla: latent semantic memory for LLMs. <a href="https://arxiv.org/abs/2610.21375">arXiv:2610.21375</a>, 2026.</li>
-    <li>Engram. Learning in a world of notes. <a href="https://engram.com/blog/learning-in-a-world-of-notes">Research note</a>, 4 November 2026.</li>
-    <li>S. Eyuboglu and others. Cartridges: lightweight and general-purpose long context representations via self-study. <a href="https://arxiv.org/abs/2506.06266">arXiv:2506.06266</a>, 2025.</li>
-    <li>P. Lewis and others. Retrieval-augmented generation for knowledge-intensive NLP tasks. NeurIPS, 2020.</li>
-    <li>D. Edge and others. From local to global: a graph RAG approach to query-focused summarization. <a href="https://arxiv.org/abs/2404.16130">arXiv:2404.16130</a>, 2024.</li>
-    <li>P. Rasmussen, P. Paliychuk, T. Beauvais, J. Ryan and D. Chalef. Zep: a temporal knowledge graph architecture for agent memory. <a href="https://arxiv.org/abs/2501.13956">arXiv:2501.13956</a>, 2025.</li>
-    <li>W. M. P. van der Aalst. Process mining: data science in action. Springer, 2016.</li>
-    <li>M. Assran and others. Self-supervised learning from images with a joint-embedding predictive architecture. CVPR, 2023.</li>
-    <li>Y. LeCun. A path towards autonomous machine intelligence. OpenReview, 2022.</li>
-    <li>M. Assran and others. V-JEPA 2: self-supervised video models enable understanding, prediction and planning. <a href="https://arxiv.org/abs/2506.09985">arXiv:2506.09985</a>, 2025.</li>
-    <li>W. Zhang, B. Terver, M. Rabbat, Y. LeCun and R. Balestriero. H-JEPA: end-to-end learning of hierarchical world models for visual planning. <a href="https://arxiv.org/abs/2610.06805">arXiv:2610.06805</a>, 2026.</li>
-    <li>P. Khosla and others. Supervised contrastive learning. NeurIPS, 2020.</li>
-    <li>J. Pearl. Causality: models, reasoning, and inference. Cambridge University Press, 2009.</li>
-    <li>D. Ha and J. Schmidhuber. World models. <a href="https://arxiv.org/abs/1803.10122">arXiv:1803.10122</a>, 2018.</li>
+    <li id="ref-lewis2020rag">P. Lewis, E. Perez, A. Piktus and others. <a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>. Advances in Neural Information Processing Systems, 2020.</li>
+    <li id="ref-ha2018world">D. Ha and J. Schmidhuber. <a href="https://arxiv.org/abs/1803.10122">World Models</a>. arXiv:1803.10122, 2018.</li>
+    <li id="ref-lecun2022path">Y. LeCun. <a href="https://openreview.net/forum?id=BZ5a1r-kVsf">A Path Towards Autonomous Machine Intelligence</a>. OpenReview preprint, 2022.</li>
+    <li id="ref-assran2025vjepa2">M. Assran, A. Bardes, D. Fan, Q. Garrido, R. Howes and others. <a href="https://arxiv.org/abs/2506.09985">V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning</a>. arXiv:2506.09985, 2025.</li>
+    <li id="ref-balestriero2026platonic">R. Balestriero and Y. LeCun. <a href="https://arxiv.org/abs/2610.39302">Proving and Improving the Platonic Representation Hypothesis with JEPAs</a>. arXiv:2610.39302, 2026.</li>
+    <li id="ref-gruenbaum2026era">B. Gruenbaum, D. Porat, A. Natanzon, R. Zavida, C. Dinachi and O. Itzahary. <a href="https://arxiv.org/abs/2609.09853">The Era by Eon Benchmark: A Generated Enterprise Estate with Exact Ground Truth for Benchmarking LLM Agents</a>. arXiv:2609.09853, 2026.</li>
+    <li id="ref-edge2024graphrag">D. Edge, H. Trinh, N. Cheng and others. <a href="https://arxiv.org/abs/2404.16130">From Local to Global: A Graph RAG Approach to Query-Focused Summarization</a>. arXiv:2404.16130, 2024.</li>
+    <li id="ref-packer2023memgpt">C. Packer, S. Wooders, K. Lin and others. <a href="https://arxiv.org/abs/2310.08560">MemGPT: Towards LLMs as Operating Systems</a>. arXiv:2310.08560, 2023.</li>
+    <li id="ref-rasmussen2025zep">P. Rasmussen, P. Paliychuk, T. Beauvais, J. Ryan and D. Chalef. <a href="https://arxiv.org/abs/2501.13956">Zep: A Temporal Knowledge Graph Architecture for Agent Memory</a>. arXiv:2501.13956, 2025.</li>
+    <li id="ref-chhikara2025mem0">P. Chhikara, D. Khant, S. Aryan, T. Singh and D. Yadav. <a href="https://doi.org/10.3233/FAIA251160">Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory</a>. European Conference on Artificial Intelligence (ECAI), 2025.</li>
+    <li id="ref-fallahpour2026memorilla">A. Fallahpour, P. Idehpour, V. Kothapalli and others. <a href="https://arxiv.org/abs/2610.21375">Memorilla: Latent Semantic Memory for LLMs</a>. arXiv:2610.21375, 2026.</li>
+    <li id="ref-eyuboglu2025cartridges">S. Eyuboglu, R. Ehrlich, S. Arora and others. <a href="https://proceedings.iclr.cc/paper_files/paper/2026/hash/4681359a7b1e94571598ad1adda35e6e-Abstract-Conference.html">Cartridges: Lightweight and General-Purpose Long Context Representations via Self-Study</a>. International Conference on Learning Representations (ICLR), 2026.</li>
+    <li id="ref-engram2026notes">Engram. <a href="https://engram.com/blog/learning-in-a-world-of-notes">Learning in a World of Notes</a>. Research note, 2026.</li>
+    <li id="ref-hafner2020dreamer">D. Hafner, T. Lillicrap, J. Ba and M. Norouzi. <a href="https://openreview.net/forum?id=S1lOTC4tDS">Dream to Control: Learning Behaviors by Latent Imagination</a>. International Conference on Learning Representations (ICLR), 2020.</li>
+    <li id="ref-zhang2026hjepa">W. Zhang, B. Terver, M. Rabbat, Y. LeCun and R. Balestriero. <a href="https://arxiv.org/abs/2610.06805">H-JEPA: End-to-End Learning of Hierarchical World Models for Visual Planning</a>. arXiv:2610.06805, 2026.</li>
+    <li id="ref-huh2024platonic">M. Huh, B. Cheung, T. Wang and P. Isola. <a href="https://proceedings.mlr.press/v235/huh24a.html">Position: The Platonic Representation Hypothesis</a>. International Conference on Machine Learning (ICML), 2024.</li>
+    <li id="ref-assran2023ijepa">M. Assran, Q. Duval, I. Misra and others. <a href="https://doi.org/10.1109/CVPR52729.2023.01499">Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture</a>. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2023.</li>
+    <li id="ref-balestriero2025lejepa">R. Balestriero and Y. LeCun. <a href="https://arxiv.org/abs/2511.08544">LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics</a>. arXiv:2511.08544, 2025.</li>
+    <li id="ref-cohan2020specter">A. Cohan, S. Feldman, I. Beltagy, D. Downey and D. S. Weld. <a href="https://doi.org/10.18653/v1/2020.acl-main.207">SPECTER: Document-level Representation Learning using Citation-informed Transformers</a>. Annual Meeting of the Association for Computational Linguistics (ACL), 2020.</li>
+    <li id="ref-cai2024ehr">T. Cai, F. Huang, R. Nakada, L. Zhang and D. Zhou. <a href="https://doi.org/10.1080/01621459.2026.2698136">Contrastive Learning on Multimodal Analysis of Electronic Health Records</a>. Journal of the American Statistical Association, 2026.</li>
+    <li id="ref-eon2026era">Eon. <a href="https://www.eon.io/blog/era-build-and-test-ai-agents">Meet Era: Simulated Companies to Benchmark Models and Eval Agents</a>. Blog post, 2026.</li>
+    <li id="ref-reimers2019sbert">N. Reimers and I. Gurevych. <a href="https://doi.org/10.18653/v1/D19-1410">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a>. Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP), 2019.</li>
+    <li id="ref-wang2020minilm">W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. <a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers</a>. Advances in Neural Information Processing Systems, 2020.</li>
+    <li id="ref-tiwari2024ifc">T. Tiwari, S. Gururangan, C. Guo and others. <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/tiwari">Information Flow Control in Machine Learning through Modular Model Architecture</a>. USENIX Security Symposium, 2024.</li>
+    <li id="ref-pearl2009causality">J. Pearl. <a href="https://doi.org/10.1017/CBO9780511803161">Causality: Models, Reasoning, and Inference</a>. Cambridge University Press, 2009.</li>
+    <li id="ref-hernan2020causal">M. A. Hernán and J. M. Robins. <a href="https://miguelhernan.org/whatifbook">Causal Inference: What If</a>. Chapman &amp; Hall/CRC, 2020.</li>
+    <li id="ref-vanderaalst2016process">W. M. P. van der Aalst. <a href="https://doi.org/10.1007/978-3-662-49851-4">Process Mining: Data Science in Action</a>. Springer, 2016.</li>
+    <li id="ref-vanderaalst2019object">W. M. P. van der Aalst. <a href="https://doi.org/10.1007/978-3-030-30446-1_1">Object-Centric Process Mining: Dealing with Divergence and Convergence in Event Data</a>. Software Engineering and Formal Methods (SEFM), 2019.</li>
+    <li id="ref-haochen2021spectral">J. Z. HaoChen, C. Wei, A. Gaidon and T. Ma. <a href="https://proceedings.neurips.cc/paper_files/paper/2021/hash/27debb435021eb68b3965290b5e24c49-Abstract.html">Provable Guarantees for Self-Supervised Deep Learning with Spectral Contrastive Loss</a>. Advances in Neural Information Processing Systems (NeurIPS), 2021.</li>
+    <li id="ref-khosla2020supcon">P. Khosla, P. Teterwak, C. Wang and others. <a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html">Supervised Contrastive Learning</a>. Advances in Neural Information Processing Systems, 2020.</li>
+    <li id="ref-schonemann1966procrustes">P. H. Schönemann. <a href="https://doi.org/10.1007/BF02289451">A Generalized Solution of the Orthogonal Procrustes Problem</a>. Psychometrika, 1966.</li>
+    <li id="ref-yu2024samecompany">D. Yu, Z. Liu and H. He. <a href="https://doi.org/10.18653/v1/2025.findings-acl.946">Same Company, Same Signal: The Role of Identity in Earnings Call Transcripts</a>. Findings of the Association for Computational Linguistics: ACL 2025.</li>
+    <li id="ref-zhang2022metadata">Y. Zhang, Z. Shen, C.-H. Wu and others. <a href="https://doi.org/10.1145/3485447.3512174">Metadata-Induced Contrastive Learning for Zero-Shot Multi-Label Text Classification</a>. Proceedings of the ACM Web Conference 2022.</li>
+    <li id="ref-peeters2022supervised">R. Peeters and C. Bizer. <a href="https://doi.org/10.1145/3487553.3524254">Supervised Contrastive Learning for Product Matching</a>. Companion Proceedings of the Web Conference 2022.</li>
+    <li id="ref-peleska2025relational">J. Peleška and G. Šír. <a href="https://doi.org/10.1007/978-3-032-19102-1_38">Task-Agnostic Contrastive Pretraining for Relational Deep Learning</a>. Machine Learning and Principles and Practice of Knowledge Discovery in Databases: International Workshops of ECML PKDD 2025, 2026.</li>
+    <li id="ref-mollaev2025banking">D. Mollaev, I. Kireev, M. Orlov and others. <a href="https://doi.org/10.1145/3746252.3761635">Multimodal Banking Dataset: Understanding Client Needs through Event Sequences</a>. Proceedings of the 34th ACM International Conference on Information and Knowledge Management (CIKM), 2025.</li>
+    <li id="ref-radford2021clip">A. Radford, J. W. Kim, C. Hallacy and others. <a href="https://proceedings.mlr.press/v139/radford21a.html">Learning Transferable Visual Models From Natural Language Supervision</a>. International Conference on Machine Learning (ICML), 2021.</li>
+    <li id="ref-huang2025llmjepa">H. Huang, Y. LeCun and R. Balestriero. <a href="https://proceedings.iclr.cc/paper_files/paper/2026/hash/ac818ec2da1c976b267de32f59709c69-Abstract-Conference.html">LLM-JEPA: Large Language Models Meet Joint Embedding Predictive Architectures</a>. International Conference on Learning Representations (ICLR), 2026.</li>
+    <li id="ref-zuo2026asymmetric">Y. Zuo, É. de la Clergerie and B. Sagot. <a href="https://arxiv.org/abs/2608.28625">Asymmetric Within-Document Predictive Learning for Scientific Document Representation</a>. arXiv:2608.28625, 2026.</li>
+    <li id="ref-moschella2023relative">L. Moschella, V. Maiorca, M. Fumero, A. Norelli, F. Locatello and E. Rodolà. <a href="https://openreview.net/forum?id=SrC-nwieGJ">Relative Representations Enable Zero-Shot Latent Space Communication</a>. International Conference on Learning Representations (ICLR), 2023.</li>
+    <li id="ref-maiorca2023latent">V. Maiorca, L. Moschella, A. Norelli, M. Fumero, F. Locatello and E. Rodolà. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/ad5fa03c906ca15905144ca3fbf2a768-Abstract.html">Latent Space Translation via Semantic Alignment</a>. Advances in Neural Information Processing Systems (NeurIPS), 2023.</li>
+    <li id="ref-nosaka2024collaboration">K. Nosaka, Y. Suetake, Y. Takano and A. Yoshise. <a href="https://doi.org/10.1016/j.compeleceng.2026.111192">Data Collaboration Analysis with Orthonormal Basis Selection and Alignment</a>. Computers and Electrical Engineering, 2026.</li>
+    <li id="ref-hamilton2016diachronic">W. L. Hamilton, J. Leskovec and D. Jurafsky. <a href="https://doi.org/10.18653/v1/P16-1141">Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change</a>. Annual Meeting of the Association for Computational Linguistics (ACL), 2016.</li>
+    <li id="ref-vonkugelgen2021content">J. von Kügelgen, Y. Sharma, L. Gresele and others. <a href="https://arxiv.org/abs/2106.04619">Self-Supervised Learning with Data Augmentations Provably Isolates Content from Style</a>. Advances in Neural Information Processing Systems (NeurIPS), 2021.</li>
+    <li id="ref-shen2020bct">Y. Shen, Y. Xiong, W. Xia and S. Soatto. <a href="https://doi.org/10.1109/CVPR42600.2020.00640">Towards Backward-Compatible Representation Learning</a>. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2020.</li>
+    <li id="ref-maystre2025procrustes">L. Maystre and others. <a href="https://arxiv.org/abs/2510.13406">When Embedding Models Meet: Procrustes Bounds and Applications</a>. arXiv:2510.13406, 2025.</li>
+    <li id="ref-vejendla2025drift">H. Vejendla. <a href="https://doi.org/10.18653/v1/2025.emnlp-main.805">Drift-Adapter: A Practical Approach to Near Zero-Downtime Embedding Model Upgrades in Vector Databases</a>. Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP), 2025.</li>
+    <li id="ref-jayaraman2025permissioned">B. Jayaraman, V. J. Marathe, H. Mozaffari, W. Shen and K. Kenthapadi. <a href="https://papers.neurips.cc/paper_files/paper/2025/hash/754612bde73a8b65ad8743f1f6d8ddf6-Abstract-Conference.html">Permissioned LLMs: Enforcing Access Control in Large Language Models</a>. Advances in Neural Information Processing Systems (NeurIPS), 2025.</li>
+    <li id="ref-bhatt2025participant">S. S. Bhatt, T. Rajore, K. Aggarwal and others. <a href="https://arxiv.org/abs/2509.14608">Position: Enterprise AI Must Enforce Participant-Aware Access Control</a>. arXiv:2509.14608, 2025.</li>
+    <li id="ref-cheng2024xrag">X. Cheng, X. Wang, X. Zhang and others. <a href="https://papers.nips.cc/paper_files/paper/2024/hash/c5cf13bfd3762821ef7607e63ee90075-Abstract-Conference.html">xRAG: Extreme Context Compression for Retrieval-augmented Generation with One Token</a>. Advances in Neural Information Processing Systems (NeurIPS), 2024.</li>
+    <li id="ref-flynt2026orgforge">J. Flynt. <a href="https://arxiv.org/abs/2603.14997">OrgForge: A Multi-Agent Simulation Framework for Verifiable Synthetic Corporate Corpora</a>. arXiv:2603.14997, 2026.</li>
+    <li id="ref-xu2024theagentcompany">F. F. Xu and others. <a href="https://openreview.net/forum?id=LZnKNApvhG">TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks</a>. Advances in Neural Information Processing Systems (NeurIPS), Datasets and Benchmarks Track, 2025.</li>
+    <li id="ref-huang2024crmarena">K.-H. Huang and others. <a href="https://doi.org/10.18653/v1/2025.naacl-long.194">CRMArena: Understanding the Capacity of LLM Agents to Perform Professional CRM Tasks in Realistic Environments</a>. Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics (NAACL), 2025.</li>
+    <li id="ref-nair2026enterprise">J. S. Nair, P. Bechard, R. Maheshwary and others. <a href="https://arxiv.org/abs/2605.12178">Do Enterprise Systems Need Learned World Models? The Importance of Context to Infer Dynamics</a>. arXiv:2605.12178, 2026.</li>
+    <li id="ref-walsh1991organizational">J. P. Walsh and G. R. Ungson. <a href="https://doi.org/10.2307/258607">Organizational Memory</a>. Academy of Management Review, 1991.</li>
+    <li id="ref-shaikh2025gum">O. Shaikh, S. Sapkota, S. Rizvi and others. <a href="https://doi.org/10.1145/3746059.3747722">Creating General User Models from Computer Use</a>. Proceedings of the 38th Annual ACM Symposium on User Interface Software and Technology (UIST), 2025.</li>
   </ol>
 </section>
 </main>
 
 <footer>
   <div class="section">
-    <span>&#169; 2026 Ashwin Gopinath. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
+    <span class="brandline"><a href="https://www.sentra.app" aria-label="Sentra"><svg class="mark" viewBox="0 0 20.4139 20" aria-hidden="true"><use href="#sentra-mark"/></svg><svg class="wordmark" viewBox="0 0 63.7002 15.8828" aria-hidden="true"><use href="#sentra-word"/></svg></a></span>
+    <span>&#169; 2026 Ashwin Gopinath, Sentra. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
     <span><a href="https://github.com/niashwin/company-world-model">GitHub</a></span>
   </div>
 </footer>

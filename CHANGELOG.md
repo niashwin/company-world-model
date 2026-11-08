@@ -1,5 +1,35 @@
 # Changelog
 
+## v7 (November 2026)
+
+A release for a general reader, with every reference checked and linked. The results did not change.
+
+- **Website for a general reader.** The page now opens with the idea in three steps. A company is a world of its
+  own. Every system is a view of that world. A model that predicts one view from another learns the state. This
+  follows the JEPA of Yann LeCun and the theorem of Randall Balestriero and Yann LeCun. Eight results follow, and each one
+  says what we tested, what happened and why it matters. The four layers of corporate AI, the comparison with
+  other work and the details for researchers come after them.
+- **Sentra brand.** The Sentra logo, colors and the Geist fonts on the website, on the image for link previews and
+  in the README.
+- **References.** Three independent checks compared all 56 entries with their sources. The venue of reference 36 is
+  now CIKM 2025, not KDD 2025. GraphRAG now has the ten authors of its current version, and the Platonic
+  Representation Hypothesis has the title of its ICML version. OrgForge has the title of its arXiv listing. Thirteen entries now cite the published version of a
+  preprint. Every entry has a link: a DOI, an arXiv page or a proceedings page. The links work in the PDF.
+- **Linked references on the website.** `cwm/bibrefs.py` writes the list of all 56 references from
+  `paper/refs.bib`, each with a link to its source. Inline mentions on the website link to their sources too.
+- **A review for the general reader.** An agent read the website and the README as an executive would, and
+  checked each number and link. The first screen now names JEPA and the proof, and gives the main result. The
+  results now give their baselines and say that they come from the simulated company. Four results now match their
+  tests exactly. One email can stand in for a name (63.8%, with a ceiling of 68.7%). The gain for MiniLM is for one
+  small model. The leak test used two employees, and similar situations are quarters. The caption of Figure 5 now
+  gives the right measure, and Figure 4 no longer rounds twice. `docs/CHECKS.md` lists every finding.
+- **Phones.** The row of section links starts at its first link, and the Paper button stays in the header.
+- **README.** A plain-language start, the results with why they matter, and linked key references. A list that
+  opens on a click gives all 56 references with links. `tools/readme_refs.py` writes that list from
+  `paper/refs.bib`, and `make site` runs it.
+- The paper has the label of version 7. Its text did not change, apart from the bibliography and the address of
+  the website in the statement on code availability.
+
 ## v6 (November 2026)
 
 Answers an expert assessment of version 5 ([`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md)) and gives the

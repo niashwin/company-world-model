@@ -3,36 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>World Models of Organizations</title>
-<meta name="description" content="Every system sees the same company. We learn one state space for a whole company from the links that its systems already keep, with access control built in.">
+<title>Every system sees the same company: world models of organizations</title>
+<meta name="description" content="A company is a world of its own. We show that AI can learn the state of every customer and project from the links that a company's systems already keep, with the method of world models.">
 <meta property="og:title" content="Every system sees the same company">
-<meta property="og:description" content="Toward world models of organizations: one state space for a whole company, learned from the links that its systems already keep.">
+<meta property="og:description" content="Toward world models of organizations. Research from Sentra: AI that learns the state of a company from the links between its systems.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{SITEURL}}">
 <meta property="og:image" content="{{SITEURL}}assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Every system sees the same company: the records of one customer in seven systems, and where an encoder places them">
+<meta property="og:image:alt" content="Every system sees the same company: the records of one customer in seven systems, and where the model places them">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#041542">
 <link rel="canonical" href="{{SITEURL}}">
-<link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2317212c'/%3E%3Cg stroke='%232a78d6' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M7 9h18M7 16h18M7 23h18'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%23fbfcfd'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/geist-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
+{{SENTRASPRITE}}
 <a class="skip" href="#main">Skip to the content</a>
 <header class="bar">
   <div class="bar-inner">
-    <a class="brand" href="#top">World models of organizations</a>
+    <span class="brand">
+      <a class="logo" href="https://www.sentra.app" aria-label="Sentra"><svg class="mark" viewBox="0 0 20.4139 20" aria-hidden="true"><use href="#sentra-mark"/></svg><svg class="wordmark" viewBox="0 0 63.7002 15.8828" aria-hidden="true"><use href="#sentra-word"/></svg></a>
+      <span class="divider" aria-hidden="true"></span>
+      <a class="title" href="#top">World models of organizations</a>
+    </span>
     <nav class="nav" aria-label="Sections">
-      <a href="#findings">Findings</a>
-      <a href="#why">Corporate AI</a>
-      <a href="#state">State</a>
-      <a href="#access">Access</a>
-      <a href="#memory">Memory</a>
-      <a href="#decisions">Decisions</a>
+      <a href="#idea">The idea</a>
+      <a href="#findings">Results</a>
+      <a href="#why">Why it matters</a>
       <a href="#compare">Compare</a>
-      <a href="#reproduce">Reproduce</a>
+      <a href="#details">Details</a>
       <a href="#cite">Cite</a>
     </nav>
     <div class="bar-actions">
@@ -43,26 +46,27 @@
 </header>
 
 <main id="main">
-<section class="section hero" id="top">
-  <h1>Every system sees the same company</h1>
-  <p class="subtitle">Toward world models of organizations</p>
-  <p class="byline">Ashwin Gopinath, Sentra, San Francisco. November 2026.</p>
-  <div class="prose">
-    <p class="lead">A company keeps its records in many systems: email, chat, the CRM, support tickets, call recordings, calendars and issue trackers. Each system records a part of what happens with a customer. No system records the situation itself.</p>
-    <p class="lead">We learn that situation from the links that the systems already keep. The result is one state space for the whole company, with permissions built in. It is the first learned layer of a world model of the organization. We test it on a simulated company with exact ground truth.</p>
+<section class="hero" id="top">
+  <div class="hero-band">
+    <div class="hero-inner">
+      <h1>Every system sees the same company</h1>
+      <p class="lead">A company is a world of its own. Its email, chat, CRM and support systems each see a part of what happens with every customer, and none of them sees the whole. We show that AI can learn the whole situation from the links that these systems already keep.</p>
+      <p class="sub">The method comes from world models of the physical world, such as Yann LeCun's <a href="{{REF:lecun2022path}}">JEPA</a>. A 2026 <a href="{{REF:balestriero2026platonic}}">proof</a> by Randall Balestriero and Yann LeCun explains why it works. In a simulated company, the model placed <b>{{HOGOODCUST}}</b> of records whose link it never saw with the right customer. A keyword search placed {{HOTFCUST}}.</p>
+      <div class="actions">
+        <a class="button primary" data-link="paper" href="{{PAPERURL}}">Read the paper</a>
+        <a class="button" href="#findings">See the results</a>
+        <a class="button" href="{{CODEURL}}">Code on GitHub</a>
+      </div>
+      <p class="byline">Ashwin Gopinath, Sentra, San Francisco. Technical report, November 2026.</p>
+    </div>
   </div>
-  <div class="actions">
-    <a class="button primary" data-link="paper" href="{{PAPERURL}}">Read the paper</a>
-    <a class="button" href="#why">What it means for corporate AI</a>
-    <a class="button" href="{{CODEURL}}">Get the code</a>
-  </div>
-
+  <div class="hero-figure">
   <figure id="fig-hero">
     <div class="frame">
       <div class="lanes-wrap">
         <div><svg class="lanes" id="lanes" viewBox="0 0 700 330" role="img" aria-label="Records of one customer and quarter in seven systems"></svg></div>
         <div class="map-side canvas-wrap">
-          <canvas id="hero-map" width="420" height="330" role="img" aria-label="Where the encoder places the records"></canvas>
+          <canvas id="hero-map" width="420" height="330" role="img" aria-label="Where the model places the records"></canvas>
           <span class="map-label" id="hero-map-label">Learned state space</span>
         </div>
       </div>
@@ -73,39 +77,156 @@
           <button class="button" id="step-next" aria-label="Next step">&#8594;</button>
           <button class="button" id="step-play">Play</button>
         </div>
-        <p class="step-text" id="step-text" aria-live="polite">The encoder places each record by the situation that it describes. The records of this customer and quarter land close together, whichever system wrote them.</p>
+        <p class="step-text" id="step-text" aria-live="polite">The model places each record by the situation that it describes. The records of this customer and quarter land close together, whichever system wrote them.</p>
       </div>
     </div>
-    <figcaption><b>Figure 1.</b> Left: the {{HERON}} records of Customer {{HEROC}} in {{HEROQ}}, in the seven systems that wrote them. Each line is one record. Right: where an encoder places the {{HEROSAMPLE}} of these records that are among the 3,000 linked records of the paper's Figure {{FIGMAPS}}. Use the steps to follow the method.</figcaption>
+    <figcaption><b>Figure 1.</b> One customer in one quarter. Left: the {{HERON}} records of Customer {{HEROC}} in {{HEROQ}}, in the seven systems that wrote them. Each line is one record. Right: where the model places the {{HEROSAMPLE}} of these records that are among the 3,000 records of Figure 3, further down this page. Step through to see how the model learns.</figcaption>
   </figure>
+  </div>
+</section>
+
+<section class="section" id="idea">
+  <h2>The idea in three steps</h2>
+  <ol class="idea-steps">
+    <li>
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="A company with customers, deals and projects. Each has a state that nobody sees directly.">
+        <circle cx="160" cy="98" r="82" class="paper-f rule" fill="none" stroke-width="1.5"/>
+        <path d="M114 72 L198 78 M114 72 L156 140 M198 78 L156 140" class="ink2" stroke-width="1" fill="none"/>
+        <circle cx="114" cy="72" r="17" class="paper-f ink" stroke-width="1.5"/><circle cx="114" cy="72" r="6.5" class="sig-f"/>
+        <circle cx="198" cy="78" r="17" class="paper-f ink" stroke-width="1.5"/><circle cx="198" cy="78" r="6.5" class="sig-f"/>
+        <circle cx="156" cy="140" r="17" class="paper-f ink" stroke-width="1.5"/><circle cx="156" cy="140" r="6.5" class="sig-f"/>
+        <text x="114" y="44" text-anchor="middle">Customer</text>
+        <text x="226" y="82" text-anchor="start">Deal</text>
+        <text x="156" y="172" text-anchor="middle">Project</text>
+        <circle cx="236" cy="168" r="4.5" class="sig-f"/><text x="246" y="172">its state</text>
+      </svg>
+      <span class="step-n">Step 1</span>
+      <h3>A company is a world of its own</h3>
+      <p>Every customer, deal and project has a state: how things stand right now. Is the customer happy? Is the deal at risk? Nobody sees this state directly. Each person and each tool sees only a part of it.</p>
+    </li>
+    <li>
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Six company systems around one situation. Each system sees the same situation from a different side.">
+        <g class="ink2" stroke-width="1" stroke-dasharray="3 4" fill="none">
+          <path d="M96 40 L160 100 M224 40 L160 100 M74 100 L160 100 M246 100 L160 100 M96 160 L160 100 M224 160 L160 100"/>
+        </g>
+        <circle cx="160" cy="100" r="22" class="sig-f" opacity="0.14"/>
+        <circle cx="160" cy="100" r="9" class="sig-f"/>
+        <g class="paper-f ink" stroke-width="1.3">
+          <rect x="62" y="26" width="68" height="26" rx="6"/><rect x="190" y="26" width="68" height="26" rx="6"/>
+          <rect x="16" y="87" width="68" height="26" rx="6"/><rect x="236" y="87" width="68" height="26" rx="6"/>
+          <rect x="62" y="148" width="68" height="26" rx="6"/><rect x="190" y="148" width="68" height="26" rx="6"/>
+        </g>
+        <text x="96" y="43" text-anchor="middle">Email</text><text x="224" y="43" text-anchor="middle">Chat</text>
+        <text x="50" y="104" text-anchor="middle">CRM</text><text x="270" y="104" text-anchor="middle">Tickets</text>
+        <text x="96" y="165" text-anchor="middle">Calls</text><text x="224" y="165" text-anchor="middle">Calendar</text>
+      </svg>
+      <span class="step-n">Step 2</span>
+      <h3>Every system is a view of that world</h3>
+      <p>An email, a support ticket and a CRM update about one customer in one week are three views of one situation. The systems already link many records to their customer. These links are free training data, and nobody has to label anything.</p>
+    </li>
+    <li>
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Two linked records, an email and a ticket. The model learns to predict one from the other, and both land at the same place in the learned space.">
+        <g class="paper-f ink" stroke-width="1.3"><rect x="20" y="28" width="104" height="56" rx="7"/><rect x="20" y="116" width="104" height="56" rx="7"/></g>
+        <text x="32" y="47">Email</text><text x="32" y="135">Ticket</text>
+        <g class="ink2" stroke-width="2" stroke-linecap="round"><path d="M32 60 H108 M32 70 H92 M32 148 H108 M32 158 H86"/></g>
+        <path d="M72 88 V112" class="sig" stroke-width="1.6" fill="none"/>
+        <path d="M67 93 L72 87 L77 93 M67 107 L72 113 L77 107" class="sig" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="80" y="104" class="small">predict</text>
+        <rect x="170" y="22" width="134" height="156" rx="10" class="rule" fill="none" stroke-width="1.3"/>
+        <g class="ink2-f" opacity="0.55"><circle cx="196" cy="54" r="3"/><circle cx="204" cy="60" r="3"/><circle cx="192" cy="64" r="3"/>
+          <circle cx="270" cy="150" r="3"/><circle cx="279" cy="143" r="3"/><circle cx="283" cy="155" r="3"/>
+          <circle cx="198" cy="150" r="3"/><circle cx="207" cy="156" r="3"/><circle cx="191" cy="158" r="3"/></g>
+        <g class="sig-f"><circle cx="248" cy="80" r="4"/><circle cx="257" cy="88" r="4"/><circle cx="242" cy="92" r="4"/><circle cx="252" cy="98" r="4"/></g>
+        <path d="M128 56 C180 56 210 74 236 82 M128 144 C184 144 214 104 238 96" class="sig" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+        <text x="258" y="120" text-anchor="middle">same place</text>
+      </svg>
+      <span class="step-n">Step 3</span>
+      <h3>Predict one view from another, and the state appears</h3>
+      <p>World models learn about the physical world this way. Yann LeCun's <a href="{{REF:lecun2022path}}">JEPA</a> learns to predict one view of a scene from another view of it. Randall Balestriero and Yann LeCun <a href="{{REF:balestriero2026platonic}}">proved</a> that, with the right pairs of views, such models converge to the same picture of the true state. We give the model pairs of linked records.</p>
+    </li>
+  </ol>
+  <div class="callout">
+    <h3>Why this is fundamental</h3>
+    <p>World models changed how AI understands the physical world. Models such as <a href="{{REF:assran2025vjepa2}}">V-JEPA 2</a> learn the state of a scene from video, and then plan actions. This work opens the same path for organizations: treat the company as a world, learn its state, and then learn how that state changes.</p>
+    <p>The theory makes a strong promise. The result depends mostly on which records count as views of the same situation, and much less on the details of the model. Companies already record those pairs as a side effect of their work.</p>
+    <p>We test the idea on Northwind Robotics, a company that <a href="{{REF:gruenbaum2026era}}">Era by Eon</a> simulates with exact ground truth. It has {{CORPUSRECORDS}} records in seven systems, and {{CORPUSCUSTOMERS}} customers. With a simulation, we can check every answer against the truth.</p>
+  </div>
 </section>
 
 <section class="section" id="findings">
-  <h2>What we found, and what it means</h2>
-  <div class="prose"><p>We test on a simulated company with exact ground truth: {{CORPUSRECORDS}} records in seven systems, and {{CORPUSCUSTOMERS}} customers.</p></div>
-  <ul class="findings">
-    <li><span class="fig-n">{{HOGOODCUST}}</span><div><p>of records whose customer link we hid land with the right customer. Text similarity places {{HOTFCUST}}.</p><p class="means">A company's AI can place most records with the right customer, also a record without its link.</p><a href="#state">State space</a></div></li>
-    <li><span class="fig-n nowrap">{{PTRAWHO}}&#8202;&#8594;&#8202;{{PTHEADHO}}</span><div><p>The same training signal improves a pretrained text encoder on these records.</p><p class="means">It also improves an off-the-shelf text encoder, of the kind that companies already use.</p><a href="#state">State space</a></div></li>
-    <li><span class="fig-n">{{ANCHMHOSTATE}}</span><div><p>of records whose link we hid still land with the right customer when we mask every name and identifier. A pretrained encoder places {{ANCHMHODETAIL}}.</p><p class="means">The model learns more than names. It recognizes a customer from what the records say.</p><a href="#state">State space</a></div></li>
-    <li><span class="fig-n">No leak</span><div><p>No result that a reader gets changes when we plant secrets in records that the reader may not read.</p><p class="means">Each person's AI can learn from the company and still not reveal what that person may not see. People who may read little get less accurate results.</p><a href="#access">Access control</a></div></li>
-    <li><span class="fig-n">{{ANCHPPLACESTATEACC}}</span><div><p>of questions answered when each question comes with one record of the customer instead of its name, with the names kept in the records. A pretrained encoder answers {{ANCHPPLACEDETAILACC}}, and no memory {{ANCHPCLOSEDACC}}.</p><p class="means">A question that starts from a ticket or an email more often reaches the right customer's records.</p><a href="#memory">Memory</a></div></li>
-    <li><span class="fig-n">{{SITRANGE}}</span><div><p>of the most similar situations of other customers share the situation, against {{SITCHANCE}} by chance.</p><p class="means">&#8220;Have we seen this before?&#8221; gets a first, rough answer, at about twice chance.</p><a href="#time">Similar situations</a></div></li>
-    <li><span class="fig-n">{{SIMINTERV}} of {{SIMTROUBLE}}</span><div><p>months in trouble in which the company intervened. The logs show where the company acted, not what the action did.</p><p class="means">To learn what works, a company must log why it decided, and vary some decisions on purpose.</p><a href="#decisions">Decisions</a></div></li>
-    <li><span class="fig-n">{{TRAINMINLO}}&#8211;{{TRAINMINHI}} min</span><div><p>to train each encoder or head that we timed, on a CPU and without a GPU.</p><p class="means">At this scale, a company can train the model again each day, also with one model for each permission scope.</p><a href="#reproduce">Reproduce</a></div></li>
+  <h2>What we found, and why it matters</h2>
+  <p class="kicker">Eight results from the simulated company. Each one says what we tested, what happened, and what it could mean for a real company.</p>
+  <ul class="results">
+    <li>
+      <p class="result-n">{{HOGOODCUST}}</p>
+      <h3>Records find their customer, even without their link</h3>
+      <p>We hid the customer links of {{HONTEST}} records and asked the model where each one belongs. It put {{HOGOODCUST}} with the right customer. A keyword search put {{HOTFCUST}} there. A guess of the largest customer gets {{HOMAJCUST}}.</p>
+      <p class="why"><b>Why it matters.</b> AI can assemble one picture of each customer from every tool, also from records that lost their link.</p>
+      <a class="more" href="#state">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">{{ANCHMHOSTATE}}</p>
+      <h3>It recognizes customers without their names</h3>
+      <p>We removed every name, email address and identifier from the records. The model still put {{ANCHMHOSTATE}} of the hidden records with the right customer. A small ready-made AI text model (<a href="{{REF:wang2020minilm}}">MiniLM</a>) put {{ANCHMHODETAIL}} there, and a guess of the largest customer gets {{HOMAJCUST}}.</p>
+      <p class="why"><b>Why it matters.</b> Names do much of the work, but not all of it. The model also learns what each customer's situation looks like.</p>
+      <a class="more" href="#state">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">{{PTRAWHO}}&#8202;&#8594;&#8202;{{PTHEADHO}}</p>
+      <h3>It also improves a ready-made AI text model</h3>
+      <p>We added the same training on top of a small ready-made AI text model, MiniLM. Its share of hidden records with the right customer rose from {{PTRAWHO}} to {{PTHEADHO}}.</p>
+      <p class="why"><b>Why it matters.</b> A company can add this training to a model that it already runs, and does not have to replace the model. We tested one small model. Larger models are a next step.</p>
+      <a class="more" href="#state">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">No leak</p>
+      <h3>Privacy is part of the model</h3>
+      <p>We planted secret codenames in {{ACLCANARYN}} records that two employees may not read, and searched for them as each employee. A model trained on everything pointed to the right customer every time, even when we filtered the results to what the employee may read. Models trained only on what each employee may read gave the same results with and without the secrets.</p>
+      <p class="why"><b>Why it matters.</b> A permission filter on search results is not enough. When each group's model learns only from what the group may read, it cannot reveal the rest. People who may read little get less accurate results.</p>
+      <a class="more" href="#access">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">{{ANCHPPLACESTATEACC}}</p>
+      <h3>One email can stand in for the customer's name</h3>
+      <p>We asked questions that came with one email or ticket instead of the customer's name. With the learned space, the system gave the right answer {{ANCHPPLACESTATEACC}} of the time. With the small ready-made model it did {{ANCHPPLACEDETAILACC}}, and with no memory {{ANCHPCLOSEDACC}}. A system that knows the email's true link gets {{ANCHPLINKACC}}. The names stayed in the records for this test.</p>
+      <p class="why"><b>Why it matters.</b> People rarely ask with exact names. A forwarded email or a ticket can bring the right customer's records.</p>
+      <a class="more" href="#memory">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">{{SITRANGE}}</p>
+      <h3>&#8220;Have we seen this before?&#8221; gets a first answer</h3>
+      <p>For each customer and quarter, we found the five most similar quarters of other customers. Of these, {{SITRANGE}} shared the situation, against {{SITCHANCE}} by chance. The share depends on the representation.</p>
+      <p class="why"><b>Why it matters.</b> A team can find earlier cases like the one in front of it. This is a first, rough answer, at about twice chance.</p>
+      <a class="more" href="#time">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">{{SIMINTERV}} of {{SIMTROUBLE}}</p>
+      <h3>Logs show what a company did, not what worked</h3>
+      <p>We studied {{SIMTROUBLE}} months in which a customer was in trouble. The company stepped in {{SIMINTERV}} times. So the logs hold almost no cases in which it did not act, and they cannot show which actions help.</p>
+      <p class="why"><b>Why it matters.</b> To let AI learn what works, a company must record its decisions and their reasons, and sometimes vary them on purpose.</p>
+      <a class="more" href="#decisions">How we measured it</a>
+    </li>
+    <li>
+      <p class="result-n">{{TRAINMINLO}}&#8211;{{TRAINMINHI}}<small>min</small></p>
+      <h3>It is cheap to train</h3>
+      <p>Each model that we timed trained in {{TRAINMINLO}} to {{TRAINMINHI}} minutes on an ordinary computer, without a GPU.</p>
+      <p class="why"><b>Why it matters.</b> With {{CORPUSLINKED}} linked records, as here, a company can train the model again often. It can also keep a separate model for each group of people with the same access. We did not test a company with millions of records.</p>
+      <a class="more" href="#reproduce">How to run it</a>
+    </li>
   </ul>
 </section>
 
 <section class="section" id="why">
-  <h2>What this means for corporate AI</h2>
+  <h2>Why it matters: from a memory to a model of the company</h2>
   <div class="prose">
-    <p class="lead">At Sentra, we call it corporate AI: AI that understands how a company works, acts within its permissions and helps it decide.</p>
-    <p>Many AI assistants rebuild context from documents for each question, and then forget it. Two questions about the same customer can rebuild the situation differently. Corporate AI needs a model of the company itself, which stays current as the company works. We build it in four layers. Each layer is useful on its own, and each one makes the next one possible.</p>
+    <p class="lead">Most AI assistants answer from documents and then forget. They have no model of the company itself, so two questions about the same customer can get two different pictures of it.</p>
+    <p>We call the goal corporate AI: AI that understands how a company works, acts within each person's permissions and helps the company decide. We see four layers on the way there. Each layer is useful on its own, and each one makes the next one possible.</p>
   </div>
   <ol class="layers">
-    <li><span class="layer-n">1</span><div><h3>Memory that accumulates</h3><p>An organizational memory keeps what happened, who decided it and why, and where each fact came from. Sentra builds this kind of memory today.</p></div><span class="status">In place</span></li>
-    <li class="this"><span class="layer-n">2</span><div><h3>Representations that learn</h3><p>One state space for the whole company, learned from the links between its systems. It places each record with its customer, and permissions are part of it. This is the work on this page.</p></div><span class="status done">Shown in simulation</span></li>
-    <li><span class="layer-n">3</span><div><h3>Models that predict</h3><p>A predictor of how situations change, and of what decisions do. We build a first version on the state space, and we show what data it needs to learn the effects of decisions.</p></div><span class="status">Next</span></li>
-    <li><span class="layer-n">4</span><div><h3>Organizations that improve</h3><p>People and agents test a decision against the model before they act. Then they compare what the model predicted with what happened, and the model learns from the difference.</p></div><span class="status">Future</span></li>
+    <li><span class="layer-n">1</span><div><h3>Memory that accumulates</h3><p>A memory of the company keeps what happened, who decided it and why, and where each fact came from. Products such as <a href="https://www.sentra.app">Sentra</a> build this layer today.</p></div><span class="status">In place</span></li>
+    <li class="this"><span class="layer-n">2</span><div><h3>Representations that learn</h3><p>One learned picture of the whole company, from the links between its systems. It places most records with their customer, and permissions are part of it. This is the study on this page.</p></div><span class="status done">Shown in simulation</span></li>
+    <li><span class="layer-n">3</span><div><h3>Models that predict</h3><p>A model that predicts how situations change, and what decisions do. We build a first version on the learned space, and we show what data it needs.</p></div><span class="status">Next</span></li>
+    <li><span class="layer-n">4</span><div><h3>Organizations that improve</h3><p>People and AI agents test a decision against the model before they act. Then the model learns from what happened.</p></div><span class="status">Future</span></li>
   </ol>
   <figure id="fig-stack">
     <div class="frame panel">
@@ -113,12 +234,12 @@
         <div class="stack-col"><div class="node src"><b>Every system</b><span>Email, chat, CRM, tickets, calls, calendars and issues</span></div></div>
         <div class="arrow" aria-hidden="true"></div>
         <div class="stack-col">
-          <div class="node mem"><b>Organizational memory</b><span>Facts, decisions, sources, time and permissions</span></div>
-          <div class="node state"><b>State space</b><span>Where each record belongs, and which situations are alike. This work.</span></div>
+          <div class="node mem"><b>Memory of the company</b><span>Facts, decisions, sources, dates and permissions</span></div>
+          <div class="node state"><b>Learned state space</b><span>Where each record belongs, and which situations are alike. This study.</span></div>
         </div>
         <div class="arrow" aria-hidden="true"></div>
         <div class="stack-col">
-          <div class="node read"><b>Memory reader</b><span>Finds records by situation, and reads them by detail</span></div>
+          <div class="node read"><b>Memory reader</b><span>Finds records by situation, and reads their details</span></div>
           <div class="node pred"><b>Predictor</b><span>How situations change, and what decisions do. Next.</span></div>
         </div>
         <div class="arrow" aria-hidden="true"></div>
@@ -126,27 +247,45 @@
       </div>
       <p class="loop"><svg class="loop-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 7.5A5 5 0 1 1 11 3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11.6 1.2v3.2H8.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Decisions and their outcomes become new records. When some decisions vary on purpose, the model can learn what they do.</p>
     </div>
-    <figcaption><b>Figure 2.</b> How the layers fit together. The learned state space does not replace the memory. The memory keeps the facts, sources and permissions. The state space adds two things: a place for records without a link, and a measure of which situations are alike. We tested the memory reader on the state space. The full combination is a design, not yet a measured system.</figcaption>
+    <figcaption><b>Figure 2.</b> How the layers fit together. The learned space does not replace the memory. The memory keeps the facts, sources and permissions. The learned space adds two things: a place for records without a link, and a measure of which situations are alike. We tested the memory reader on the learned space. The full combination is a design, not yet a measured system.</figcaption>
   </figure>
 </section>
 
-<section class="section" id="idea">
-  <h2>The idea</h2>
+<section class="section" id="compare">
+  <h2>How this compares</h2>
   <div class="prose">
-    <p>A world model of an organization has a state space. Each point in this space is a situation, for example one customer in one quarter. Each record of the company lands at the situation that it describes, whichever system wrote it.</p>
-    <p>A recent result, the Platonic Representation Theorem, shows how to learn such a space. A model learns to predict one record of a situation from another record of the same situation. Such pairs are <em>good views</em>: two different observations of the same state. With good views, models of this kind (JEPAs) converge to the same space, up to a rotation.</p>
-    <p>Companies already keep good views. The CRM, the email system and the ticket system each link records to customers. Two records that two systems link to the same customer in the same quarter observe the same situation. Nobody has to label anything.</p>
-    <p>We test this idea on Northwind Robotics, a company that Era by Eon simulates with exact ground truth. The company has {{CORPUSRECORDS}} records in seven systems. Of these, {{CORPUSLINKED}} have a link to one of {{CORPUSCUSTOMERS}} customers. The other {{CORPUSUNLINKED}} have no link, so the encoder must place them from their content alone. We cannot score these records directly, because they have no ground truth.</p>
+    <p>Other approaches give AI knowledge of a company in different ways, and they work best together. Most of them store or read what the company wrote. This work adds a layer that first organizes those records into situations.</p>
   </div>
+  <div class="compare-wrap" role="region" aria-label="Comparison of approaches" tabindex="0">
+  <table class="compare">
+    <thead><tr><th scope="col">Approach</th><th scope="col">What it does</th><th scope="col">Where it is strong</th><th scope="col">What it leaves open</th><th scope="col">How it fits with this work</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Enterprise search and RAG<span><a href="{{REF:lewis2020rag}}">Retrieval-augmented generation</a></span></th><td data-label="What it does">Finds documents for each question, and a language model reads them.</td><td data-label="Where it is strong">Current and simple, with permission filters on the results.</td><td data-label="What it leaves open">Builds the situation again for each question, from the documents that it finds.</td><td data-label="How it fits">The learned space can send a question to its situation before the search.</td></tr>
+      <tr><th scope="row">Company memory and knowledge graphs<span>For example, <a href="{{REF:edge2024graphrag}}">GraphRAG</a>, <a href="{{REF:rasmussen2025zep}}">Zep</a>, <a href="{{REF:packer2023memgpt}}">MemGPT</a> and <a href="{{REF:chhikara2025mem0}}">Mem0</a></span></th><td data-label="What it does">Keeps entities, facts, decisions and their sources in a graph or a ledger.</td><td data-label="Where it is strong">Facts with sources, easy to audit and update.</td><td data-label="What it leaves open">Keeps facts, not a learned state of each situation.</td><td data-label="How it fits">The learned state is a view of this memory. The memory keeps the facts, and the state adds placement and similarity.</td></tr>
+      <tr><th scope="row"><a href="{{REF:fallahpour2026memorilla}}">Memorilla</a><span>Stanford, 2026</span></th><td data-label="What it does">Turns a document collection into 16 memory tokens for each question, which a frozen language model reads.</td><td data-label="Where it is strong">Reads large collections with few tokens: 84.33% on FactKG, against 80.43% with the full context.</td><td data-label="What it leaves open">Organizes documents, not situations.</td><td data-label="How it fits">Our memory reader is a small version of this design. A reader of this kind could read situations instead of separate documents.</td></tr>
+      <tr><th scope="row"><a href="{{REF:engram2026notes}}">Engram</a><span>2026</span></th><td data-label="What it does">Studies a company's information ahead of time, keeps notes about it, and trains models to use the notes.</td><td data-label="Where it is strong">Better and cheaper answers. Engram reports a gain of 7 to 20 points when it trains models to use their notes, and the gain held as the notes changed.</td><td data-label="What it leaves open">Knowledge stays in notes, without a learned state of each situation.</td><td data-label="How it fits">Agents trained this way could act on a shared state that respects permissions. We did not test this.</td></tr>
+      <tr><th scope="row">Process mining<span><a href="{{REF:vanderaalst2016process}}">Van der Aalst, 2016</a></span></th><td data-label="What it does">Builds models of business processes from event logs that a case number links.</td><td data-label="Where it is strong">Shows how work flows, and where it stalls.</td><td data-label="What it leaves open">Needs structured events. It does not read the text of the work.</td><td data-label="How it fits">The same idea, links between records, applied to every record that has text.</td></tr>
+      <tr><th scope="row">World models of physical scenes<span><a href="{{REF:assran2025vjepa2}}">V-JEPA 2</a> and <a href="{{REF:zhang2026hjepa}}">H-JEPA</a></span></th><td data-label="What it does">Learn the state of a scene from video, and predict what actions do.</td><td data-label="Where it is strong">Prediction and planning for robots.</td><td data-label="What it leaves open">Built for cameras and sensors, not for company records and permissions.</td><td data-label="How it fits">This work brings the recipe to organizations. Prediction is its next layer.</td></tr>
+      <tr class="this"><th scope="row">This work</th><td data-label="What it does">Learns one state space for the whole company from the links between its systems.</td><td data-label="Where it is strong">Places records whose links it never saw, and has permissions built in.</td><td data-label="What it leaves open">Prediction of change, and the effects of decisions. Tested on one simulated company so far.</td><td data-label="How it fits">The layer that the others could keep, compress or read.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Adapted from Table 1 of the paper, which gives the references. The numbers for Memorilla and Engram come from their own reports.</p>
 </section>
+
+<div class="section-head" id="details"><div class="rule-line">
+  <h2>The results in detail</h2>
+  <p>This part is for readers who want the evidence. Each section shows one experiment, its numbers and an interactive figure. The <a data-link="paper" href="{{PAPERURL}}">paper</a> gives every detail.</p>
+</div></div>
+
 
 <section class="section" id="state">
   <h2>One state space for seven systems</h2>
   <p class="takeaway"><b>For a company:</b> one picture of each customer across every tool, also for a record without its link.</p>
   <div class="prose">
-    <p>We train small text encoders from scratch on the linked records, with three objectives on the same text. Good views pair two records of the same customer and quarter, from any system. Bad views pair a record with a damaged copy of itself. Next-token prediction learns to predict the next word.</p>
+    <p>An encoder is a model that turns each record into a point in a space. We train small encoders from scratch on the linked records, with three objectives on the same text. <em>Good views</em> pair two records of the same customer and quarter, from any system. <em>Bad views</em> pair a record with a damaged copy of itself. <em>Next-token prediction</em> learns to predict the next word, as most language models do.</p>
     <p>First, we measure on the training records. With good views, {{E1GOODPCT}} of a record's ten nearest records from other systems belong to the same customer. Bad views and next-token prediction reach {{E1BADPCT}} and {{E1NTPPCT}}.</p>
-    <p>The fairer test hides the links of some records. The encoder never sees their links, and their threads are not in the training data. A good-view encoder places {{HOGOODCUST}} of these records with the right customer. TF-IDF places {{HOTFCUST}}, and a guess of the largest customer {{HOMAJCUST}}. The same good views also raise a frozen pretrained encoder from {{PTRAWHO}} to {{PTHEADHO}}.</p>
+    <p>The fairer test hides the links of some records. The encoder never sees their links, and their threads are not in the training data. A good-view encoder places {{HOGOODCUST}} of these records with the right customer. A keyword search (TF-IDF) places {{HOTFCUST}}, and a guess of the largest customer {{HOMAJCUST}}. The same good views also raise a frozen pretrained encoder (<a href="{{REF:wang2020minilm}}">MiniLM</a>) from {{PTRAWHO}} to {{PTHEADHO}}.</p>
     <p>The space learns more than names. With every name and identifier masked, it still places {{ANCHMHOSTATE}} of these records with the right customer, against {{ANCHMHODETAIL}} for the pretrained encoder. It finds the customer more sharply than the exact quarter, and monthly windows add some timing.</p>
   </div>
   <figure id="fig-map">
@@ -183,7 +322,7 @@
   <p class="takeaway"><b>For a company:</b> each person's model learns only from what that person may read, so it cannot reveal the rest.</p>
   <div class="prose">
     <p>A learned world model can leak through three paths: search results, states that combine records a reader may not open, and the encoder's own training. Filters on search results and states close only the first two paths.</p>
-    <p>To test this, we plant secrets in {{ACLCANARYN}} records that a reader may not read. Then the reader searches for them. With an encoder trained on everything, the search finds the secrets, even when we filter the search and the states.</p>
+    <p>To test this, we plant secrets in {{ACLCANARYN}} records that a reader may not read. Then the reader searches for them. With an encoder trained on everything, the search still points to the right customer, even when we filter the search and the states.</p>
     <p>When each reader's model trains only on the records that the reader may read, every result is the same with and without the secrets. The cost falls on people who may read little. A shared pretrained backbone, which holds no company data, recovers part of that cost for some of them.</p>
   </div>
   <figure id="fig-leak">
@@ -196,7 +335,7 @@
         <div class="legend"><span><i class="key dot" style="background:var(--bad)"></i>With the secrets planted</span><span><i class="key dot" style="background:var(--mute-2)"></i>Without the secrets</span></div>
       </div>
     </div>
-    <figcaption><b>Figure 5.</b> A search for a planted codename (precision@10) and for a planted secret sentence (precision@5). The distance between the two dots is the leak. With access control built in, the two dots are at the same place.</figcaption>
+    <figcaption><b>Figure 5.</b> Two searches for planted secrets. For a codename, the chart shows the share of the top 10 results that belong to the customer whose records hold the codename. For the secret sentence, it shows the share of the five most similar customers that are the five customers with secrets. The distance between the two dots is the leak. With access control built in, the two dots are at the same place.</figcaption>
   </figure>
   <figure id="fig-rescue">
     <div class="frame"><div class="figure-body"><svg class="chart" id="rescue"></svg>
@@ -212,7 +351,7 @@
   <p class="takeaway"><b>For a company:</b> a question that starts from a ticket or an email, not a name, more often reaches the right customer's records.</p>
   <div class="prose">
     <p>The state channel tells where a record belongs: which customer and which situation. The detail channel tells what the record says. A pretrained sentence encoder keeps these details. A memory of the company needs both channels.</p>
-    <p>We ask questions about customers, for example how many tickets a customer had in a quarter. A small reader answers from 16 records that a store finds. The reader is a small version of the Memorilla design.</p>
+    <p>We ask questions about customers, for example how many tickets a customer had in a quarter. A small reader answers from 16 records that a store finds. The reader is a small version of the <a href="{{REF:fallahpour2026memorilla}}">Memorilla</a> design.</p>
     <p>When a question names the customer, a store of pretrained-encoder vectors, the detail channel, answers as well as any combination of channels.</p>
     <p>Sometimes a question comes with one record of the customer instead of the name. We call this record the anchor. A store first places the anchor with a customer, and the reader then reads that customer's records. With the names kept, placement with the state channel answers {{ANCHPPLACESTATEACC}} of the questions, against {{ANCHPPLACEDETAILACC}} with the pretrained encoder and {{ANCHPCLOSEDACC}} with no store. With every name masked, the gain is smaller.</p>
   </div>
@@ -259,9 +398,9 @@
   <p class="takeaway"><b>For a company:</b> to learn what works, log decisions with their reasons, and vary some of them on purpose.</p>
   <div class="prose">
     <p>We read six kinds of action from the records: sales calls, messages from leaders, CRM tasks, engineering escalations, support replies and emails to customers. Then we add the actions to the predictor.</p>
-    <p>This month's actions add little to the prediction of next month's state, because the state already reflects most of them.</p>
+    <p>This month's actions add little to the prediction of next month's state. One reason is that the state already reflects most of them.</p>
     <p>We also simulate a decision for {{SIMTROUBLE}} customer-months in trouble: an urgent or high-priority ticket during an open deal. For each month, we find similar months of other customers. Then we compare the months in which the company intervened with the months in which it did not intervene.</p>
-    <p>The company intervened in {{SIMINTERV}} of the {{SIMTROUBLE}} months. The similar months in which it intervened were in trouble {{SIMBALTROUBLEONR}} of the time, against {{SIMBALTROUBLEOFFR}} for the months in which it did not intervene. So the comparison sets troubled months against calm months. It shows where the company acted, not what the action did.</p>
+    <p>The company intervened in {{SIMINTERV}} of the {{SIMTROUBLE}} months. The similar months in which it intervened were in trouble {{SIMBALTROUBLEONR}} of the time, against {{SIMBALTROUBLEOFFR}} for the months in which it did not intervene. So the comparison sets troubled months against calm months. It shows where the company acted, not what the action did. To learn the effect of a decision, the data must record why each decision happened. Similar cases must also get different decisions (<a href="{{REF:pearl2009causality}}">Pearl</a>; <a href="{{REF:hernan2020causal}}">Hern&#225;n and Robins</a>).</p>
   </div>
   <figure id="fig-sim">
     <div class="frame">
@@ -296,33 +435,11 @@
   </figure>
 </section>
 
-<section class="section" id="compare">
-  <h2>How this compares</h2>
-  <div class="prose">
-    <p>Enterprise AI gives models knowledge of a company in several ways. They are layers of one architecture more than rivals. Most of them keep or read what the company wrote. This work adds the layer that organizes those records into situations before anything reads them.</p>
-  </div>
-  <div class="compare-wrap" role="region" aria-label="Comparison of approaches" tabindex="0">
-  <table class="compare">
-    <thead><tr><th scope="col">Approach</th><th scope="col">What it does</th><th scope="col">Where it is strong</th><th scope="col">What it leaves open</th><th scope="col">How it fits with this work</th></tr></thead>
-    <tbody>
-      <tr><th scope="row">Enterprise search and RAG<span>Retrieval-augmented generation</span></th><td data-label="What it does">Finds documents for each question, and a language model reads them.</td><td data-label="Where it is strong">Current and simple, with permission filters on the results.</td><td data-label="What it leaves open">Builds the situation again for each question, from the documents that it finds.</td><td data-label="How it fits">The state space can send a question to its situation before the search.</td></tr>
-      <tr><th scope="row">Organizational memory and knowledge graphs<span>For example, Sentra's memory, GraphRAG, Zep, MemGPT and Mem0</span></th><td data-label="What it does">Keeps entities, facts, decisions and their sources in a graph or a ledger.</td><td data-label="Where it is strong">Facts with sources, easy to audit and update.</td><td data-label="What it leaves open">Keeps facts, not a learned state of each situation.</td><td data-label="How it fits">The learned state is a view of this memory. The memory keeps the facts, and the state adds placement and similarity.</td></tr>
-      <tr><th scope="row">Memorilla<span>Stanford, 2026</span></th><td data-label="What it does">Turns a document collection into 16 memory tokens for each question, which a frozen language model reads.</td><td data-label="Where it is strong">Reads large collections with few tokens: 84.33% on FactKG, against 80.43% with the full context.</td><td data-label="What it leaves open">Organizes documents, not situations.</td><td data-label="How it fits">Our memory reader is a small version of this design. A reader of this kind could read situations instead of separate documents.</td></tr>
-      <tr><th scope="row">Engram<span>2026</span></th><td data-label="What it does">Studies a company's information ahead of time, keeps notes about it, and trains models to use the notes.</td><td data-label="Where it is strong">Better and cheaper answers. Engram reports a gain of 7 to 20 points when it trains models to use their notes, and the gain held as the notes changed.</td><td data-label="What it leaves open">Knowledge stays in notes, without a learned state of each situation.</td><td data-label="How it fits">Agents trained this way could act on a shared state that respects permissions. We did not test this.</td></tr>
-      <tr><th scope="row">Process mining<span>Object-centric process mining</span></th><td data-label="What it does">Builds models of business processes from event logs that a case number links.</td><td data-label="Where it is strong">Shows how work flows, and where it stalls.</td><td data-label="What it leaves open">Needs structured events. It does not read the text of the work.</td><td data-label="How it fits">The same idea, links between records, applied to every record that has text.</td></tr>
-      <tr><th scope="row">World models of physical scenes<span>V-JEPA 2 and H-JEPA</span></th><td data-label="What it does">Learn latent states from video, and predict what actions do.</td><td data-label="Where it is strong">Prediction and planning for robots.</td><td data-label="What it leaves open">Built for sensors, not for company records and permissions.</td><td data-label="How it fits">This work brings the recipe to organizations. Prediction is its next layer.</td></tr>
-      <tr class="this"><th scope="row">This work</th><td data-label="What it does">Learns one state space for the whole company from the links between its systems.</td><td data-label="Where it is strong">Places records whose links it never saw, and has permissions built in.</td><td data-label="What it leaves open">Prediction of change, and the effects of decisions. Tested on one simulated company so far.</td><td data-label="How it fits">The layer that the others could keep, compress or read.</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="note">Sources: Memorilla (Fallahpour and others, <a href="https://arxiv.org/abs/2610.21375">arXiv:2610.21375</a>). Engram, <a href="https://engram.com/blog/learning-in-a-world-of-notes">Learning in a world of notes</a>, 4 November 2026. Process mining (van der Aalst, <i>Process Mining: Data Science in Action</i>, 2016). GraphRAG (<a href="https://arxiv.org/abs/2404.16130">arXiv:2404.16130</a>), Zep (<a href="https://arxiv.org/abs/2501.13956">arXiv:2501.13956</a>), MemGPT (<a href="https://arxiv.org/abs/2310.08560">arXiv:2310.08560</a>) and Mem0 (<a href="https://arxiv.org/abs/2504.19413">arXiv:2504.19413</a>). V-JEPA 2 (<a href="https://arxiv.org/abs/2506.09985">arXiv:2506.09985</a>) and H-JEPA (<a href="https://arxiv.org/abs/2610.06805">arXiv:2610.06805</a>). Table 1 of the paper gives the same comparison with references.</p>
-</section>
-
 <section class="section" id="next">
   <h2>What comes next</h2>
   <div class="prose">
     <p>The decisive next test is causal. It needs a simulator with a hidden state and known effects of actions. There, one customer can face different decisions: an engineering escalation, a discount or a call from an executive. A world model passes the test if it ranks those decisions by their true effects for customers that it never saw. It must also beat a memory with simple rules.</p>
-    <p>Organizations also change at several speeds. Tickets move in hours, deals in weeks and strategy in quarters. A hierarchy of state spaces, one for each timescale, is a direct extension of this work.</p>
+    <p>Organizations also change at several speeds. Tickets move in hours, deals in weeks and strategy in quarters. A hierarchy of state spaces, one for each timescale, is a direct extension of this work, in the manner of <a href="{{REF:zhang2026hjepa}}">H-JEPA</a>.</p>
     <h3>Scope of this study</h3>
     <ul class="limits">
       <li>All results come from one simulated company, whose text is cleaner than real company text.</li>
@@ -347,12 +464,11 @@ pytest -q tests
 <span class="c"># every experiment, from the simulated company to the paper (several hours, Docker for Era)</span>
 bash scripts/reproduce.sh</pre>
   <div class="prose">
-    <p class="note">Era by Eon generates the company. The repository does not include the generated data. The script starts the seven simulators with Docker and exports every record. See REPRODUCE.md in the repository for the command that makes each table.</p>
+    <p class="note">Era by Eon generates the company. The repository does not include the generated data. The script starts the seven simulators with Docker and exports every record. See <a href="{{CODEURL}}/blob/main/REPRODUCE.md">REPRODUCE.md</a> for the command that makes each table.</p>
   </div>
 </section>
-
 <section class="section" id="cite">
-  <h2>Cite</h2>
+  <h2>Cite this work</h2>
   <div class="cite-box">
 <pre id="bibtex">@techreport{gopinath2026organizations,
   title       = {Toward World Models of Organizations: Every System Sees the Same Company},
@@ -361,38 +477,23 @@ bash scripts/reproduce.sh</pre>
   address     = {San Francisco},
   year        = {2026},
   month       = nov,
-  note        = {Version 6},
+  note        = {Version 7},
   url         = {{{CODEURL}}}
 }</pre>
     <button class="button" id="copy-bib" type="button">Copy</button>
   </div>
   <h3>References</h3>
+  <p class="note">All {{REFCOUNT}} references of the paper, in the order of the paper. Each title links to the source.</p>
   <ol class="refs">
-    <li>R. Balestriero and Y. LeCun. Proving and improving the Platonic Representation Hypothesis with JEPAs. <a href="https://arxiv.org/abs/2610.39302">arXiv:2610.39302</a>, 2026.</li>
-    <li>R. Balestriero and Y. LeCun. LeJEPA: provable and scalable self-supervised learning without the heuristics. <a href="https://arxiv.org/abs/2511.08544">arXiv:2511.08544</a>, 2025.</li>
-    <li>M. Huh, B. Cheung, T. Wang and P. Isola. The Platonic Representation Hypothesis. ICML, 2024.</li>
-    <li>B. Gruenbaum, D. Porat, A. Natanzon, R. Zavida, C. Dinachi and O. Itzahary. The Era by Eon benchmark: a generated enterprise estate with exact ground truth for benchmarking LLM agents. <a href="https://arxiv.org/abs/2609.09853">arXiv:2609.09853</a>, 2026.</li>
-    <li>A. Fallahpour, P. Idehpour, V. Kothapalli, N. Mounier, S. Wu, S. Pardis and J. Leskovec. Memorilla: latent semantic memory for LLMs. <a href="https://arxiv.org/abs/2610.21375">arXiv:2610.21375</a>, 2026.</li>
-    <li>Engram. Learning in a world of notes. <a href="https://engram.com/blog/learning-in-a-world-of-notes">Research note</a>, 4 November 2026.</li>
-    <li>S. Eyuboglu and others. Cartridges: lightweight and general-purpose long context representations via self-study. <a href="https://arxiv.org/abs/2506.06266">arXiv:2506.06266</a>, 2025.</li>
-    <li>P. Lewis and others. Retrieval-augmented generation for knowledge-intensive NLP tasks. NeurIPS, 2020.</li>
-    <li>D. Edge and others. From local to global: a graph RAG approach to query-focused summarization. <a href="https://arxiv.org/abs/2404.16130">arXiv:2404.16130</a>, 2024.</li>
-    <li>P. Rasmussen, P. Paliychuk, T. Beauvais, J. Ryan and D. Chalef. Zep: a temporal knowledge graph architecture for agent memory. <a href="https://arxiv.org/abs/2501.13956">arXiv:2501.13956</a>, 2025.</li>
-    <li>W. M. P. van der Aalst. Process mining: data science in action. Springer, 2016.</li>
-    <li>M. Assran and others. Self-supervised learning from images with a joint-embedding predictive architecture. CVPR, 2023.</li>
-    <li>Y. LeCun. A path towards autonomous machine intelligence. OpenReview, 2022.</li>
-    <li>M. Assran and others. V-JEPA 2: self-supervised video models enable understanding, prediction and planning. <a href="https://arxiv.org/abs/2506.09985">arXiv:2506.09985</a>, 2025.</li>
-    <li>W. Zhang, B. Terver, M. Rabbat, Y. LeCun and R. Balestriero. H-JEPA: end-to-end learning of hierarchical world models for visual planning. <a href="https://arxiv.org/abs/2610.06805">arXiv:2610.06805</a>, 2026.</li>
-    <li>P. Khosla and others. Supervised contrastive learning. NeurIPS, 2020.</li>
-    <li>J. Pearl. Causality: models, reasoning, and inference. Cambridge University Press, 2009.</li>
-    <li>D. Ha and J. Schmidhuber. World models. <a href="https://arxiv.org/abs/1803.10122">arXiv:1803.10122</a>, 2018.</li>
+{{REFLIST}}
   </ol>
 </section>
 </main>
 
 <footer>
   <div class="section">
-    <span>&#169; 2026 Ashwin Gopinath. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
+    <span class="brandline"><a href="https://www.sentra.app" aria-label="Sentra"><svg class="mark" viewBox="0 0 20.4139 20" aria-hidden="true"><use href="#sentra-mark"/></svg><svg class="wordmark" viewBox="0 0 63.7002 15.8828" aria-hidden="true"><use href="#sentra-word"/></svg></a></span>
+    <span>&#169; 2026 Ashwin Gopinath, Sentra. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
     <span><a href="{{CODEURL}}">GitHub</a></span>
   </div>
 </footer>

@@ -20,6 +20,7 @@ clean:
 
 site:
 	$(PY) cwm/export_site_data.py
+	$(PY) tools/readme_refs.py
 
 check:
 	$(PY) -m pytest -q tests

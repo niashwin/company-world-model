@@ -31,6 +31,8 @@
 \ifdefined\pdftrailerid \pdftrailerid{} \fi
 \ifdefined\pdfsuppressptexinfo \pdfsuppressptexinfo=-1 \fi
 \hypersetup{pdftitle={Toward World Models of Organizations: Every System Sees the Same Company},pdfauthor={Ashwin Gopinath}}
+\newcommand{\doi}[1]{\href{https://doi.org/#1}{doi:\nolinkurl{#1}}}
+\urlstyle{same}
 
 % Nature-style layout: unnumbered headings, "Fig. 1 |" legends, numbered superscript references
 \setcounter{secnumdepth}{0}
@@ -63,7 +65,7 @@
 \vspace{3pt}
 {\small Sentra, San Francisco, CA, USA\par}
 \vspace{2pt}
-{\small Technical report, version 6, November 2026\par}
+{\small Technical report, version 7, November 2026\par}
 \end{center}
 \vspace{6pt}
 \noindent{\bfseries Every company records its work in many systems, such as email, chat, customer records and support tickets. Each system holds part of what happens with a customer, but no system holds the situation itself. People rebuild that situation in their heads, and AI assistants rebuild it from documents for each question\citep{lewis2020rag}. A world model of the organization would hold that situation, as world models of physical scenes hold their state\citep{ha2018world,lecun2022path,assran2025vjepa2}. Here we show that the links that enterprise systems keep can train the base of such a model: one state space for a company. A recent theorem predicts that encoders trained to predict one observation of a state from another converge to one representation\citep{balestriero2026platonic}. Records that different systems link to the same customer in the same period are such observations. We test this in a simulated company with exact ground truth\citep{gruenbaum2026era}. There, small encoders trained on these links place HOGOODCUST of records with withheld links with the right customer, against HOTFCUST for text similarity. They keep part of this signal when we mask every name. Permissions are part of the model. The same space indexes a memory and a first decision layer, which shows what data a company needs to learn what its decisions do. At this scale, each model trains in minutes on an ordinary computer. A company can thus learn the first layer of a model of itself from its own records.\par}
@@ -486,7 +488,7 @@ Era's simulators are free. Anyone can generate the exact company again from the 
 
 \subsection{Code availability}
 \label{sec:code}
-The repository at \url{https://github.com/niashwin/company-world-model} holds the code, the exporter for Era's simulators and all results. It also holds the scripts that draw the figures and fill in every number of this paper, and an interactive website.
+The repository at \url{https://github.com/niashwin/company-world-model} holds the code, the exporter for Era's simulators and all results. It also holds the scripts that draw the figures and fill in every number of this paper. The project website, with interactive figures and a linked list of the references, is at \url{https://niashwin.github.io/company-world-model/}.
 
 \section{Acknowledgements}
 We thank Eon, which made Era freely available. An AI model (Claude, Anthropic) helped with the experiments and the drafts. The author takes full responsibility for the content.

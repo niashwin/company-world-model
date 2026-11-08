@@ -1,71 +1,83 @@
-# Toward World Models of Organizations
+<p>
+  <a href="https://www.sentra.app"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="website/assets/brand/sentra-lockup-white.svg">
+    <img alt="Sentra" src="website/assets/brand/sentra-lockup-navy.svg" height="26">
+  </picture></a>
+</p>
 
+# Every system sees the same company
+
+**Toward world models of organizations.** Ashwin Gopinath, Sentra, San Francisco. Technical report, version 7,
+November 2026.
+
+[Website](https://niashwin.github.io/company-world-model/) |
+[Paper (PDF)](paper/main.pdf) |
+[Cite](#citation) |
 [![tests](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
 
-**Every system sees the same company.** Email, chat, the CRM, support tickets, recorded calls, calendars and issue
-trackers each record part of what happens with every customer, deal and project. But no system records the
-situation itself. People rebuild that situation in their heads, and AI assistants rebuild it from documents for
-each question. This repository learns it: one **state space** for the whole company, trained on the links that the
-systems already keep, with **access control built in**. It is the first learned layer of a **world model of an
-organization**.
+[![Every system sees the same company](website/assets/og.png)](https://niashwin.github.io/company-world-model/)
 
-![The idea](paper/figures/idea.png)
+## In one minute
 
-## Summary
+A company is a world of its own. Every customer, deal and project has a state: how things stand right now. Email,
+chat, the CRM, support tickets and calls each see a part of that state, and no system sees the whole of it. Most AI
+assistants rebuild the picture from documents for each question, and then forget it.
 
-A recent theorem predicts that encoders trained to predict one observation of a state from another converge to one
-representation (Balestriero & LeCun, 2026). Records that different systems link to the same customer in the same
-period are such observations. So the links that a company already keeps are a free training signal. We test this on
-a simulated company from [Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents), with exact ground truth.
+This work shows that AI can learn the state itself, from the links that a company's systems already keep. The method
+comes from world models, which let AI learn the state of the physical world from video. Yann LeCun's
+[JEPA](https://openreview.net/forum?id=BZ5a1r-kVsf) learns to predict one view of a scene from another view of it.
+Randall Balestriero and Yann LeCun [proved](https://arxiv.org/abs/2610.39302) that such models, with the right pairs
+of views, converge to one picture of the true state. A company's links supply those pairs. An email, a ticket and a
+CRM update about one customer in one week are three views of one situation.
 
-- Small encoders trained on these links place **76%** of records with withheld links with the right customer. Text
-  similarity places 53%, and a guess of the largest customer 12%.
-- With every name and identifier masked, the encoders still place 33% of these records. A pretrained encoder places
-  20%.
-- The same links raise a frozen pretrained encoder from 53% to 62%.
-- Permissions are part of the model. When we plant secrets in records that a reader may not read, no result that
-  the reader gets changes.
-- The state space indexes a memory. Some questions come with one record of the customer instead of its name. With
-  the names kept in the records, they get the right answer 63.8% of the time. With a pretrained encoder, they get
-  54.9%, and without a store 52.2%.
-- On the same space, we build a first decision layer. We also show what data it needs to learn the effects of
-  decisions.
-- Each encoder and head that we timed trains in 2–7 minutes on a CPU.
+We test the idea on a simulated company from [Era by Eon](https://arxiv.org/abs/2609.09853), with exact ground
+truth: 78,048 records in seven systems, and 21 customers. With a simulation, we can check every answer against the
+truth.
 
-**Paper:** [`paper/main.pdf`](paper/main.pdf), version 6, in the format of a Nature article. The LaTeX source is in
-[`paper/`](paper).
-**What changed and why:** [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) (every review, point by point),
-[`docs/CHECKS.md`](docs/CHECKS.md) (how we checked version 6) and [`CHANGELOG.md`](CHANGELOG.md).
+## What we found, and why it matters
 
-## What this means for corporate AI
+Eight results from the simulated company. Each row says what we tested and what it could mean for a real company.
 
-Corporate AI is AI that understands how a company works, acts within its permissions and helps it decide. It needs
-a model of the company itself, which stays current as the company works. We see four layers. Each layer is useful on
-its own, and each one makes the next one possible.
+| Result | What we tested | Why it matters |
+| --- | --- | --- |
+| **76%** of records find their customer, even without their link | We hid the customer links of 5,366 records. The model put 76% with the right customer. A keyword search put 53%, and a guess of the largest customer 12%. | AI can assemble one picture of each customer from every tool, also from records that lost their link. |
+| **33%** without any names | We removed every name, email address and identifier. The model still put 33% of the hidden records with the right customer. A small ready-made AI text model ([MiniLM](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)) put 20%, and a guess of the largest customer 12%. | Names do much of the work, but not all of it. The model also learns what each customer's situation looks like. |
+| **53% → 62%** for a ready-made AI text model | We added the same training on top of MiniLM. Its share of hidden records with the right customer rose from 53% to 62%. | A company can add this training to a model that it already runs, and does not have to replace the model. We tested one small model. |
+| **No leak** | We planted secret codenames in 150 records that two employees may not read, and searched for them as each employee. A model trained on everything pointed to the right customer every time, even when we filtered the results to what the employee may read. Models trained only on what each employee may read gave the same results with and without the secrets. | A permission filter on search results is not enough. When each group's model learns only from what the group may read, it cannot reveal the rest. People who may read little get less accurate results. |
+| **63.8%** from one email | Questions came with one email or ticket instead of the customer's name. The answers were right 63.8% of the time, against 54.9% with MiniLM and 52.2% with no memory. A system that knows the email's true link gets 68.7%. The names stayed in the records for this test. | One email can stand in for the customer's name: a forwarded email or a ticket can bring the right customer's records. |
+| **13–21%** similar situations | For each customer and quarter, we found the five most similar quarters of other customers. Of these, 13–21% shared the situation, against 8% by chance. The share depends on the representation. | "Have we seen this before?" gets a first, rough answer. |
+| **25 of 29** months with an intervention | In 25 of 29 months in which a customer was in trouble, the company stepped in. | Logs show what a company did, not what worked. To learn what works, a company must record its decisions and their reasons, and sometimes vary them on purpose. |
+| **2–7 minutes** to train | We timed each model on an ordinary computer, without a GPU. | With 21,972 linked records, as here, a company can train the model again often. It can keep a separate model for each group of people with the same access. We did not test a company with millions of records. |
+
+## Why it matters: from a memory to a model of the company
+
+We call the goal corporate AI: AI that understands how a company works, acts within each person's permissions and
+helps the company decide. We see four layers on the way there. Each layer is useful on its own, and each one makes the
+next one possible.
 
 | Layer | What it gives | Status |
 | --- | --- | --- |
-| Memory that accumulates | What happened, who decided it and why, and where each fact came from | Organizational memory products, such as Sentra's, build this today |
-| **Representations that learn** | **One state space for the company, which places each record with its customer and finds similar situations** | **This work, shown in simulation** |
-| Models that predict | How situations change, and what decisions do | The next layer. This work builds a first version and shows what data it needs |
-| Organizations that improve | People and agents test decisions against the model, and the model learns from what happens | Future |
+| Memory that accumulates | What happened, who decided it and why, and where each fact came from | In place: products such as [Sentra](https://www.sentra.app) build this layer today |
+| **Representations that learn** | **One learned state space for the company, which places most records with their customer** | **This work, shown in simulation** |
+| Models that predict | How situations change, and what decisions do | Next: this work builds a first version and shows what data it needs |
+| Organizations that improve | People and AI agents test decisions against the model, and the model learns from what happens | Future |
 
 The learned state space does not replace the memory. The memory keeps the facts, sources and permissions. The state
 space adds two things: a place for records without a link, and a measure of which situations are alike.
 
 ## How it compares
 
-Enterprise AI gives models knowledge of a company in several ways. They are layers of one architecture more than
-rivals. Table 1 of the paper gives this comparison with references.
+Other approaches give AI knowledge of a company in different ways, and they work best together. Table 1 of the paper
+gives this comparison with references.
 
 | Approach | What it keeps | Where it is strong | What it leaves open |
 | --- | --- | --- | --- |
-| Retrieval (RAG) | Documents and a search index | Current and simple, with permission filters on results | Builds each situation again for each question |
-| Explicit memory: graphs, ledgers and memory stores (GraphRAG, Zep, MemGPT, Mem0) | Entities, facts, decisions, dates and sources | Facts with sources, easy to audit and update | Facts, not a learned state of each situation |
+| Retrieval ([RAG](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html)) | Documents and a search index | Current and simple, with permission filters on results | Builds each situation again for each question |
+| Company memory and knowledge graphs ([GraphRAG](https://arxiv.org/abs/2404.16130), [Zep](https://arxiv.org/abs/2501.13956), [MemGPT](https://arxiv.org/abs/2310.08560), [Mem0](https://doi.org/10.3233/FAIA251160)) | Entities, facts, decisions, dates and sources | Facts with sources, easy to audit and update | Facts, not a learned state of each situation |
 | Compressed memory ([Memorilla](https://arxiv.org/abs/2610.21375)) | Embeddings of documents, read as 16 memory tokens for each question by a frozen model | A large collection in a few tokens (84.33% on FactKG, against 80.43% with the full context) | Organizes documents, not situations |
-| Trained context and skills (Cartridges, [Engram](https://engram.com/blog/learning-in-a-world-of-notes)) | A trained cache of the documents, or notes and a model trained to use them | Better and cheaper answers (Engram reports 7 to 20 points from training to use notes) | Organizes text, not situations |
-| Process mining | Event logs that a case number links | Shows how work flows | Needs structured events, not text |
-| World models of physical scenes (V-JEPA 2, H-JEPA) | Latent states of a scene | Prediction and planning | Built for sensors, not for records and permissions |
+| Trained context and skills ([Cartridges](https://proceedings.iclr.cc/paper_files/paper/2026/hash/4681359a7b1e94571598ad1adda35e6e-Abstract-Conference.html), [Engram](https://engram.com/blog/learning-in-a-world-of-notes)) | A trained cache of the documents, or notes and a model trained to use them | Better and cheaper answers (Engram reports 7 to 20 points from training to use notes) | Organizes text, not situations |
+| [Process mining](https://doi.org/10.1007/978-3-662-49851-4) | Event logs that a case number links | Shows how work flows | Needs structured events, not text |
+| World models of physical scenes ([V-JEPA 2](https://arxiv.org/abs/2506.09985), [H-JEPA](https://arxiv.org/abs/2610.06805)) | Latent states of a scene | Prediction and planning | Built for cameras and sensors, not for records and permissions |
 | **This work** | **A learned state of each situation, from the links between systems** | **Places records whose links it never saw; permissions built in** | **Prediction of change, and the effects of decisions; tested on one simulated company** |
 
 Our memory reader follows Memorilla in a small form, so a reader of this kind could read situations instead of
@@ -74,9 +86,10 @@ only the first of these combinations.
 
 ## Website
 
-The interactive project website is in [`website/`](website). GitHub Pages publishes it with
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml). Its address will be
-[https://niashwin.github.io/company-world-model/](https://niashwin.github.io/company-world-model/).
+The interactive project website is part of this repository, in [`website/`](website). It explains the work for a
+general reader, shows every result with an interactive figure, and lists every reference with a link. GitHub Pages
+publishes it with [`.github/workflows/pages.yml`](.github/workflows/pages.yml), together with the PDF of the paper.
+Its address will be [https://niashwin.github.io/company-world-model/](https://niashwin.github.io/company-world-model/).
 Turn on GitHub Pages one time: in Settings > Pages, set Source to GitHub Actions. A GitHub Pages site is public on
 the internet, also when the repository is private. For a private repository, Pages needs a paid GitHub plan.
 
@@ -90,7 +103,7 @@ The repository includes the data of the website, so the site works from a clone.
 `python cwm/export_site_data.py` after Path 2 below. It reads `results/`, the filled paper (`paper/main.tex` and
 `paper/main.aux`) and the stored embeddings, from which it computes the maps.
 
-## Results at a glance
+## For researchers: results at a glance
 
 We use one simulated company. It has seven systems, 21,972 customer-linked records, 21 active customers and exact
 ground truth. Every number below is in the paper and in `results/`. Each result uses one seed, unless we give a
@@ -255,17 +268,19 @@ edit of the paper keeps every placeholder, label, reference and citation.
 | `cwm/run_v2.py` | Version-2 experiments: pretrained baselines, monthly windows, access control with a shared backbone, two channels, dynamics, drift, misalignment, similar situations, scope diagnostic |
 | `cwm/make_figures.py`, `cwm/fill_paper.py` | `make_figures.py` draws the figures. `cwm/fill_paper.py` writes the results into the paper from `results/`, and `tests/test_paper_numbers.py` checks the numbers that the text states directly. |
 | `cwm/export_site_data.py` | Rebuilds the data of the website (`website/data/site-data.js`) from `results/` and the filled paper, and writes `website/index.html` from `website/template.html` |
+| `cwm/bibrefs.py` | Reads `paper/refs.bib` and writes the linked reference list of the website |
 | `scripts/reproduce.sh` | Runs every experiment again, from the simulated company to the PDF and the website, in stages (`data`, `v1` to `v4`, `paper`, `site`) |
 | [`REPRODUCE.md`](REPRODUCE.md) | How to reproduce the paper, by two paths. A table maps each part of the paper to its command and result file. |
 | `tests/` | Smoke tests that GitHub Actions runs on every push |
 | `tools/ste_check.py`, `tools/tex_invariants.py` | `ste_check.py` measures how closely a text follows ASD-STE100. `tex_invariants.py` checks that an edit of the paper keeps every placeholder, label, reference and citation. |
 | `tools/make_og_image.py` | Renders `website/assets/og.png`, the image that link previews of the website show |
+| `tools/readme_refs.py` | Writes the list of all references, with links, into this README from `paper/refs.bib` |
 | `results/` | Every result that the paper reports, as JSON. New in version 2: `v2_*.json`, `extras_e.json` and `memory2_{minilm4,dual,route}.json`. New in version 3: `memory_anchor_*.json` and `memory2_q_*.json`. New in version 4: `actions.json`. Files that end in `_a`, `_b`, ... are parallel runs, and `fill_paper.py` merges them. |
 | `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, PDF |
-| `website/` | The project website. `template.html` is the source of the page, and `cwm/export_site_data.py` generates `index.html` from it. |
+| `website/` | The project website. `template.html` is the source of the page, and `cwm/export_site_data.py` generates `index.html` from it. `assets/brand/` holds the Sentra logo, and `assets/fonts/` the Geist fonts (SIL Open Font License). |
 | `.github/workflows/pages.yml` | Publishes `website/` and the PDF of the paper with GitHub Pages |
 | `docs/REVIEW_RESPONSE.md` | Point-by-point answers to every review, from version 1 to version 6 |
-| `docs/CHECKS.md` | The checks of version 6 and their results: tests of the numbers, a clean rebuild, the STE measure and the independent reviews |
+| `docs/CHECKS.md` | The checks of version 7 and their results: tests of the numbers, a clean rebuild, the references, the STE measure and the independent reviews |
 | `docs/ARXIV_ABSTRACT.txt` | A shorter abstract that fits arXiv's 1,920-character limit |
 
 ## Moving to real data
@@ -285,6 +300,103 @@ not redistribute the generated data here. Regenerate it with `cwm/era_up.sh` and
 `bash scripts/reproduce.sh data`. Check Era's terms before you share it. The MIT licence applies to the code (see
 `LICENSE`).
 
+## References
+
+The key references, with links. The full list of 56 follows them. The
+[website](https://niashwin.github.io/company-world-model/#cite) lists all 56 too, each with a link to its source.
+
+<!-- ste:off -->
+
+- R. Balestriero and Y. LeCun. [Proving and Improving the Platonic Representation Hypothesis with JEPAs](https://arxiv.org/abs/2610.39302). arXiv:2610.39302, 2026.
+- Y. LeCun. [A Path Towards Autonomous Machine Intelligence](https://openreview.net/forum?id=BZ5a1r-kVsf). OpenReview preprint, 2022.
+- M. Assran, Q. Duval, I. Misra and others. [Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture](https://doi.org/10.1109/CVPR52729.2023.01499). IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2023.
+- M. Assran, A. Bardes, D. Fan, Q. Garrido, R. Howes and others. [V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning](https://arxiv.org/abs/2506.09985). arXiv:2506.09985, 2025.
+- W. Zhang, B. Terver, M. Rabbat, Y. LeCun and R. Balestriero. [H-JEPA: End-to-End Learning of Hierarchical World Models for Visual Planning](https://arxiv.org/abs/2610.06805). arXiv:2610.06805, 2026.
+- R. Balestriero and Y. LeCun. [LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics](https://arxiv.org/abs/2511.08544). arXiv:2511.08544, 2025.
+- M. Huh, B. Cheung, T. Wang and P. Isola. [Position: The Platonic Representation Hypothesis](https://proceedings.mlr.press/v235/huh24a.html). International Conference on Machine Learning (ICML), 2024.
+- D. Ha and J. Schmidhuber. [World Models](https://arxiv.org/abs/1803.10122). arXiv:1803.10122, 2018.
+- B. Gruenbaum, D. Porat, A. Natanzon, R. Zavida, C. Dinachi and O. Itzahary. [The Era by Eon Benchmark: A Generated Enterprise Estate with Exact Ground Truth for Benchmarking LLM Agents](https://arxiv.org/abs/2609.09853). arXiv:2609.09853, 2026.
+- A. Fallahpour, P. Idehpour, V. Kothapalli and others. [Memorilla: Latent Semantic Memory for LLMs](https://arxiv.org/abs/2610.21375). arXiv:2610.21375, 2026.
+- Engram. [Learning in a World of Notes](https://engram.com/blog/learning-in-a-world-of-notes). Research note, 2026.
+- S. Eyuboglu, R. Ehrlich, S. Arora and others. [Cartridges: Lightweight and General-Purpose Long Context Representations via Self-Study](https://proceedings.iclr.cc/paper_files/paper/2026/hash/4681359a7b1e94571598ad1adda35e6e-Abstract-Conference.html). International Conference on Learning Representations (ICLR), 2026.
+- P. Lewis, E. Perez, A. Piktus and others. [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+- D. Edge, H. Trinh, N. Cheng and others. [From Local to Global: A Graph RAG Approach to Query-Focused Summarization](https://arxiv.org/abs/2404.16130). arXiv:2404.16130, 2024.
+- P. Rasmussen, P. Paliychuk, T. Beauvais, J. Ryan and D. Chalef. [Zep: A Temporal Knowledge Graph Architecture for Agent Memory](https://arxiv.org/abs/2501.13956). arXiv:2501.13956, 2025.
+- C. Packer, S. Wooders, K. Lin and others. [MemGPT: Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560). arXiv:2310.08560, 2023.
+- P. Chhikara, D. Khant, S. Aryan, T. Singh and D. Yadav. [Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory](https://doi.org/10.3233/FAIA251160). European Conference on Artificial Intelligence (ECAI), 2025.
+- W. M. P. van der Aalst. [Process Mining: Data Science in Action](https://doi.org/10.1007/978-3-662-49851-4). Springer, 2016.
+- J. Pearl. [Causality: Models, Reasoning, and Inference](https://doi.org/10.1017/CBO9780511803161). Cambridge University Press, 2009.
+- M. A. Hernán and J. M. Robins. [Causal Inference: What If](https://miguelhernan.org/whatifbook). Chapman & Hall/CRC, 2020.
+- P. Khosla, P. Teterwak, C. Wang and others. [Supervised Contrastive Learning](https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+- J. Z. HaoChen, C. Wei, A. Gaidon and T. Ma. [Provable Guarantees for Self-Supervised Deep Learning with Spectral Contrastive Loss](https://proceedings.neurips.cc/paper_files/paper/2021/hash/27debb435021eb68b3965290b5e24c49-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2021.
+- N. Reimers and I. Gurevych. [Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://doi.org/10.18653/v1/D19-1410). Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP), 2019.
+- W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. [MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+
+<!-- refs:start -->
+<details>
+<summary>All 56 references of the paper, in its order, with links</summary>
+
+1. P. Lewis, E. Perez, A. Piktus and others. [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+2. D. Ha and J. Schmidhuber. [World Models](https://arxiv.org/abs/1803.10122). arXiv:1803.10122, 2018.
+3. Y. LeCun. [A Path Towards Autonomous Machine Intelligence](https://openreview.net/forum?id=BZ5a1r-kVsf). OpenReview preprint, 2022.
+4. M. Assran, A. Bardes, D. Fan, Q. Garrido, R. Howes and others. [V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning](https://arxiv.org/abs/2506.09985). arXiv:2506.09985, 2025.
+5. R. Balestriero and Y. LeCun. [Proving and Improving the Platonic Representation Hypothesis with JEPAs](https://arxiv.org/abs/2610.39302). arXiv:2610.39302, 2026.
+6. B. Gruenbaum, D. Porat, A. Natanzon, R. Zavida, C. Dinachi and O. Itzahary. [The Era by Eon Benchmark: A Generated Enterprise Estate with Exact Ground Truth for Benchmarking LLM Agents](https://arxiv.org/abs/2609.09853). arXiv:2609.09853, 2026.
+7. D. Edge, H. Trinh, N. Cheng and others. [From Local to Global: A Graph RAG Approach to Query-Focused Summarization](https://arxiv.org/abs/2404.16130). arXiv:2404.16130, 2024.
+8. C. Packer, S. Wooders, K. Lin and others. [MemGPT: Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560). arXiv:2310.08560, 2023.
+9. P. Rasmussen, P. Paliychuk, T. Beauvais, J. Ryan and D. Chalef. [Zep: A Temporal Knowledge Graph Architecture for Agent Memory](https://arxiv.org/abs/2501.13956). arXiv:2501.13956, 2025.
+10. P. Chhikara, D. Khant, S. Aryan, T. Singh and D. Yadav. [Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory](https://doi.org/10.3233/FAIA251160). European Conference on Artificial Intelligence (ECAI), 2025.
+11. A. Fallahpour, P. Idehpour, V. Kothapalli and others. [Memorilla: Latent Semantic Memory for LLMs](https://arxiv.org/abs/2610.21375). arXiv:2610.21375, 2026.
+12. S. Eyuboglu, R. Ehrlich, S. Arora and others. [Cartridges: Lightweight and General-Purpose Long Context Representations via Self-Study](https://proceedings.iclr.cc/paper_files/paper/2026/hash/4681359a7b1e94571598ad1adda35e6e-Abstract-Conference.html). International Conference on Learning Representations (ICLR), 2026.
+13. Engram. [Learning in a World of Notes](https://engram.com/blog/learning-in-a-world-of-notes). Research note, 2026.
+14. D. Hafner, T. Lillicrap, J. Ba and M. Norouzi. [Dream to Control: Learning Behaviors by Latent Imagination](https://openreview.net/forum?id=S1lOTC4tDS). International Conference on Learning Representations (ICLR), 2020.
+15. W. Zhang, B. Terver, M. Rabbat, Y. LeCun and R. Balestriero. [H-JEPA: End-to-End Learning of Hierarchical World Models for Visual Planning](https://arxiv.org/abs/2610.06805). arXiv:2610.06805, 2026.
+16. M. Huh, B. Cheung, T. Wang and P. Isola. [Position: The Platonic Representation Hypothesis](https://proceedings.mlr.press/v235/huh24a.html). International Conference on Machine Learning (ICML), 2024.
+17. M. Assran, Q. Duval, I. Misra and others. [Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture](https://doi.org/10.1109/CVPR52729.2023.01499). IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2023.
+18. R. Balestriero and Y. LeCun. [LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics](https://arxiv.org/abs/2511.08544). arXiv:2511.08544, 2025.
+19. A. Cohan, S. Feldman, I. Beltagy, D. Downey and D. S. Weld. [SPECTER: Document-level Representation Learning using Citation-informed Transformers](https://doi.org/10.18653/v1/2020.acl-main.207). Annual Meeting of the Association for Computational Linguistics (ACL), 2020.
+20. T. Cai, F. Huang, R. Nakada, L. Zhang and D. Zhou. [Contrastive Learning on Multimodal Analysis of Electronic Health Records](https://doi.org/10.1080/01621459.2026.2698136). Journal of the American Statistical Association, 2026.
+21. Eon. [Meet Era: Simulated Companies to Benchmark Models and Eval Agents](https://www.eon.io/blog/era-build-and-test-ai-agents). Blog post, 2026.
+22. N. Reimers and I. Gurevych. [Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://doi.org/10.18653/v1/D19-1410). Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP), 2019.
+23. W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. [MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+24. T. Tiwari, S. Gururangan, C. Guo and others. [Information Flow Control in Machine Learning through Modular Model Architecture](https://www.usenix.org/conference/usenixsecurity24/presentation/tiwari). USENIX Security Symposium, 2024.
+25. J. Pearl. [Causality: Models, Reasoning, and Inference](https://doi.org/10.1017/CBO9780511803161). Cambridge University Press, 2009.
+26. M. A. Hernán and J. M. Robins. [Causal Inference: What If](https://miguelhernan.org/whatifbook). Chapman & Hall/CRC, 2020.
+27. W. M. P. van der Aalst. [Process Mining: Data Science in Action](https://doi.org/10.1007/978-3-662-49851-4). Springer, 2016.
+28. W. M. P. van der Aalst. [Object-Centric Process Mining: Dealing with Divergence and Convergence in Event Data](https://doi.org/10.1007/978-3-030-30446-1_1). Software Engineering and Formal Methods (SEFM), 2019.
+29. J. Z. HaoChen, C. Wei, A. Gaidon and T. Ma. [Provable Guarantees for Self-Supervised Deep Learning with Spectral Contrastive Loss](https://proceedings.neurips.cc/paper_files/paper/2021/hash/27debb435021eb68b3965290b5e24c49-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2021.
+30. P. Khosla, P. Teterwak, C. Wang and others. [Supervised Contrastive Learning](https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+31. P. H. Schönemann. [A Generalized Solution of the Orthogonal Procrustes Problem](https://doi.org/10.1007/BF02289451). Psychometrika, 1966.
+32. D. Yu, Z. Liu and H. He. [Same Company, Same Signal: The Role of Identity in Earnings Call Transcripts](https://doi.org/10.18653/v1/2025.findings-acl.946). Findings of the Association for Computational Linguistics: ACL 2025.
+33. Y. Zhang, Z. Shen, C.-H. Wu and others. [Metadata-Induced Contrastive Learning for Zero-Shot Multi-Label Text Classification](https://doi.org/10.1145/3485447.3512174). Proceedings of the ACM Web Conference 2022.
+34. R. Peeters and C. Bizer. [Supervised Contrastive Learning for Product Matching](https://doi.org/10.1145/3487553.3524254). Companion Proceedings of the Web Conference 2022.
+35. J. Peleška and G. Šír. [Task-Agnostic Contrastive Pretraining for Relational Deep Learning](https://doi.org/10.1007/978-3-032-19102-1_38). Machine Learning and Principles and Practice of Knowledge Discovery in Databases: International Workshops of ECML PKDD 2025, 2026.
+36. D. Mollaev, I. Kireev, M. Orlov and others. [Multimodal Banking Dataset: Understanding Client Needs through Event Sequences](https://doi.org/10.1145/3746252.3761635). Proceedings of the 34th ACM International Conference on Information and Knowledge Management (CIKM), 2025.
+37. A. Radford, J. W. Kim, C. Hallacy and others. [Learning Transferable Visual Models From Natural Language Supervision](https://proceedings.mlr.press/v139/radford21a.html). International Conference on Machine Learning (ICML), 2021.
+38. H. Huang, Y. LeCun and R. Balestriero. [LLM-JEPA: Large Language Models Meet Joint Embedding Predictive Architectures](https://proceedings.iclr.cc/paper_files/paper/2026/hash/ac818ec2da1c976b267de32f59709c69-Abstract-Conference.html). International Conference on Learning Representations (ICLR), 2026.
+39. Y. Zuo, É. de la Clergerie and B. Sagot. [Asymmetric Within-Document Predictive Learning for Scientific Document Representation](https://arxiv.org/abs/2608.28625). arXiv:2608.28625, 2026.
+40. L. Moschella, V. Maiorca, M. Fumero, A. Norelli, F. Locatello and E. Rodolà. [Relative Representations Enable Zero-Shot Latent Space Communication](https://openreview.net/forum?id=SrC-nwieGJ). International Conference on Learning Representations (ICLR), 2023.
+41. V. Maiorca, L. Moschella, A. Norelli, M. Fumero, F. Locatello and E. Rodolà. [Latent Space Translation via Semantic Alignment](https://proceedings.neurips.cc/paper_files/paper/2023/hash/ad5fa03c906ca15905144ca3fbf2a768-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2023.
+42. K. Nosaka, Y. Suetake, Y. Takano and A. Yoshise. [Data Collaboration Analysis with Orthonormal Basis Selection and Alignment](https://doi.org/10.1016/j.compeleceng.2026.111192). Computers and Electrical Engineering, 2026.
+43. W. L. Hamilton, J. Leskovec and D. Jurafsky. [Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change](https://doi.org/10.18653/v1/P16-1141). Annual Meeting of the Association for Computational Linguistics (ACL), 2016.
+44. J. von Kügelgen, Y. Sharma, L. Gresele and others. [Self-Supervised Learning with Data Augmentations Provably Isolates Content from Style](https://arxiv.org/abs/2106.04619). Advances in Neural Information Processing Systems (NeurIPS), 2021.
+45. Y. Shen, Y. Xiong, W. Xia and S. Soatto. [Towards Backward-Compatible Representation Learning](https://doi.org/10.1109/CVPR42600.2020.00640). IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2020.
+46. L. Maystre and others. [When Embedding Models Meet: Procrustes Bounds and Applications](https://arxiv.org/abs/2510.13406). arXiv:2510.13406, 2025.
+47. H. Vejendla. [Drift-Adapter: A Practical Approach to Near Zero-Downtime Embedding Model Upgrades in Vector Databases](https://doi.org/10.18653/v1/2025.emnlp-main.805). Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP), 2025.
+48. B. Jayaraman, V. J. Marathe, H. Mozaffari, W. Shen and K. Kenthapadi. [Permissioned LLMs: Enforcing Access Control in Large Language Models](https://papers.neurips.cc/paper_files/paper/2025/hash/754612bde73a8b65ad8743f1f6d8ddf6-Abstract-Conference.html). Advances in Neural Information Processing Systems (NeurIPS), 2025.
+49. S. S. Bhatt, T. Rajore, K. Aggarwal and others. [Position: Enterprise AI Must Enforce Participant-Aware Access Control](https://arxiv.org/abs/2509.14608). arXiv:2509.14608, 2025.
+50. X. Cheng, X. Wang, X. Zhang and others. [xRAG: Extreme Context Compression for Retrieval-augmented Generation with One Token](https://papers.nips.cc/paper_files/paper/2024/hash/c5cf13bfd3762821ef7607e63ee90075-Abstract-Conference.html). Advances in Neural Information Processing Systems (NeurIPS), 2024.
+51. J. Flynt. [OrgForge: A Multi-Agent Simulation Framework for Verifiable Synthetic Corporate Corpora](https://arxiv.org/abs/2603.14997). arXiv:2603.14997, 2026.
+52. F. F. Xu and others. [TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks](https://openreview.net/forum?id=LZnKNApvhG). Advances in Neural Information Processing Systems (NeurIPS), Datasets and Benchmarks Track, 2025.
+53. K.-H. Huang and others. [CRMArena: Understanding the Capacity of LLM Agents to Perform Professional CRM Tasks in Realistic Environments](https://doi.org/10.18653/v1/2025.naacl-long.194). Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics (NAACL), 2025.
+54. J. S. Nair, P. Bechard, R. Maheshwary and others. [Do Enterprise Systems Need Learned World Models? The Importance of Context to Infer Dynamics](https://arxiv.org/abs/2605.12178). arXiv:2605.12178, 2026.
+55. J. P. Walsh and G. R. Ungson. [Organizational Memory](https://doi.org/10.2307/258607). Academy of Management Review, 1991.
+56. O. Shaikh, S. Sapkota, S. Rizvi and others. [Creating General User Models from Computer Use](https://doi.org/10.1145/3746059.3747722). Proceedings of the 38th Annual ACM Symposium on User Interface Software and Technology (UIST), 2025.
+
+</details>
+<!-- refs:end -->
+<!-- ste:on -->
+
 ## Citation
 
 ```bibtex
@@ -295,13 +407,15 @@ not redistribute the generated data here. Regenerate it with `cwm/era_up.sh` and
   address     = {San Francisco},
   year        = {2026},
   month       = nov,
-  note        = {Version 6},
+  note        = {Version 7},
   url         = {https://github.com/niashwin/company-world-model}
 }
 ```
 
 ## Acknowledgments
 
-Era by Eon is free and made this work possible. SIGReg follows LeJEPA (Balestriero & LeCun, 2025). The
-implementation here is our own. The memory reader follows Memorilla (Fallahpour et al., 2026). The pretrained
-backbone is all-MiniLM-L6-v2 from Sentence-Transformers.
+[Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents) is free and made this work possible. SIGReg
+follows [LeJEPA](https://arxiv.org/abs/2511.08544) (Balestriero & LeCun, 2025). The implementation here is our own.
+The memory reader follows [Memorilla](https://arxiv.org/abs/2610.21375) (Fallahpour et al., 2026). The pretrained
+backbone is [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) from
+[Sentence-Transformers](https://doi.org/10.18653/v1/D19-1410).

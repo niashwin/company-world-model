@@ -10,6 +10,8 @@ The checker is a set of heuristics. It does not replace the STE dictionary or a 
   PARA     a paragraph has more than six sentences (rule 6.6). Lists are not paragraphs.
 
 A sentence complies when it has no LEN, PASSIVE, ING or TENSE flag. The score is the share of sentences that comply.
+Text between the comments <!-- ste:off --> and <!-- ste:on --> is not checked. The README uses them around its
+lists of references, because the titles of other works are not our writing.
 
 Usage:
   python tools/ste_check.py paper/main.tex                      # the filled paper (placeholders replaced)
@@ -231,6 +233,7 @@ def main():
     total, bad_all, report = 0, 0, {}
     for path in a.files:
         text = open(path).read()
+        text = re.sub(r"<!--\s*ste:off\s*-->.*?<!--\s*ste:on\s*-->", "\n\n", text, flags=re.S)
         for k in sorted(sub, key=len, reverse=True):
             text = text.replace(k, str(sub[k]))
         if path.endswith(".tex"):

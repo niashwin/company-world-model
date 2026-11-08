@@ -12,6 +12,7 @@ more than the paper prints, and this script computes them from the cached embedd
 Run after the experiments and `make paper`:  python cwm/export_site_data.py
 No record text leaves the repository: the website gets times, systems, anonymous customer numbers and results.
 """
+import html
 import json
 import os
 import re
@@ -21,6 +22,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from run_prh import D1, OUT, ROOT  # noqa: E402
+import bibrefs  # noqa: E402
 
 SITE = os.path.join(ROOT, "website", "data", "site-data.js")
 TEMPLATE, PAGE = os.path.join(ROOT, "website", "template.html"), os.path.join(ROOT, "website", "index.html")
@@ -164,9 +166,21 @@ HEADLINE = ["HOGOODCUST", "HOTFCUST", "HOBADCUST", "HONTPCUST", "PTRAWHO", "PTHE
             "CORPUSLINKED", "CORPUSCUSTOMERS", "CORPUSUNLINKED", "CORPUSNEW", "ACLCANARYN", "EVENGESCADJ",
             "EVCALLADJ", "EVLEADERADJ", "TUNEDMAXGAIN", "TUNEDNWORSE", "E1GOODNSEEDS", "ACLCOSTFINOWN", "ACL2FINHEAD",
             "ACLCOSTENGOWN", "ACL2ENGHEAD", "ANCHPPLACECONCATACC", "ANCHMHOSTATE", "ANCHMHODETAIL", "HOMAJCUST",
-            "TRAINMINLO", "TRAINMINHI"]
+            "TRAINMINLO", "TRAINMINHI", "HONTEST"]
 REPO = "https://github.com/niashwin/company-world-model"
 SITEURL = "https://niashwin.github.io/company-world-model/"
+
+
+def sentra_sprite():
+    """The Sentra logomark and wordmark as SVG symbols, so that the page can show them in the color of the text."""
+    out = ['<svg width="0" height="0" style="position:absolute" aria-hidden="true">']
+    for name, sym in (("sentra-logomark.svg", "sentra-mark"), ("sentra-wordmark.svg", "sentra-word")):
+        svg = open(os.path.join(ROOT, "website", "assets", "brand", name)).read()
+        box = re.search(r'viewBox="([^"]+)"', svg).group(1)
+        paths = "".join(re.findall(r"<path [^>]*/>", svg))
+        out.append(f'<symbol id="{sym}" viewBox="{box}">{paths}</symbol>')
+    out.append("</svg>")
+    return "".join(out)
 
 
 def headline(sub):
@@ -305,6 +319,19 @@ def main():
                   "FIGMAPS": LABELS.get("fig:maps", "?"), "SITEURL": SITEURL,
                   "PAPERURL": REPO + "/blob/main/paper/main.pdf", "CODEURL": REPO})
     page = open(TEMPLATE).read()
+    # every reference of the paper, with a link to its source, in the order of the paper
+    bib = bibrefs.parse_bib(os.path.join(ROOT, "paper", "refs.bib"))
+    order = bibrefs.cite_order(aux_p)
+    missing = [k for k in order if k not in bib or not bibrefs.entry_url(bib[k])]
+    if missing:
+        raise SystemExit(f"paper/refs.bib: no entry or no link for {missing}")
+    words["REFLIST"] = "\n".join(f'    <li id="ref-{k}">{bibrefs.entry_html(bib[k])}</li>' for k in order)
+    words["REFCOUNT"] = str(len(order))
+    for k in set(re.findall(r"\{\{REF:([A-Za-z0-9_]+)\}\}", page)):
+        if k not in bib or not bibrefs.entry_url(bib[k]):
+            raise SystemExit(f"website/template.html: no link for the reference {k}")
+        page = page.replace("{{REF:" + k + "}}", html.escape(bibrefs.entry_url(bib[k])))
+    words["SENTRASPRITE"] = sentra_sprite()
     for k, v in words.items():
         page = page.replace("{{" + k + "}}", v)
     left = sorted(set(re.findall(r"\{\{([A-Z0-9]+)\}\}", page)))

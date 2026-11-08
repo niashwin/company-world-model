@@ -75,14 +75,14 @@
   var STEPS = [
     "Seven systems wrote " + H.records.length + " records about Customer " + H.customer + " in " + quarterName(H.quarter) +
       ". Each line is one record, at the time that the system wrote it.",
-    "Each system links its records to the customer. Two records with the same customer and quarter are two views of " +
+    "Each system links its records to the customer. Two records of the same customer and quarter are two views of " +
       "one situation, from one system or from two. We call them good views.",
-    "A small encoder learns to predict one view from the other. It never reads the links. The links only choose " +
+    "A small model learns to predict one view from the other. It never reads the links. The links only choose " +
       "the pairs.",
-    "The encoder places each record by the situation that it describes. The records of this customer and quarter " +
+    "The model places each record by the situation that it describes. The records of this customer and quarter " +
       "land close together, whichever system wrote them.",
-    "Bad views pair a record with a damaged copy of itself. With bad views, the same records spread out. Only good " +
-      "views gather the records of a customer, whatever system wrote them."
+    "For comparison, bad views pair a record with a damaged copy of itself. Then the same records spread out. Only " +
+      "good views gather the records of a customer, whatever system wrote them."
   ];
   var heroPairs = (function () {
     var recs = H.records.map(function (r, i) { return { i: i, lane: LANES.indexOf(M.systems[r[0]]), t: r[1] }; });
@@ -104,7 +104,7 @@
     if (!root) { return; }
     clear(root);
     var W = Math.round(root.getBoundingClientRect().width) || 700, narrow = W < 560;
-    var Hh = narrow ? 300 : 330, L = narrow ? 100 : 132, R = 14, T = 14, B = 34, lh = (Hh - T - B) / LANES.length;
+    var Hh = narrow ? 300 : 330, L = narrow ? 100 : 152, R = 14, T = 14, B = 34, lh = (Hh - T - B) / LANES.length;
     root.setAttribute("viewBox", "0 0 " + W + " " + Hh);
     var ink2 = css("--ink-2"), ink3 = css("--ink-3"), rule = css("--rule"), sig = css("--signal");
     var counts = {};
@@ -410,7 +410,7 @@
       if (stacked) { text(root, L, y0 + 15, d.label, { class: "label halo" }); }
       else { text(root, L - 10, y0 + rowH / 2 + 4, d.label, { "text-anchor": "end", class: "label" }); }
       svg("rect", { x: L, y: yb, width: Math.max(1, x(d.v) - L), height: bh, rx: 3, fill: d.color }, root);
-      text(root, x(d.v) + 6, yb + bh / 2 + 4.5, pct(d.v, d.v < 0.1 ? 1 : 0), { class: "value" });
+      text(root, x(d.v) + 6, yb + bh / 2 + 4.5, pct(d.v, opt.digits !== undefined ? opt.digits : (d.v < 0.1 ? 1 : 0)), { class: "value" });
     });
   }
   function repColour(name) {
@@ -430,7 +430,7 @@
       var nm = shortRep(cell(r, 0));
       return { label: nm, v: num(cell(r, 1)).v, color: repColour(nm) };
     });
-    barChart("bars-e1", e1, { headLines: 1 });
+    barChart("bars-e1", e1, { headLines: 1, digits: 1 });   // the table has three decimals: one decimal of a percent avoids rounding twice
     var ho = bodyRows("tab:heldout").filter(function (r) { return cell(r, 1) !== ""; }).map(function (r) {
       var nm = shortRep(cell(r, 0));
       return { label: nm, v: num(cell(r, 3)).v, color: repColour(nm) };
