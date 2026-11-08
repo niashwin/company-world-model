@@ -38,8 +38,14 @@ A release for a general reader, with every reference checked and linked. The res
 - **README.** A plain-language start, the results with why they matter, and linked key references. A list that
   opens on a click gives all 56 references with links. `tools/readme_refs.py` writes that list from
   `paper/refs.bib`, and `make site` runs it.
+- **Corporate AI, defined.** The paper, the website and the README now say what we mean by corporate AI. It is
+  one system that knows everything about a company: its people, customers, projects and work in progress. It takes
+  part in every decision and every strategy, and it helps each person within that person's permissions. It grows
+  out of the systems of record of today into a system of intelligence, with a world model of the company at its
+  core. On the website, a new section and a section link give the definition.
 - The paper has the label of version 7. Its results did not change. Its text changed only where the review
-  found problems, and in the affiliations, the bibliography and the address of the website.
+  found problems, in a definition of corporate AI, and in the affiliations, the bibliography and the address of
+  the website.
 
 ## v6 (November 2026)
 

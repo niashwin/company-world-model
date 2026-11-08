@@ -729,7 +729,9 @@
   }
   if ("IntersectionObserver" in window) {
     var links = {};
-    document.querySelectorAll(".nav a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+    document.querySelectorAll(".nav a").forEach(function (a) {
+      (a.getAttribute("data-spy") || a.getAttribute("href").slice(1)).split(" ").forEach(function (id) { links[id] = a; });
+    });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) { return; }

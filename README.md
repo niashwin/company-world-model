@@ -35,12 +35,28 @@ We test the idea on a simulated company from [Era by Eon](https://arxiv.org/abs/
 truth: 78,048 records in seven systems and 21 active customers. There, our world model placed 76% of records whose link it
 never saw with the right customer. A keyword search placed 53%.
 
+## What we mean by corporate AI
+
+Corporate AI is one system that knows everything about a company: its people, customers, projects and work in
+progress. In a sense, it is the company itself as a single mind. It takes part in every decision and every strategy,
+and it helps each person with every task, within that person's permissions.
+
+| | Today: systems of record | Corporate AI: a system of intelligence |
+| --- | --- | --- |
+| What it holds | One part of what happened, in each system: CRM, support, projects, calendar, finance and HR | Everything about the company: its people, customers, projects and work |
+| What it does | Stores records and finds them | Understands each situation and how it changes, and helps decide what to do |
+| Who connects the parts | People, in their heads | The system itself, within each person's permissions |
+
+Corporate AI grows out of the systems of record that companies run today: it learns from their records and from the
+links between them. Others call it corporate intelligence, enterprise AI, enterprise general intelligence or a
+company brain. We expect every company to run this way, with a world model of the company at its core.
+
 ## The foundation for corporate AI
 
-Today, AI for companies comes one capability at a time: search, a memory, notes, and a permission filter for each.
-Each tool builds its own partial picture of the company. A world model is one picture of the whole company, and
-every capability can draw on it. Each capability then inherits the permissions of the world model, and gains a
-model of how situations change.
+Corporate AI needs one picture of the whole company. Today, AI for companies comes one capability at a time:
+search, a memory, notes, and a permission filter for each. Each tool builds its own partial picture of the company.
+A world model is that one picture, and every capability can draw on it. Each capability then inherits the
+permissions of the world model, and gains a model of how situations change.
 
 | Capability | Today, one tool at a time | With one world model | This study |
 | --- | --- | --- | --- |
@@ -73,8 +89,8 @@ Eight results from the simulated company. Each row says what we tested and what 
 
 ## The road to corporate AI
 
-We call the goal corporate AI: AI that understands how a company works, acts within each person's permissions and
-helps the company decide. A world model of the company is at the center of it.
+Corporate AI grows in layers, from the records that a company keeps today to an organization that learns from its
+own decisions. A world model of the company is at the center, and the other layers draw on it.
 
 | Step | What it gives | Status |
 | --- | --- | --- |

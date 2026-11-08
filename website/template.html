@@ -32,7 +32,7 @@
     </span>
     <nav class="nav" aria-label="Sections">
       <a href="#idea">The idea</a>
-      <a href="#enables">What it enables</a>
+      <a href="#corporate-ai" data-spy="corporate-ai enables">Corporate AI</a>
       <a href="#findings">Results</a>
       <a href="#road">The road ahead</a>
       <a href="#details">Details</a>
@@ -54,7 +54,7 @@
       <p class="sub">The method comes from world models of the physical world, such as Yann LeCun's <a href="{{REF:lecun2022path}}">JEPA</a>. A 2026 <a href="{{REF:balestriero2026platonic}}">proof</a> by Randall Balestriero and Yann LeCun explains why it works. In a simulated company, our world model placed <b>{{HOGOODCUST}}</b> of records whose link it never saw with the right customer. A keyword search placed {{HOTFCUST}}.</p>
       <div class="actions">
         <a class="button primary" data-link="paper" href="{{PAPERURL}}">Read the paper</a>
-        <a class="button" href="#enables">What it makes possible</a>
+        <a class="button" href="#corporate-ai">What it makes possible</a>
         <a class="button" href="{{CODEURL}}">Code on GitHub</a>
       </div>
       <p class="byline">Ashwin Gopinath, Department of Mechanical Engineering, MIT, and Sentra. Technical report, version 7, November 2026.</p>
@@ -154,10 +154,38 @@
   </div>
 </section>
 
+<section class="section" id="corporate-ai">
+  <h2>What we mean by corporate AI</h2>
+  <div class="prose">
+    <p class="lead">Corporate AI is one system that knows everything about a company: its people, customers, projects and work in progress. In a sense, it is the company itself as a single mind. It takes part in every decision and every strategy, and it helps each person with every task, within that person's permissions.</p>
+  </div>
+  <div class="shift" role="group" aria-label="From systems of record to a system of intelligence">
+    <div class="shift-from">
+      <h3>Today: systems of record</h3>
+      <ul class="shift-sys" aria-label="Examples of systems of record"><li>CRM</li><li>Support</li><li>Projects</li><li>Calendar</li><li>Finance</li><li>HR</li></ul>
+      <p>Each system stores one part of what happened. People connect the parts in their heads, and each person connects them differently.</p>
+    </div>
+    <div class="shift-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+    <div class="shift-to">
+      <h3>Corporate AI: <span>a system of intelligence</span></h3>
+      <ul>
+        <li>Knows the people, customers, projects and work</li>
+        <li>Understands how each situation changes</li>
+        <li>Takes part in every decision and strategy</li>
+        <li>Helps each person, within that person's permissions</li>
+      </ul>
+      <a class="shift-core" href="#enables">At its core: <span>a world model of the company</span></a>
+    </div>
+  </div>
+  <div class="prose">
+    <p>Corporate AI grows out of the systems of record that companies run today: it learns from their records and from the links between them. Others call it corporate intelligence, enterprise AI, enterprise general intelligence or a company brain. We expect every company to run this way.</p>
+  </div>
+</section>
+
 <section class="section" id="enables">
   <h2>The foundation for corporate AI</h2>
   <div class="prose">
-    <p class="lead">Today, AI for companies comes one capability at a time: search, a memory, notes, and a permission filter for each. Each tool builds its own partial picture of the company. A world model is one picture of the whole company, and every capability can draw on it.</p>
+    <p class="lead">Corporate AI needs one picture of the whole company. Today, AI for companies comes one capability at a time: search, a memory, notes, and a permission filter for each. Each tool builds its own partial picture of the company. A world model is that one picture, and every capability can draw on it.</p>
     <p>Each capability then inherits the permissions of the world model. Each one also gains what a store of documents cannot give: a model of how situations change.</p>
   </div>
   <figure id="fig-foundation">
@@ -264,7 +292,7 @@
 <section class="section" id="road">
   <h2>The road to corporate AI</h2>
   <div class="prose">
-    <p class="lead">We call the goal corporate AI: AI that understands how a company works, acts within each person's permissions, and helps the company decide. A world model of the company is at the center of it.</p>
+    <p class="lead">Corporate AI grows in layers, from the records that a company keeps today to an organization that learns from its own decisions. A world model of the company is at the center, and the other layers draw on it.</p>
   </div>
   <ol class="layers">
     <li><span class="layer-n">1</span><div><h3>Memory that accumulates</h3><p>A memory of the company keeps what happened, who decided it and why, and where each fact came from. Products such as <a href="https://www.sentra.app">Sentra</a> build this layer today.</p></div><span class="tag">In place</span></li>

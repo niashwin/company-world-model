@@ -52,9 +52,9 @@ The target was 90%.
 
 | Text | Sentences | Share that complies |
 | --- | ---: | ---: |
-| `paper/main.tex` | 1,447 | 98.3% |
-| `README.md` | 329 | 100% |
-| `website/template.html` | 368 | 100% |
+| `paper/main.tex` | 1,455 | 98.3% |
+| `README.md` | 346 | 100% |
+| `website/template.html` | 385 | 100% |
 | `REPRODUCE.md` | 94 | 96.8% |
 | `docs/ARXIV_ABSTRACT.txt` | 17 | 100% |
 
@@ -123,7 +123,7 @@ logo needed space between its parts. We fixed both.
   Font License, which is in `website/assets/fonts/`.
 - The four colors of the charts pass the checks of the palette validator in the light and the dark theme. Text
   colors have a contrast of at least 4.5 to 1 with their background.
-- The website has 113 links, and every link inside the page reaches its target. The website and the README
+- The website has 114 links, and every link inside the page reaches its target. The website and the README
   link to 64 different outside pages. The agent of the review opened each one or confirmed it through another
   page. The address of the website works only after GitHub Pages is on for the repository.
 - We took screenshots of every section at 1,280 pixels in the light and the dark theme, and at 390 pixels on a
