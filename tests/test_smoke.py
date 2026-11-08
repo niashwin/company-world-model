@@ -129,18 +129,23 @@ def test_rotation_does_not_change_placement(tmp_path):
 
 def test_memory_retrieves_by_key():
     """With rows split into [content | key], the reader retrieves by key: the same question with different keys reads
-    different records, and with the same key reads the same ones."""
+    different records, and with the same key reads the same ones.
+
+    Each key has exactly `topk` records, so the top-k set does not depend on how the CPU breaks ties between equal
+    scores. The reader ignores the order of its candidates, so outputs agree up to the order of float sums."""
     import torch
     from memory import Memory
     torch.manual_seed(0)
-    n, d = 40, 8
-    keys = torch.zeros(n, 2); keys[:20, 0] = 1.0; keys[20:, 1] = 1.0
+    n, d, per_key = 40, 8, 20
+    keys = torch.zeros(n, 2); keys[:per_key, 0] = 1.0; keys[per_key:, 1] = 1.0
     S = torch.cat([torch.randn(n, d), keys], 1)
     q = torch.randn(1, d).repeat(2, 1)
-    mem = Memory(d, 6, variant="topk", split=d, topk=4).eval()
+    mem = Memory(d, 6, variant="topk", split=d, topk=per_key).eval()
     with torch.no_grad():
         out = mem(S, torch.cat([q, torch.tensor([[1.0, 0.0], [0.0, 1.0]])], 1))
         same = mem(S, torch.cat([q, torch.tensor([[1.0, 0.0], [1.0, 0.0]])], 1))
+        shuffled = mem(S[torch.randperm(n)], torch.cat([q, torch.tensor([[1.0, 0.0], [0.0, 1.0]])], 1))
     assert out.shape == (2, 16, 6)
-    assert not torch.allclose(out[0], out[1])
-    assert torch.allclose(same[0], same[1])
+    assert not torch.allclose(out[0], out[1], atol=1e-3)
+    assert torch.allclose(same[0], same[1], atol=1e-5)
+    assert torch.allclose(out, shuffled, atol=1e-5)   # the order of the store does not matter

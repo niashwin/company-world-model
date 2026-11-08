@@ -43,6 +43,9 @@ A release for a general reader, with every reference checked and linked. The res
   part in every decision and every strategy, and it helps each person within that person's permissions. It grows
   out of the systems of record of today into a system of intelligence, with a world model of the company at its
   core. On the website, a new section and a section link give the definition.
+- **Tests.** The smoke test of the memory reader no longer depends on how a CPU breaks ties between equal
+  scores. Each key now has exactly as many records as the reader takes, and the test also checks that the order
+  of the store does not matter.
 - The paper has the label of version 7. Its results did not change. Its text changed only where the review
   found problems, in a definition of corporate AI, and in the affiliations, the bibliography and the address of
   the website.
