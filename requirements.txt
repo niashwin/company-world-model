@@ -5,4 +5,4 @@ scikit-learn>=1.4
 matplotlib>=3.8
 requests>=2.31
 pytest>=8
-sentence-transformers>=2.7   # only for the memory-reader experiment (run_memory2.py)
+sentence-transformers>=2.7   # the pretrained encoder: make_minilm.py, run_v2.py, run_memory2.py, run_memory_anchor.py, memory_retrieval.py

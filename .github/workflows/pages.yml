@@ -1,0 +1,36 @@
+# Publish the project website (website/) and the paper's PDF with GitHub Pages.
+# Turn it on once: Settings > Pages > Build and deployment > Source: GitHub Actions.
+# The site is public on the internet, also when the repository is private (Pages in a private repository needs a paid plan).
+name: website
+on:
+  push:
+    branches: [main]
+    paths: ["website/**", "paper/main.pdf", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Put the site together
+        run: |
+          mkdir -p _site
+          cp -r website/index.html website/assets website/data _site/
+          cp paper/main.pdf _site/paper.pdf
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

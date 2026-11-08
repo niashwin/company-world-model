@@ -24,6 +24,7 @@ NAME = {"good": "Good views", "bad": "Bad views", "ntp": "Next-token", "tfidf": 
 CUST = ["#6250d6", "#eda100", "#e87ba4"]
 MARK = ["o", "s", "^"]
 
+META = {"CreationDate": None}   # no timestamp, so a rebuild gives the same file
 plt.rcParams.update({
     "font.family": "DejaVu Sans", "font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5,
     "xtick.labelsize": 8, "ytick.labelsize": 8, "legend.fontsize": 8, "axes.edgecolor": INK2,
@@ -83,14 +84,15 @@ def fig_e1():
         ax.tick_params(axis="x", length=0)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("Precision@10, other systems")
-    from_ident = 0.163  # identity-only ceiling on the unmasked corpus (run_extras.identity_only_state_precision)
+    # identity-only ceiling on the unmasked corpus (run_extras.identity_only_state_precision)
+    from_ident = load("extras_b.json").get("mask", {}).get("identity_only_state_p@10", 0.163)
     axes[1].axhline(from_ident, color=INK2, lw=0.9, ls=(0, (3, 2)))
     axes[1].text(1.25, from_ident + 0.025, "knowing only the customer", ha="center", va="bottom", fontsize=7, color=INK2)
     for ax in axes:
         for lab in ax.get_xticklabels():
             lab.set_fontsize(7.5)
     fig.tight_layout(w_pad=2)
-    fig.savefig(os.path.join(FIG, "e1_precision.pdf"))
+    fig.savefig(os.path.join(FIG, "e1_precision.pdf"), metadata=META)
     plt.close(fig)
 
 
@@ -106,7 +108,7 @@ def tsne_maps():
     path = os.path.join(ROOT, "data/era/day1/observations.jsonl")
     if not all(os.path.exists(p) for p in need) or not os.path.exists(path):
         print("maps: skipped (needs data/ and cached embeddings from run_prh.py e1)")
-        return
+        return False
     c = load_corpus(path)
     rng = np.random.default_rng(0)
     idx = rng.choice(len(c.obs), 3000, replace=False)
@@ -134,7 +136,7 @@ def tsne_maps():
         ax.set_title(NAME[arm], color=C[arm], fontweight="bold")
     axes[0].legend(loc="lower left", frameon=False, handletextpad=0.2, borderaxespad=0.1, markerscale=1.6)
     fig.tight_layout(w_pad=0.8)
-    fig.savefig(os.path.join(FIG, "maps.pdf"), dpi=300)
+    fig.savefig(os.path.join(FIG, "maps.pdf"), metadata=META, dpi=300)
     plt.close(fig)
     json.dump({"customers": [c.accounts[a] for a in pick]}, open(os.path.join(FIG, "maps_meta.json"), "w"))
 
@@ -159,7 +161,7 @@ def fig_e2():
     ax.set_ylim(0, 0.3)
     ax.set_xlabel("Anchor pairs used to fit the rotation")
     ax.set_ylabel("Same-state recall@1")
-    fig.savefig(os.path.join(FIG, "e2_anchors.pdf"))
+    fig.savefig(os.path.join(FIG, "e2_anchors.pdf"), metadata=META)
     plt.close(fig)
 
 
@@ -199,7 +201,7 @@ def fig_e3():
     ax.set_title("Searching the old index", loc="left")
     ax.tick_params(axis="x", length=0); ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=2)
-    fig.savefig(os.path.join(FIG, "e3_time.pdf"))
+    fig.savefig(os.path.join(FIG, "e3_time.pdf"), metadata=META)
     plt.close(fig)
 
 
@@ -247,7 +249,7 @@ def fig_robust():
     ax.set_title("Customer names, contacts and ids masked", loc="left")
     ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=2)
-    fig.savefig(os.path.join(FIG, "robustness.pdf"))
+    fig.savefig(os.path.join(FIG, "robustness.pdf"), metadata=META)
     plt.close(fig)
     return True
 
@@ -278,7 +280,7 @@ def fig_persistence():
     p = os.path.join(RES, "state_vectors.npz")
     if not os.path.exists(p):
         print("persist: skipped (needs results/state_vectors.npz from run_state.py)")
-        return
+        return False
     z = np.load(p, allow_pickle=True)
     states = [tuple(s.split("|")) for s in z["states"]]
     out = {}
@@ -297,7 +299,7 @@ def fig_persistence():
     ax.set_xlabel("Quarters apart, same customer")
     ax.set_ylabel("Cosine similarity of states")
     ax.legend(loc="upper right", frameon=False, handlelength=1.5, borderaxespad=0.1)
-    fig.savefig(os.path.join(FIG, "persistence.pdf"))
+    fig.savefig(os.path.join(FIG, "persistence.pdf"), metadata=META)
     plt.close(fig)
     json.dump(out, open(os.path.join(RES, "persistence.json"), "w"), indent=1)
 
@@ -365,7 +367,7 @@ def fig_acl():
     ax.legend(loc="upper right", frameon=False, fontsize=6.4, handlelength=1.2, borderaxespad=0.1, ncol=1)
     ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=1.5)
-    fig.savefig(os.path.join(FIG, "acl.pdf"))
+    fig.savefig(os.path.join(FIG, "acl.pdf"), metadata=META)
     plt.close(fig)
 
 
@@ -373,6 +375,7 @@ if __name__ == "__main__":
     import sys
     which = sys.argv[1:] or ["e1", "maps", "e2", "e3", "robust", "persist", "acl"]
     for w in which:
-        {"e1": fig_e1, "maps": tsne_maps, "e2": fig_e2, "e3": fig_e3, "robust": fig_robust,
-         "persist": fig_persistence, "acl": fig_acl}[w]()
-        print("made", w)
+        done = {"e1": fig_e1, "maps": tsne_maps, "e2": fig_e2, "e3": fig_e3, "robust": fig_robust,
+                "persist": fig_persistence, "acl": fig_acl}[w]()
+        if done is not False:
+            print("made", w)

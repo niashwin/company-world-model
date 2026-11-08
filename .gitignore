@@ -1,5 +1,6 @@
-# generated data (regenerate with cwm/era_up.sh + cwm/era_export.py)
-data/
+# generated data (regenerate with scripts/reproduce.sh data); only the top-level folder
+/data/
+/data
 # large or derived artifacts
 results/*.npy
 results/*.npz
@@ -21,3 +22,5 @@ __pycache__/
 *.pyc
 .venv/
 results/*_log.txt
+# the pretrained encoder that sentence-transformers downloads
+/models/

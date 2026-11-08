@@ -1,5 +1,9 @@
 % Figure 1, drawn in TikZ. Compiled standalone to figures/idea.pdf (make idea) and included by main.tex.
 \documentclass[tikz,border=2pt]{standalone}
+% reproducible builds: no dates or random IDs in the PDF
+\ifdefined\pdfinfoomitdate \pdfinfoomitdate=1 \fi
+\ifdefined\pdftrailerid \pdftrailerid{} \fi
+\ifdefined\pdfsuppressptexinfo \pdfsuppressptexinfo=-1 \fi
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
 \usepackage[scaled=0.9]{helvet}

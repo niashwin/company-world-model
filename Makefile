@@ -1,7 +1,7 @@
 # Reproduce the paper's numbers, figures and PDF from results/ (see README for generating data and results).
 PY ?= python
 
-.PHONY: figures paper all clean
+.PHONY: figures paper all clean site check reproduce
 
 figures:
 	$(PY) cwm/make_figures.py
@@ -17,3 +17,13 @@ all: figures paper
 
 clean:
 	cd paper && latexmk -C main.tex
+
+site:
+	$(PY) cwm/export_site_data.py
+
+check:
+	$(PY) -m pytest -q tests
+	$(PY) tools/ste_check.py paper/main.tex --min 0.9
+
+reproduce:
+	bash scripts/reproduce.sh

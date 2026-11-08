@@ -738,5 +738,27 @@
     0.18620689655172415
    ]
   }
+ },
+ "checks": {
+  "last_month_with_data": "2027-01",
+  "transitions_into_later_months": 1,
+  "trouble_into_later_months": 1,
+  "later_next_months": [
+   [
+    "6",
+    "2027-01",
+    "2027-02"
+   ]
+  ],
+  "observed_in_trouble_without_them": {
+   "deal_progress": [
+    0.4583333333333333,
+    0.25
+   ],
+   "escalation": [
+    0.7083333333333334,
+    0.75
+   ]
+  }
  }
 }

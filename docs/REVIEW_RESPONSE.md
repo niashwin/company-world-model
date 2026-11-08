@@ -1,5 +1,10 @@
 # Responses to the reviews
 
+A note on terms: versions 2 to 4 sometimes called good views "link-trained views". From version 5, the paper, the
+README and the website use "good views" for the pairs that the links give, and "good-view space" for the space that
+an encoder learns from them. The responses below keep the terms of their time. [`CHECKS.md`](CHECKS.md) records the
+checks of version 5.
+
 - [The "corporate AI" review](#response-to-the-corporate-ai-review) → version 4
 - [Review of version 2](#response-to-the-review-of-version-2) → version 3
 - [Review of version 1](#response-to-the-review-of-version-1) → version 2

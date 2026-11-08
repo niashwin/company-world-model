@@ -1,0 +1,57 @@
+{
+ "day1": {
+  "records": 78048,
+  "linked": 21972,
+  "by_system": {
+   "calendar": {
+    "records": 487,
+    "linked": 167
+   },
+   "gmail": {
+    "records": 19713,
+    "linked": 14160
+   },
+   "gong": {
+    "records": 2066,
+    "linked": 1858
+   },
+   "jira": {
+    "records": 1206,
+    "linked": 77
+   },
+   "salesforce": {
+    "records": 5077,
+    "linked": 1136
+   },
+   "slack": {
+    "records": 45382,
+    "linked": 457
+   },
+   "zendesk": {
+    "records": 4117,
+    "linked": 4117
+   }
+  }
+ },
+ "customers": 21,
+ "customer_quarter_states": 180,
+ "first_quarter": "2022Q4",
+ "last_quarter": "2026Q4",
+ "day1_usable_linked": 21972,
+ "day2": {
+  "records": 102954,
+  "linked": 30085,
+  "new_linked_known_customers": 7990,
+  "new_linked_by_month": {
+   "2026-10": 3,
+   "2026-11": 2604,
+   "2026-12": 3354,
+   "2027-01": 2025,
+   "2027-02": 1,
+   "2027-03": 3
+  },
+  "new_linked_later_by_system": {
+   "calendar": 4
+  }
+ }
+}

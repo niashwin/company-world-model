@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Models of Organizations</title>
+<meta name="description" content="Every system sees the same company. We learn one state space for a whole company from the links that its systems already keep, with access control built in.">
+<meta property="og:title" content="Every system sees the same company">
+<meta property="og:description" content="Toward world models of organizations: one state space for a whole company, learned from the links that its systems already keep.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niashwin.github.io/company-world-model/">
+<meta property="og:image" content="https://niashwin.github.io/company-world-model/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Every system sees the same company: the records of one customer in seven systems, and where an encoder places them">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://niashwin.github.io/company-world-model/">
+<link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2317212c'/%3E%3Cg stroke='%232a78d6' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M7 9h18M7 16h18M7 23h18'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%23fbfcfd'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="bar">
+  <div class="bar-inner">
+    <a class="brand" href="#top">World models of organizations</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#idea">Idea</a>
+      <a href="#state">State</a>
+      <a href="#access">Access</a>
+      <a href="#memory">Memory</a>
+      <a href="#time">Time</a>
+      <a href="#decisions">Decisions</a>
+      <a href="#outlook">Outlook</a>
+      <a href="#reproduce">Reproduce</a>
+      <a href="#cite">Cite</a>
+    </nav>
+    <div class="bar-actions">
+      <a class="button secondary" data-link="paper" href="https://github.com/niashwin/company-world-model/blob/main/paper/main.pdf">Paper</a>
+      <a class="button secondary" href="https://github.com/niashwin/company-world-model">Code</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="section hero" id="top">
+  <h1>Every system sees the same company</h1>
+  <p class="subtitle">Toward world models of organizations</p>
+  <p class="byline">Ashwin Gopinath, Sentra, San Francisco. November 2026.</p>
+  <div class="prose">
+    <p class="lead">A company keeps its records in many systems: email, chat, the CRM, support tickets, call recordings, calendars and issue trackers. Each system records a part of what happens with a customer. No system records the situation itself.</p>
+    <p class="lead">We learn that situation from the links that the systems already keep. The result is one state space for the whole company, with access control built in. We test it on a simulated company with exact ground truth.</p>
+  </div>
+  <div class="actions">
+    <a class="button primary" data-link="paper" href="https://github.com/niashwin/company-world-model/blob/main/paper/main.pdf">Read the paper</a>
+    <a class="button" href="https://github.com/niashwin/company-world-model">Get the code</a>
+    <a class="button" href="#findings">See what we found</a>
+  </div>
+
+  <figure id="fig-hero">
+    <div class="frame">
+      <div class="lanes-wrap">
+        <div><svg class="lanes" id="lanes" viewBox="0 0 700 330" role="img" aria-label="Records of one customer and quarter in seven systems"></svg></div>
+        <div class="map-side canvas-wrap">
+          <canvas id="hero-map" width="420" height="330" role="img" aria-label="Where the encoder places the records"></canvas>
+          <span class="map-label" id="hero-map-label">Good-view space</span>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="stepper">
+          <button class="button" id="step-prev" aria-label="Previous step">&#8592;</button>
+          <span class="step-count" id="step-count" aria-live="polite">Step 4 of 5</span>
+          <button class="button" id="step-next" aria-label="Next step">&#8594;</button>
+          <button class="button" id="step-play">Play</button>
+        </div>
+        <p class="step-text" id="step-text" aria-live="polite">The encoder places each record by the situation that it describes. The records of this customer and quarter land close together, whichever system wrote them.</p>
+      </div>
+    </div>
+    <figcaption><b>Figure 1.</b> Left: the 510 records of Customer 9 in 2026 Q3, in the seven systems that wrote them. Each line is one record. Right: where an encoder places the 75 of these records that are among the 3,000 linked records of the paper's Figure 3. Use the steps to follow the method.</figcaption>
+  </figure>
+</section>
+
+<section class="section" id="findings">
+  <h2>What we found</h2>
+  <ul class="findings">
+    <li><span class="fig-n">76%</span><p>of records whose links we hid land with the right customer. TF-IDF places 53%. <a href="#state">State space</a></p></li>
+    <li><span class="fig-n">53% to 62%</span><p>The same good views improve a frozen pretrained encoder on these records. <a href="#state">State space</a></p></li>
+    <li><span class="fig-n">0</span><p>change in any result that a reader gets, with access control built in, when we plant secrets in records that the reader may not read. <a href="#access">Access control</a></p></li>
+    <li><span class="fig-n">63.8%</span><p>of questions answered when each question comes with one record of the customer instead of its name, with the names kept in the records. The state channel places the record. Placement with the pretrained encoder answers 54.9%. <a href="#memory">Memory</a></p></li>
+    <li><span class="fig-n">13–21%</span><p>precision for similar situations of other customers, against 8% by chance, in every representation. Forecasts and drift scores stay at chance or at simple baselines. <a href="#time">Time</a></p></li>
+    <li><span class="fig-n">25 of 29</span><p>months in trouble in which the company intervened. The logs show where the company acted, not what the action did. <a href="#decisions">Decisions</a></p></li>
+    <li><span class="fig-n">2&#8211;7 min</span><p>to train each encoder or head that we timed, on a CPU and without a GPU. <a href="#reproduce">Reproduce</a></p></li>
+    <li><span class="fig-n">21,972</span><p>linked records from seven systems of a simulated company, with exact ground truth. <a href="#idea">The idea</a></p></li>
+  </ul>
+</section>
+
+<section class="section" id="idea">
+  <h2>The idea</h2>
+  <div class="prose">
+    <p>A world model of an organization has a state space. Each point in this space is a situation, for example one customer in one quarter. Each record of the company lands at the situation that it describes, whichever system wrote it.</p>
+    <p>The Platonic Representation Theorem gives a way to learn such a space. It is about joint-embedding predictive architectures (JEPAs), which learn to predict one view of a state from another view of the same state. The views must be <em>good views</em>: two different observations of the same state. With good views, such encoders converge to the same representation, up to a rotation.</p>
+    <p>Companies already keep good views. The CRM, the email system and the ticket system each link records to customers. Two records that two systems link to the same customer in the same quarter observe the same situation. Nobody has to label anything.</p>
+    <p>We test this idea on Northwind Robotics, a company that Era by Eon simulates with exact ground truth. The company has 78,048 records in seven systems. Of these, 21,972 have a link to one of 21 customers. The other 72% have no link, so the encoder must place them from their content alone. We cannot score these records directly, because they have no ground truth.</p>
+  </div>
+</section>
+
+<section class="section" id="state">
+  <h2>One state space for seven systems</h2>
+  <div class="prose">
+    <p>We train small text encoders from scratch on the linked records, with three objectives on the same text. Good views pair two records of the same customer and quarter, from any system. Bad views pair a record with a damaged copy of itself. Next-token prediction learns to predict the next word.</p>
+    <p>First, we measure on the training records. With good views, 95.1% of a record's ten nearest records from other systems belong to the same customer. Bad views and next-token prediction reach 13.6% and 13.2%.</p>
+    <p>The fairer test hides the links of some records. The encoder never sees their links, and their threads are not in the training data. A good-view encoder places 76% of these records with the right customer. TF-IDF places 53%. The same good views also raise a frozen pretrained encoder from 53% to 62%.</p>
+  </div>
+  <figure id="fig-map">
+    <div class="frame">
+      <div class="controls">
+        <span class="ctl" id="map-space-label">Space</span>
+        <div class="seg" id="map-space" role="group" aria-labelledby="map-space-label"></div>
+      </div>
+      <div class="controls">
+        <span class="ctl" id="map-mode-label">Show</span>
+        <div class="seg" id="map-mode" role="group" aria-labelledby="map-mode-label">
+          <button type="button" data-mode="customer" aria-pressed="true">One customer</button>
+          <button type="button" data-mode="system" aria-pressed="false">One system</button>
+        </div>
+        <select id="map-pick" aria-label="Customer or system to show"></select>
+      </div>
+      <div class="canvas-wrap"><canvas id="map" width="1120" height="560" role="img" aria-label="Map of 3,000 linked records"></canvas><div class="tooltip" id="map-tip"></div></div>
+      <div class="figure-body"><div class="legend" id="map-legend"></div></div>
+    </div>
+    <figcaption><b>Figure 2.</b> Where six encoders place the same 3,000 linked records, in two dimensions (t-SNE). Only good views gather each customer's records, whatever system wrote them. Show one system to compare how much each space groups the records of one system. Change the space to see the records move.</figcaption>
+  </figure>
+  <figure id="fig-bars">
+    <div class="frame"><div class="figure-body two-up">
+      <div><p class="chart-title">Ten nearest records from other systems: same customer</p><svg class="chart" id="bars-e1"></svg></div>
+      <div><p class="chart-title">Records with hidden links: placed with the right customer</p><svg class="chart" id="bars-ho"></svg></div>
+    </div></div>
+    <figcaption><b>Figure 3.</b> Left: the share of a record's ten nearest records from other systems that belong to the same customer, on the training records. Right: the share of records with hidden links that land with the right customer. On the right, the dashed line shows the share that a guess of the largest customer gets.</figcaption>
+    <details class="numbers" data-tables="tab:e1 tab:heldout"><summary>Show the numbers</summary></details>
+  </figure>
+</section>
+
+<section class="section" id="access">
+  <h2>Access control, built in</h2>
+  <div class="prose">
+    <p>A learned world model can leak through three paths: search results, states that combine records a reader may not open, and the encoder's own training. Filters on search results and states close only the first two paths.</p>
+    <p>To test this, we plant secrets in 150 records that a reader may not read. Then the reader searches for them. With an encoder trained on everything, the search finds the secrets, even when we filter the search and the states.</p>
+    <p>When each reader's model trains only on the records that the reader may read, every result is identical with and without the secrets. A pretrained backbone holds no company data, so all readers can share it. It helps some readers who may read little, but not all. With a head on the backbone, the financial analyst's placement rises from 23% to 43%. The software engineer's placement changes only from 28% to 29%.</p>
+  </div>
+  <figure id="fig-leak">
+    <div class="frame">
+      <div class="controls">
+        <span class="ctl" id="leak-reader-label">Reader</span>
+        <div class="seg" id="leak-reader" role="group" aria-labelledby="leak-reader-label"></div>
+      </div>
+      <div class="figure-body"><svg class="chart" id="leak"></svg>
+        <div class="legend"><span><i class="key dot" style="background:var(--bad)"></i>With the secrets planted</span><span><i class="key dot" style="background:var(--mute-2)"></i>Without the secrets</span></div>
+      </div>
+    </div>
+    <figcaption><b>Figure 4.</b> A search for a planted codename (precision@10) and for a planted secret sentence (precision@5). The distance between the two dots is the leak. With access control built in, the two dots are at the same place.</figcaption>
+  </figure>
+  <figure id="fig-rescue">
+    <div class="frame"><div class="figure-body"><svg class="chart" id="rescue"></svg>
+      <div class="legend"><span><i class="key dot" style="background:var(--signal)"></i>Own encoder, readable records only</span><span><i class="key dot" style="background:var(--pre)"></i>Shared backbone and own head, readable records only</span><span><i class="key ring"></i>Encoder trained on everything (it leaks)</span></div>
+    </div></div>
+    <figcaption><b>Figure 5.</b> How often each reader's model places a held-out record with the right customer. Readers who may read most records lose little. For the financial analyst, the shared backbone recovers part of the loss without a leak. For the software engineer, it recovers almost nothing.</figcaption>
+    <details class="numbers" data-tables="tab:acl tab:aclrescue"><summary>Show the numbers</summary></details>
+  </figure>
+</section>
+
+<section class="section" id="memory">
+  <h2>Two channels: state and detail</h2>
+  <div class="prose">
+    <p>The state channel tells where a record belongs: which customer and which situation. The detail channel tells what the record says. A pretrained sentence encoder keeps these details. A memory of the company needs both channels.</p>
+    <p>We ask questions about customers, for example how many tickets a customer had in a quarter. A small reader answers from 16 records that a store finds. The reader follows Memorilla.</p>
+    <p>When a question names the customer, a store of pretrained-encoder vectors, the detail channel, answers as well as any combination of channels.</p>
+    <p>Sometimes a question comes with one record of the customer instead of the name. We call this record the anchor. Then a store must first place the anchor with a customer, and the reader reads that customer's records. With the names kept in the records, placement with the state channel answers 63.8% of the questions. Placement with both channels side by side answers 64.2%, placement with the pretrained encoder 54.9%, and no store 52.2%. When we mask every name in the records, only the anchor's own link helps clearly.</p>
+  </div>
+  <figure id="fig-anchor">
+    <div class="frame">
+      <div class="controls">
+        <span class="ctl" id="anchor-names-label">Names in the records</span>
+        <div class="seg" id="anchor-names" role="group" aria-labelledby="anchor-names-label">
+          <button type="button" data-names="kept" aria-pressed="true">Kept</button>
+          <button type="button" data-names="masked" aria-pressed="false">Masked</button>
+        </div>
+      </div>
+      <div class="figure-body"><svg class="chart" id="anchor"></svg></div>
+    </div>
+    <figcaption><b>Figure 6.</b> Questions that come with one record of the customer instead of its name. Each row is one way to find the records. The line shows one standard deviation over four seeds of the reader and the anchors, with one run of the state encoder. The dashed lines show no store and an oracle: it takes the records that the anchor's own link gives, and reads their detail channel.</figcaption>
+  </figure>
+  <figure id="fig-mem">
+    <div class="frame"><div class="figure-body"><svg class="chart" id="mem"></svg>
+      <div class="legend"><span><i class="key dot" style="background:var(--mute-2)"></i>No store (closed book)</span><span><i class="key dot" style="background:var(--signal)"></i>16 records from the store</span></div>
+    </div></div>
+    <figcaption><b>Figure 7.</b> Questions that name the customer. The store with the detail channel alone does about as well as any combination of channels. The right column gives the gain from the store in points, with its standard deviation over four seeds. The gain of the state channel alone is within one standard deviation. Each line shows one standard deviation of the accuracy with the store.</figcaption>
+    <details class="numbers" data-tables="tab:memory2 tab:anchor tab:twochannel"><summary>Show the numbers</summary></details>
+  </figure>
+</section>
+
+<section class="section" id="time">
+  <h2>Time and dynamics</h2>
+  <div class="prose">
+    <p>A world model must also predict how a situation changes. Here our result is negative. With monthly and weekly windows, forecasts, linear dynamics, drift scores and distances between teams stay at chance or at simple baselines.</p>
+    <p>A linear predictor of next month's state does at most 3.4 points better than a simple shrinkage toward the mean. In 4 of the 6 spaces, it gains at most half a point. Almost all that it learns is a return toward the mean. Every representation finds similar situations of other customers at about twice chance, and good views have no advantage here.</p>
+  </div>
+  <figure id="fig-time">
+    <div class="frame"><div class="figure-body"><svg class="chart" id="timechart"></svg>
+      <div class="legend"><span><i class="key dot" style="background:var(--ink)"></i>Linear predictor, tuned</span><span><i class="key ring" style="border-color:var(--ink-3)"></i>Shrinkage toward the mean</span></div>
+    </div></div>
+    <figcaption><b>Figure 8.</b> Error of next month's state, relative to a prediction of no change. Negative is better. For good views, the learned predictor is worse than a simple shrinkage.</figcaption>
+    <details class="numbers" data-tables="tab:months tab:time tab:primitives"><summary>Show the numbers</summary></details>
+  </figure>
+</section>
+
+<section class="section" id="decisions">
+  <h2>Decisions: what the company did, and what followed</h2>
+  <div class="prose">
+    <p>We read six kinds of action from the records: sales calls, messages from leaders, CRM tasks, engineering escalations, support replies and emails to customers. Then we add the actions to the predictor.</p>
+    <p>This month's actions do not help to predict next month's state. The error changes by −0.1% to +0.6% of the error without the actions. In the good-view space, this month's state already predicts most of the actions, with an AUROC of 0.63–0.88.</p>
+    <p>We also simulate a decision for 29 customer-months in trouble: an urgent or high-priority ticket during an open deal. For each month, we find similar months of other customers. Then we compare the months in which the company intervened with the months in which it did not intervene.</p>
+    <p>The company intervened in 25 of the 29 months. The similar months in which it intervened were in trouble 19–24% of the time, against 0.2–4% for the months in which it did not intervene. So the comparison sets troubled months against calm months. It shows where the company acted, not what the action did.</p>
+  </div>
+  <figure id="fig-sim">
+    <div class="frame">
+      <div class="controls">
+        <label for="sim-month">Month in trouble</label>
+        <select id="sim-month"></select>
+        <span class="ctl" id="sim-space-label">Space</span>
+        <div class="seg" id="sim-space" role="group" aria-labelledby="sim-space-label"></div>
+      </div>
+      <div class="controls">
+        <span class="ctl" id="sim-outcome-label">Outcome next month</span>
+        <div class="seg" id="sim-outcome" role="group" aria-labelledby="sim-outcome-label">
+          <button type="button" data-outcome="urgent_next" aria-pressed="true">Urgent or high-priority ticket</button>
+          <button type="button" data-outcome="deal_next" aria-pressed="false">Deal advanced</button>
+        </div>
+      </div>
+      <div class="figure-body">
+        <div class="sim-head" id="sim-head"></div>
+        <div id="sim-rows"></div>
+        <div class="legend"><span><i class="key" style="background:var(--signal)"></i>The outcome happened</span><span><i class="key" style="border:1.5px solid var(--mute-2)"></i>It did not happen</span><span><i class="key dot" style="background:var(--bad)"></i>That month was itself in trouble</span></div>
+      </div>
+    </div>
+    <figcaption><b>Figure 9.</b> The case-based simulation of one decision. Each square is a similar month of another customer, from the 60 nearest states. Look at the orange dots. The similar months in which the company intervened were in trouble 19–24% of the time. The months in which it did not intervene were in trouble 0.2–4% of the time.</figcaption>
+  </figure>
+  <figure id="fig-simall">
+    <div class="frame"><div class="figure-body two-up">
+      <div><p class="chart-title">Urgent or high-priority ticket next month: intervene minus not</p><svg class="chart" id="simall-urgent"></svg></div>
+      <div><p class="chart-title">Deal advanced next month: intervene minus not</p><svg class="chart" id="simall-deal"></svg></div>
+    </div></div>
+    <figcaption><b>Figure 10.</b> All 29 months in trouble, in percentage points, with 95% intervals from a resample of customers. The estimates move with the method and the space, and the outcome model gives the decision little weight. These numbers tell what followed each decision, not its effect.</figcaption>
+    <details class="numbers" data-tables="tab:actions tab:simulate"><summary>Show the numbers</summary></details>
+  </figure>
+</section>
+
+<section class="section" id="outlook">
+  <h2>Toward an operational world model</h2>
+  <div class="prose">
+    <p>Much of enterprise AI today is retrieval. Each question rebuilds the situation from documents, and then the system forgets it. A world model keeps the state of the organization up to date as records arrive. People and agents then ask the state, not the documents.</p>
+    <p>An operational world model has four parts, and each part needs the one before it:</p>
+    <ol class="parts">
+      <li><b>A shared state space</b>, learned from the links that the systems keep. <span class="status done">Shown here</span></li>
+      <li><b>A memory</b> that keeps the state and the detail of every record, and answers each question from the right channel. <span class="status done">Shown in part</span></li>
+      <li><b>A predictor</b> of how states change, trained on the company's own history of states, decisions and outcomes. <span class="status">Not yet</span></li>
+      <li><b>Planning</b>: people and agents test a decision against the predictor before they make it. <span class="status">Future work</span></li>
+    </ol>
+    <p>The state space trains in minutes on a CPU. At this scale, a company could retrain it and the model of each access scope every day, or when an access rule changes.</p>
+    <h3>Current limits</h3>
+    <ul class="limits">
+      <li>All results come from one simulated company. Its text is cleaner than real text, and its systems agree by construction. Some negative results may come from how Era generates events.</li>
+      <li>Links are a weak form of supervision, and most metrics score the same groups that the links define. So results on training records are upper limits. The test on records with hidden links is the fairer measure.</li>
+      <li>We tested one small, frozen pretrained backbone. A larger encoder that we fine-tune end to end may behave differently.</li>
+      <li>The main comparison uses 3 seeds and the memory reader 4. Most other experiments use one run.</li>
+      <li>The question benchmark is narrow. Its 144 test questions ask only about counts and categories in the records of one system.</li>
+      <li>Forecasts do not beat the most common answer. A tuned linear predictor beats a simple shrinkage toward the mean by at most 3.4 points. The company's logged actions do not change this.</li>
+      <li>We read actions from the logs with simple rules, and the company did not assign them at random. So the simulation shows what followed each decision, not its effect.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="reproduce">
+  <h2>Reproduce the work</h2>
+  <div class="prose">
+    <p>Everything runs on a CPU. Each encoder and head that we timed trains in 2&#8211;7 minutes. The paper and its figures rebuild from the stored results in about a minute. Every number in the paper comes from these results.</p>
+  </div>
+<pre><span class="c"># the paper and its figures, from results/ (no data needed)</span>
+git clone https://github.com/niashwin/company-world-model
+cd company-world-model
+pip install -r requirements.txt
+make all
+pytest -q tests
+
+<span class="c"># every experiment, from the simulated company to the paper (several hours, Docker for Era)</span>
+bash scripts/reproduce.sh</pre>
+  <div class="prose">
+    <p class="note">Era by Eon generates the company. The repository does not include the generated data. The script starts the seven simulators with Docker and exports every record. See REPRODUCE.md in the repository for the command that makes each table.</p>
+  </div>
+</section>
+
+<section class="section" id="cite">
+  <h2>Cite</h2>
+  <div class="cite-box">
+<pre id="bibtex">@techreport{gopinath2026organizations,
+  title       = {Toward World Models of Organizations: Every System Sees the Same Company},
+  author      = {Gopinath, Ashwin},
+  institution = {Sentra},
+  address     = {San Francisco},
+  year        = {2026},
+  month       = nov,
+  note        = {Version 5},
+  url         = {https://github.com/niashwin/company-world-model}
+}</pre>
+    <button class="button" id="copy-bib" type="button">Copy</button>
+  </div>
+  <h3>References</h3>
+  <ol class="refs">
+    <li>R. Balestriero and Y. LeCun. Proving and improving the Platonic Representation Hypothesis with JEPAs. <a href="https://arxiv.org/abs/2610.39302">arXiv:2610.39302</a>, 2026.</li>
+    <li>R. Balestriero and Y. LeCun. LeJEPA: provable and scalable self-supervised learning without the heuristics. <a href="https://arxiv.org/abs/2511.08544">arXiv:2511.08544</a>, 2025.</li>
+    <li>M. Huh, B. Cheung, T. Wang and P. Isola. The Platonic Representation Hypothesis. ICML, 2024.</li>
+    <li>B. Gruenbaum, D. Porat, A. Natanzon, R. Zavida, C. Dinachi and O. Itzahary. The Era by Eon benchmark: a generated enterprise estate with exact ground truth for benchmarking LLM agents. <a href="https://arxiv.org/abs/2609.09853">arXiv:2609.09853</a>, 2026.</li>
+    <li>A. Fallahpour, P. Idehpour, N. Mounier, S. Wu, S. Pardis, V. Kothapalli and J. Leskovec. Memorilla: latent semantic memory for LLMs. <a href="https://arxiv.org/abs/2610.21375">arXiv:2610.21375</a>, 2026.</li>
+    <li>M. Assran and others. Self-supervised learning from images with a joint-embedding predictive architecture. CVPR, 2023.</li>
+    <li>Y. LeCun. A path towards autonomous machine intelligence. 2022.</li>
+    <li>D. Ha and J. Schmidhuber. World models. <a href="https://arxiv.org/abs/1803.10122">arXiv:1803.10122</a>, 2018.</li>
+  </ol>
+</section>
+</main>
+
+<footer>
+  <div class="section">
+    <span>&#169; 2026 Ashwin Gopinath. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
+    <span><a href="https://github.com/niashwin/company-world-model">GitHub</a></span>
+  </div>
+</footer>
+<script src="data/site-data.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

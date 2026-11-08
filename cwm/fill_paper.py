@@ -19,18 +19,22 @@ def load(name):
     return json.load(open(p)) if os.path.exists(p) else {}
 
 
-PRH, XA, XB, ST, M2, M2S, M2L, E3B = (load(n) for n in ("prh.json", "extras_a.json", "extras_b.json", "state.json",
-                                                         "memory2.json", "memory2_seeds.json", "memory2_minilm.json",
-                                                         "e3b.json"))
+PRH, XA, XB, ST, M2, M2S, E3B = (load(n) for n in ("prh.json", "extras_a.json", "extras_b.json", "state.json",
+                                                    "memory2.json", "memory2_seeds.json", "e3b.json"))
 ACL = load("acl.json")
 V2 = {k: load(f"v2_{k}.json") for k in ("pretrained", "monthly", "acl", "state", "time", "primitives", "scope")}
 
 
 def merged(prefix):
-    """Merge result files written by parallel runs (prefix.json, prefix_a.json, ...): setup, runs and retrieval."""
+    """Merge result files written by parallel runs (prefix_a.json, prefix_b.json, ...): setup, runs and retrieval.
+    A file without a suffix comes from one complete run of the same command (scripts/reproduce.sh writes it); when it
+    exists, it alone is used, so that a new run replaces the stored parallel parts."""
     import re
     out = {}
-    for n in sorted(os.listdir(RES)) if os.path.isdir(RES) else []:
+    names = sorted(os.listdir(RES)) if os.path.isdir(RES) else []
+    if prefix + ".json" in names:
+        names = [prefix + ".json"]
+    for n in names:
         if re.fullmatch(re.escape(prefix) + r"(_[a-z])?\.json", n):
             d = load(n)
             out.setdefault("setup", d.get("setup", {}))
@@ -110,6 +114,11 @@ def fill(text):
         sub[f"E1{tag}STPCT"] = pct(np.mean([m[METRICS["ST"]] for m in r.values()]))
         sub[f"E1{tag}MRPCT"] = pct(np.mean([m[METRICS["MR"]] for m in r.values()]), 0)
         sub[f"E1{tag}NSEEDS"] = str(len(r))
+    alt = [np.mean([m[METRICS["ACC"]] for m in runs(a).values()]) for a in ("bad", "ntp")]
+    sub["EONEGOODROUND"] = pct(np.mean([m[METRICS["ACC"]] for m in runs("good").values()]), 0)
+    sub["EONEALTROUND"] = f"{100 * min(alt):.0f}--{pct(max(alt), 0)}"
+    if "tfidf_lsa" in PRH.get("E1", {}):
+        sub["EONETFROUND"] = pct(PRH["E1"]["tfidf_lsa"][METRICS["ACC"]], 0)
     mask = XB.get("mask", {})
     if "good_s0" in mask:
         sub["MASKGOODPCT"] = pct(mask["good_s0"][METRICS["ACC"]], 0)
@@ -125,12 +134,12 @@ def fill(text):
         bad = np.mean([m[METRICS["ACC"]] for m in runs("bad").values()])
         ntp = np.mean([m[METRICS["ACC"]] for m in runs("ntp").values()])
         sub["NOISESENTENCE"] = (
-            f"With {pct(ps[0], 0)} of the links wrong, same-customer precision is {pct(lo[METRICS['ACC']], 0)} "
-            f"(from {pct(clean[METRICS['ACC']], 0)} with clean links) and state precision {pct(lo[METRICS['ST']], 0)} "
-            f"(from {pct(clean[METRICS['ST']], 0)}). With {pct(ps[-1], 0)} wrong, they are "
+            f"With {pct(ps[0], 0)} of the links wrong, same-customer precision is {pct(lo[METRICS['ACC']], 0)}, "
+            f"against {pct(clean[METRICS['ACC']], 0)} with clean links. State precision is {pct(lo[METRICS['ST']], 0)}, "
+            f"against {pct(clean[METRICS['ST']], 0)}. With {pct(ps[-1], 0)} of the links wrong, the two values are "
             f"{pct(hi[METRICS['ACC']], 0)} and {pct(hi[METRICS['ST']], 0)}. Even then, same-customer precision is far "
-            f"above that of bad views and next-token prediction trained on clean links ({pct(bad, 0)} and "
-            f"{pct(ntp, 0)}). Wrong links blur the space; they do not break it.")
+            f"above that of bad views and next-token prediction with clean links ({pct(bad, 0)} and "
+            f"{pct(ntp, 0)}). Wrong links blur the space, but they do not break it.")
     if HO:
         sub["HONTEST"] = f"{HO['n_test_records']:,}".replace(",", "{,}")
         for arm, tag in (("good_s0", "GOOD"), ("bad_s0", "BAD"), ("ntp_s0", "NTP"), ("tfidf_lsa", "TF"),
@@ -183,15 +192,21 @@ def fill(text):
         sub["ACLPOLICYTABLE"] = acl_policy_table()
         sub["ACLSECRETSENTENCE"] = ACL["secret"].capitalize() + "."
         sub["ACLLEAKTABLE"] = acl_leak_table()
+    fill_corpus(sub)
     fill_v2(sub)
     fill_anchor(sub)
     fill_actions(sub)
     sub["APPSEEDTABLE"] = seed_table()
     sub["APPSTATETABLE"] = state_table()
     sub["APPMEMTABLE"] = memory_table()
+    LAST_SUB.clear()
+    LAST_SUB.update(sub)
     for k in sorted(sub, key=len, reverse=True):
         text = text.replace(k, minus(sub[k]))
     return text
+
+
+LAST_SUB = {}   # the last substitution map, written out when FILL_MAP names a file (used by tools/ste_check.py)
 
 
 def mem_stats(store):
@@ -602,6 +617,42 @@ def rng_(vals, fmt="{:.2f}", sep="--"):
     return f"{fmt.format(min(vals))}{sep}{fmt.format(max(vals))}"
 
 
+SYSNAME = {"slack": "Slack (chat)", "gmail": "Gmail (email)", "salesforce": "Salesforce (CRM)",
+           "zendesk": "Zendesk (support)", "gong": "Gong (calls)", "jira": "Jira (issues)", "calendar": "Google Calendar"}
+
+
+def thousands(n):
+    return f"{n:,}".replace(",", "{,}")
+
+
+def fill_corpus(sub):
+    """Table 1 and the counts of Section 5, from results/corpus.json (cwm/corpus_stats.py)."""
+    C = load("corpus.json")
+    if not C:
+        return
+    d1 = C["day1"]
+    rows = ["\\begin{tabular}{lrrr}", "\\toprule", "System & Records & Linked to a customer & Share linked \\\\",
+            "\\midrule"]
+    for k, v in sorted(d1["by_system"].items(), key=lambda kv: -kv[1]["records"]):
+        rows.append(f"{SYSNAME.get(k, k)} & {thousands(v['records'])} & {thousands(v['linked'])} & "
+                    f"{pct(v['linked'] / v['records'], 0)} \\\\")
+    rows += ["\\midrule", f"All & {thousands(d1['records'])} & {thousands(d1['linked'])} & "
+             f"{pct(d1['linked'] / d1['records'], 0)} \\\\", "\\bottomrule", "\\end{tabular}"]
+    sub["DATATABLE"] = "\n".join(rows)
+    sub["CORPUSRECORDS"] = thousands(d1["records"])
+    sub["CORPUSLINKED"] = thousands(d1["linked"])
+    sub["CORPUSSHARE"] = pct(d1["linked"] / d1["records"], 0)
+    sub["CORPUSUNLINKED"] = pct(1 - d1["linked"] / d1["records"], 0)
+    sub["CORPUSCUSTOMERS"] = str(C["customers"])
+    sub["CORPUSSTATES"] = str(C["customer_quarter_states"])
+    sub["CORPUSNEW"] = thousands(C["day2"]["new_linked_known_customers"])
+    bm = C["day2"]["new_linked_by_month"]
+    sub["CORPUSNEWQFOUR"] = thousands(sum(v for k, v in bm.items() if "2026-10" <= k <= "2026-12"))
+    sub["CORPUSNEWJAN"] = thousands(bm.get("2027-01", 0))
+    sub["CORPUSNEWLATER"] = thousands(sum(v for k, v in bm.items() if k > "2027-01"))
+    sub["CORPUSFIRSTQ"], sub["CORPUSLASTQ"] = (f"{q[:4]}~Q{q[-1]}" for q in (C["first_quarter"], C["last_quarter"]))
+
+
 def fill_actions(sub):
     """Section 6.11: actions read from records, action-conditioned dynamics, event windows, decision simulation.
     Error changes are printed as a share of the reference model's error, positive meaning worse."""
@@ -778,6 +829,13 @@ def fill_actions(sub):
             nzero += sum(SI[yk][k + "_difference_ci"][0] <= 0 <= SI[yk][k + "_difference_ci"][1] for k in case_keys)
         sub["SIMCASENZERO"] = WORDS[nzero]
     # one encoder or head per timing: E2 in prh.json times two per-system encoders and their evaluation together
+    CK = AC.get("checks", {})
+    if CK:
+        sub["CHKLATE"] = WORDS.get(CK["transitions_into_later_months"], str(CK["transitions_into_later_months"])).capitalize()
+        sub["CHKLATETROUBLE"] = WORDS.get(CK["trouble_into_later_months"], str(CK["trouble_into_later_months"]))
+        o = CK["observed_in_trouble_without_them"]
+        sub["CHKPROGON"], sub["CHKPROGOFF"] = pct(o["deal_progress"][0], 0), pct(o["deal_progress"][1], 0)
+        sub["CHKESCON"], sub["CHKESCOFF"] = pct(o["escalation"][0], 0), pct(o["escalation"][1], 0)
     secs = [v for f in ("prh.json", "extras_a.json", "extras_b.json", "extras_c.json", "extras_d.json", "extras_e.json",
                         "v2_pretrained.json", "v2_monthly.json", "acl.json")
             for v in _seconds({k: x for k, x in load(f).items() if not (f == "prh.json" and k == "E2")})]
@@ -959,11 +1017,14 @@ if __name__ == "__main__":
     src, dst = sys.argv[1], sys.argv[2]
     out = fill(open(src).read())
     open(dst, "w").write(out)
+    if os.environ.get("FILL_MAP"):
+        json.dump(LAST_SUB, open(os.environ["FILL_MAP"], "w"), indent=0)
     left = [w for w in ("E1GOOD", "E1BAD", "E1NTP", "MASK", "NOISE", "APPSEED", "APPSTATE", "APPMEM", "HOGOOD", "HOTF",
                         "HOBAD", "HONTP", "HOREF", "HONTEST", "HOTABLE", "E3B", "ACL", "PTRAW", "PTHEAD", "MASKEMP",
                         "MON", "TIME", "DYN", "FCGOOD", "FCTWO", "FCBAD", "STATE2", "CALL", "NOWTWO", "NOWMINI",
                         "MEM2", "MEMGOOD", "MEMDUAL", "MEMMINI", "MEMROUTE", "SHRINK", "TUNED", "PRIM", "DRIFT", "MISR", "SIT", "ACL2",
-                        "TROUBLE", "SCOPE", "MONTABLE", "ANCH", "ACT", "SIM", "EVP", "EVC", "EVE", "EVL", "TRAINMIN") if w in out]
+                        "TROUBLE", "SCOPE", "MONTABLE", "ANCH", "ACT", "SIM", "EVP", "EVC", "EVE", "EVL", "TRAINMIN",
+                        "CORPUS", "DATATABLE", "EONE", "MEMREADER", "SUPPORTAGENTS", "CHK") if w in out]
     print("unfilled:", left or "none")
     if left:
         sys.exit(1)

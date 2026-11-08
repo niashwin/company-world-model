@@ -1,5 +1,32 @@
 # Changelog
 
+## v5 (November 2026)
+
+- **Simplified Technical English.** The paper, the README and the website follow the writing rules of ASD-STE100:
+  short sentences, active voice, simple tenses and one term for each concept. The target was at least 90% of the
+  sentences. `tools/ste_check.py` measures 98% for the paper. `tools/tex_invariants.py` checks that an edit keeps
+  every placeholder, label, reference and citation. The results did not change. Independent reviews of the text
+  against `results/` led to corrections of some wording and some claims; `docs/CHECKS.md` lists them. One term for
+  each concept: "good views" replaces "link-trained views" of versions 2 to 4.
+- **Checks** (`docs/CHECKS.md`). A record of each check of version 5 and its result: the tests of the numbers, the
+  clean rebuild, the measure of the writing, and the independent reviews with what they found.
+- **Project website** (`website/`). An interactive site with the paper's own numbers: the records of one customer
+  in seven systems, the state-space map in six spaces, the leak test, the two memory channels, dynamics, and the
+  decision simulation. `cwm/export_site_data.py` writes its data from `results/` and the filled paper.
+  `.github/workflows/pages.yml` publishes it with GitHub Pages. The charts draw at the width of the screen, so they
+  stay legible on phones, and the site has light and dark themes.
+- **Reproduction from a fresh clone.** `REPRODUCE.md` maps each table and figure to its command and result file.
+  `scripts/reproduce.sh` runs every stage, from the simulated company to the PDF. `cwm/corpus_stats.py` writes
+  Table 1 and the counts of Section 5 to `results/corpus.json`, so `cwm/fill_paper.py` generates Table 1.
+  `tests/test_paper_numbers.py` checks each number that the text of the paper states directly against `results/`.
+- **A check of months after the export** (`run_actions.py checks`, Appendix B). One of the 396 transitions leads
+  into February 2027, after the export ends. Appendix B gives the observed rates of Table 13 without it.
+- **Reproducible builds.** The figures and the PDF have no timestamps, so the same sources give the same files.
+  A rebuild of every figure from the caches gives images identical to the stored ones.
+- The range of training times (2 to 7 minutes) now counts one encoder or head per timing. `cwm/fill_paper.py` leaves
+  out the timing of the alignment experiment, which trains two encoders together.
+- Removed `results/memory2_minilm.json`, which no part of the paper used.
+
 ## v4 (November 2026)
 
 Answers the "corporate AI" review ([`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md)).

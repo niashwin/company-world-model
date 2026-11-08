@@ -8,14 +8,16 @@ Outcomes come from the ground truth: a deal advancing or being won, and an urgen
 
 Stages (each adds a section to results/actions.json):
   table      actions and outcomes per customer-month, and how often each action is followed by each outcome
-  dynamics   next month's state from this month's state, with and without this month's actions (and, as an upper
-             bound, next month's), against no change and shrinkage to the mean; a permutation control; and next
-             month's outcomes from state and actions
+  dynamics   next month's state from this month's state, with and without this month's actions, against no change
+             and shrinkage to the mean; controls with shuffled actions, with this or next month's mix of systems,
+             and with next month's actions; how well the state predicts each action; and next month's outcomes
+             from state and actions
   events     the state in the 14 days before and after a sales call, an engineering escalation or a leader's
              involvement, against matched times without one
   simulate   decision simulation for customers in trouble (an urgent or high ticket during an open deal): what
              followed similar states of other customers when the company intervened and when it did not
              (case-based, in the state space), and what an action-conditioned outcome model predicts
+  checks     transitions whose next month comes after the day-2 export, where outcomes are zero by construction
 
 All analyses are observational: the company's actions were not randomized, so what they estimate is what tends to
 follow an action in a given state, not its causal effect.
@@ -555,6 +557,30 @@ def stage_simulate(k_nn=15, pool=60, n_boot=300):
     save("simulate", out)
 
 
+# ------------------------------------------------------------------------------------------------ checks
+def stage_checks(last_month="2027-01"):
+    """Transitions whose next month comes after the day-2 export (30 January 2027). Such a month holds only records
+    with later dates, such as planned calendar events, so its outcomes are zero by construction."""
+    w = World()
+    a_, b_ = [a for a, b in w.trans], [b for a, b in w.trans]
+    late = [i for i, b in enumerate(b_) if str(w.key(b)[1]) > last_month]
+    T = np.array([w.trouble(a) for a in a_]).astype(bool)
+    F = np.array([w.actions(a) for a in a_])
+    I = (F[:, ACTIONS.index("call")] + F[:, ACTIONS.index("eng_escalation")]) > 0
+    keep = np.ones(len(a_), bool)
+    keep[late] = False
+    out = {"last_month_with_data": last_month, "transitions_into_later_months": len(late),
+           "trouble_into_later_months": int(T[late].sum()) if late else 0,
+           "later_next_months": [[str(w.key(a_[i])[0]), str(w.key(a_[i])[1]), str(w.key(b_[i])[1])] for i in late],
+           "observed_in_trouble_without_them": {}}
+    for yk in ("deal_progress", "escalation"):
+        y = np.array([w.outcomes(b)[yk] for b in b_])
+        out["observed_in_trouble_without_them"][yk] = [float(y[T & I & keep].mean()), float(y[T & ~I & keep].mean())]
+    print(json.dumps(out, indent=1))
+    save("checks", out)
+
+
 if __name__ == "__main__":
     for st in sys.argv[1:]:
-        {"table": stage_table, "dynamics": stage_dynamics, "events": stage_events, "simulate": stage_simulate}[st]()
+        {"table": stage_table, "dynamics": stage_dynamics, "events": stage_events, "simulate": stage_simulate,
+         "checks": stage_checks}[st]()

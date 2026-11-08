@@ -6,12 +6,19 @@ authors:
   - family-names: Gopinath
     given-names: Ashwin
     affiliation: Sentra
-version: "2.0"
-date-released: 2026-11-07
+version: "5.0"
+date-released: 2026-11-08
 license: MIT
+repository-code: "https://github.com/niashwin/company-world-model"
+url: "https://niashwin.github.io/company-world-model/"
 preferred-citation:
   type: report
   title: "Toward World Models of Organizations: Every System Sees the Same Company"
+  institution:
+    name: Sentra
+    city: San Francisco
+  month: 11
+  url: "https://github.com/niashwin/company-world-model"
   authors:
     - family-names: Gopinath
       given-names: Ashwin
