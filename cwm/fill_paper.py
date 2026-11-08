@@ -210,6 +210,9 @@ def fill(text):
     sub["APPSEEDTABLE"] = seed_table()
     sub["APPSTATETABLE"] = state_table()
     sub["APPMEMTABLE"] = memory_table()
+    g = load("memory2.json").get("growth_setup", {})
+    if g:
+        sub["NEXTQN"] = str(g["new_questions"])
     LAST_SUB.clear()
     LAST_SUB.update(sub)
     for k in sorted(sub, key=len, reverse=True):
@@ -313,7 +316,8 @@ def fill_v2(sub):
         tuned = [100 * d["tuned_error_reduction_vs_persistence"] for d in dyn.values()]
         sub["TUNEDRANGE"] = f"{min(tuned):.0f}--{max(tuned):.0f}\\%"
         sub["TUNEDMAXGAIN"] = f"{max(gains.values()):.1f}"
-        sub["TUNEDNWORSE"] = str(sum(v <= 0.5 for v in gains.values()))
+        n = sum(v <= 0.5 for v in gains.values())
+        sub["TUNEDNWORSE"] = ["none", "one", "two", "three", "four", "five", "six"][n] if n <= 6 else str(n)
         sub["SHRINKKBAD"] = f"{T['bad']['dynamics']['shrink_factor']:.2f}"
         sub["SHRINKKMINI"] = f"{T['minilm']['dynamics']['shrink_factor']:.2f}"
         sub["SHRINKKGOOD"] = f"{gm['shrink_factor']:.2f}"
@@ -704,7 +708,7 @@ def fill_actions(sub):
         rows += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{8pt}", "",
                  "\\setlength{\\tabcolsep}{4.5pt}\\begin{tabular}{lcccc}", "\\toprule",
                  "& \\multicolumn{4}{c}{Next month's outcome from this month, AUROC} \\\\", "\\cmidrule(lr){2-5}",
-                 "& \\multicolumn{2}{c}{Deal advances or is won} & \\multicolumn{2}{c}{Urgent or high ticket} \\\\",
+                 "& \\multicolumn{2}{c}{Deal advances or is won} & \\multicolumn{2}{c}{Urgent or high-priority ticket} \\\\",
                  "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}",
                  "Representation & state & + actions & state & + actions \\\\", "\\midrule"]
         for k, n in reps_:
@@ -805,8 +809,8 @@ def fill_actions(sub):
             for j, side in ((0, "ON"), (1, "OFF")):
                 v = [SI["escalation"][key + x][j] for x in sfx]
                 sub[f"SIMBAL{tag}{side}R"] = f"{num(min(v))}--{num(max(v))}\\%"
-        rows = ["\\setlength{\\tabcolsep}{4pt}\\begin{tabular}{lcccccc}", "\\toprule",
-                "& \\multicolumn{3}{c}{Deal advances or is won next month} & \\multicolumn{3}{c}{Urgent or high ticket next month} \\\\",
+        rows = ["\\setlength{\\tabcolsep}{3.2pt}\\begin{tabular}{lcccccc}", "\\toprule",
+                "& \\multicolumn{3}{c}{Deal advances or is won next month} & \\multicolumn{3}{c}{Urgent or high-priority ticket next month} \\\\",
                 "\\cmidrule(lr){2-4}\\cmidrule(lr){5-7}",
                 "Estimate & intervene & not & difference & intervene & not & difference \\\\", "\\midrule"]
         lab = [("observed_in_trouble", f"Observed in trouble ({SI['intervened_in_trouble']} vs "
@@ -868,6 +872,10 @@ def _seconds(d):
     return out
 
 
+SYSLABEL = {"slack": "Slack", "gmail": "Gmail", "zendesk": "Zendesk", "salesforce": "Salesforce", "gong": "Gong",
+            "jira": "Jira", "calendar": "Calendar"}
+
+
 def acl_policy_table():
     R = ACL["readers"]
     systems = ["slack", "gmail", "zendesk", "salesforce", "gong", "jira", "calendar"]
@@ -876,7 +884,7 @@ def acl_policy_table():
     rows += [f"{a} & {b} \\\\" for a, b in ACL["policy"]]
     rows += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{6pt}", "",
              "\\setlength{\\tabcolsep}{4pt}\\begin{tabular}{l" + "c" * (len(systems) + 1) + "}", "\\toprule",
-             "Reader & all & " + " & ".join(systems) + " \\\\", "\\midrule"]
+             "Reader & All & " + " & ".join(SYSLABEL[sy] for sy in systems) + " \\\\", "\\midrule"]
     for r in RTAG:
         if r in R:
             v = R[r]["visible_share_by_system"]
@@ -1011,7 +1019,7 @@ def memory_table():
             f"Good views (state) & closed book (no store) & {len(jc)} & {mean(jc, ov):.3f} & \\multicolumn{{2}}{{c}}{{{mean(jc, cbn):.3f}}} \\\\",
             f" & 16 tokens over the 16 retrieved rows & {len(jt)} & {mean(jt, ov):.3f} & {mean(jt, st):.3f} & {mean(jt, gr):.3f} \\\\",
             f" & 16 tokens over the whole store & {len(jm)} & {mean(jm, ov):.3f} & {mean(jm, st):.3f} & {mean(jm, gr):.3f} \\\\",
-            f" & the same, not pre-trained & {len(jn)} & {mean(jn, ov):.3f} & {mean(jn, st):.3f} & {mean(jn, gr):.3f} \\\\",
+            f" & the same, not pretrained & {len(jn)} & {mean(jn, ov):.3f} & {mean(jn, st):.3f} & {mean(jn, gr):.3f} \\\\",
             "\\addlinespace[2pt]",
             f"Pretrained (detail) & closed book (no store) & {len(lc)} & {mean(lc, ov):.3f} & \\multicolumn{{2}}{{c}}{{{mean(lc, cbn):.3f}}} \\\\",
             f" & 16 tokens over the 16 retrieved rows & {len(lt)} & {mean(lt, ov):.3f} & {mean(lt, st):.3f} & {mean(lt, gr):.3f} \\\\",

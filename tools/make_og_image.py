@@ -29,7 +29,7 @@ p { font-family: "Geist"; font-size: 24px; color: rgba(255,255,255,0.82); margin
 </style></head><body><div class="card">
 <div class="logo">MARK WORD</div>
 <h1>Every company is a world.<br>We build its world model.</h1>
-<p>Toward world models of organizations. Research from Sentra, 2026.</p>
+<p>Toward World Models of Organizations. Ashwin Gopinath, MIT and Sentra, 2026.</p>
 <div class="fig"><img src="data:image/png;base64,IMG"></div>
 </div></body></html>"""
 

@@ -20,7 +20,7 @@ os.makedirs(FIG, exist_ok=True)
 
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 C = {"good": "#2a78d6", "bad": "#eb6834", "ntp": "#1baf7a", "tfidf": "#7d7c78", "random": "#b9b8b2"}
-NAME = {"good": "Good views", "bad": "Bad views", "ntp": "Next-token", "tfidf": "TF-IDF", "random": "Random init"}
+NAME = {"good": "Good views", "bad": "Bad views", "ntp": "Next-token", "tfidf": "TF-IDF", "random": "Random encoder"}
 CUST = ["#6250d6", "#eda100", "#e87ba4"]
 MARK = ["o", "s", "^"]
 
@@ -33,6 +33,13 @@ plt.rcParams.update({
     "grid.linewidth": 0.6, "axes.axisbelow": True, "savefig.bbox": "tight", "savefig.pad_inches": 0.03,
     "pdf.fonttype": 42,
 })
+
+
+def FULL(fig):
+    """The whole figure as the bounding box: two figures of the same size then sit level side by side."""
+    from matplotlib.transforms import Bbox
+    w, h = fig.get_size_inches()
+    return Bbox([[0, 0], [w, h]])
 
 
 def load(name):
@@ -72,6 +79,8 @@ def fig_e1():
     prh = load("prh.json")["E1"]
     arms = ["good", "bad", "ntp", "tfidf", "random"]
     fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.35))
+    # identity-only ceiling on the unmasked corpus (run_extras.identity_only_state_precision)
+    from_ident = load("extras_b.json").get("mask", {}).get("identity_only_state_p@10", 0.163)
     for ax, metric, title in [(axes[0], "account_p@10_cross_system", "Same customer"),
                               (axes[1], "state_p@10_cross_system", "Same customer and quarter")]:
         means, errs = [], []
@@ -84,22 +93,25 @@ def fig_e1():
         xs = np.arange(len(arms))
         ax.bar(xs, means, width=0.62, color=[C[a] for a in arms], yerr=errs, capsize=2.5,
                error_kw=dict(ecolor=INK2, elinewidth=0.8, capthick=0.8))
-        bar_labels(ax, xs, np.array(means), tops=np.array(means) + np.array(errs), bg=True)
-        ax.set_xticks(xs, ["Good\nviews", "Bad\nviews", "Next-\ntoken", "TF-IDF", "Random\ninit"], rotation=0)
+        tops = np.array(means) + np.array(errs)
+        if ax is axes[1]:   # a label just below the reference line moves above it, so that the line does not cross it
+            tops = np.array([from_ident + 0.005 if t < from_ident < t + 0.075 else t for t in tops])
+        bar_labels(ax, xs, np.array(means), tops=tops, bg=True)
+        ax.set_xticks(xs, ["Good\nviews", "Bad\nviews", "Next-\ntoken", "TF-IDF", "Random\nencoder"], rotation=0)
         ax.set_ylim(0, 1.08)
         ax.set_title(title, loc="left", color=INK)
         ax.tick_params(axis="x", length=0)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("Precision@10, other systems")
-    panel(axes[0], "a", x=-0.16); panel(axes[1], "b", x=-0.1)
-    # identity-only ceiling on the unmasked corpus (run_extras.identity_only_state_precision)
-    from_ident = load("extras_b.json").get("mask", {}).get("identity_only_state_p@10", 0.163)
     axes[1].axhline(from_ident, color=INK2, lw=0.9, ls=(0, (3, 2)))
-    axes[1].text(4.4, from_ident + 0.03, "knowing only the customer", ha="right", va="bottom", fontsize=7, color=INK2)
+    # the line's key sits at the top right, away from the bars and their values
+    axes[1].plot([1.75, 2.2], [0.97, 0.97], color=INK2, lw=0.9, ls=(0, (3, 2)))
+    axes[1].text(2.3, 0.97, "knowing only the customer", ha="left", va="center", fontsize=7, color=INK2)
     for ax in axes:
         for lab in ax.get_xticklabels():
             lab.set_fontsize(7.5)
     fig.tight_layout(w_pad=2)
+    letter_at(fig, axes[0], "a", dy=0.1); letter_at(fig, axes[1], "b", dy=0.1)
     fig.savefig(os.path.join(FIG, "e1_precision.pdf"), metadata=META)
     plt.close(fig)
 
@@ -144,8 +156,10 @@ def tsne_maps():
         ax.set_title(NAME[arm], color=C[arm], fontweight="bold")
     for ax, letter in zip(axes, "abc"):
         panel(ax, letter, x=0.0, y=1.02)
-    axes[0].legend(loc="lower left", frameon=False, handletextpad=0.2, borderaxespad=0.1, markerscale=1.6)
     fig.tight_layout(w_pad=0.8)
+    h, lab = axes[0].get_legend_handles_labels()
+    fig.legend(h, lab, loc="upper center", bbox_to_anchor=(0.5, 0.02), ncol=3, frameon=False, handletextpad=0.2,
+               columnspacing=1.6, markerscale=1.6)
     fig.savefig(os.path.join(FIG, "maps.pdf"), metadata=META, dpi=300)
     plt.close(fig)
     json.dump({"customers": [c.accounts[a] for a in pick]}, open(os.path.join(FIG, "maps_meta.json"), "w"))
@@ -155,7 +169,8 @@ def tsne_maps():
 def fig_e2():
     e2 = load("prh.json")["E2"]
     ks = [64, 256, 2000]
-    fig, ax = plt.subplots(figsize=(3.3, 2.4))
+    fig, ax = plt.subplots(figsize=(3.3, 2.45))
+    fig.subplots_adjust(left=0.2, right=0.97, bottom=0.25, top=0.9)
     for arm in ["good", "bad", "ntp"]:
         ys = [e2[f"{arm}_s0"][f"anchors_{k}"]["state_R@1"] for k in ks]
         ax.plot(ks, ys, color=C[arm], lw=2, marker="o", ms=4.5, label=NAME[arm])
@@ -163,16 +178,16 @@ def fig_e2():
     ax.text(2400, 0.082, "Bad views,\nnext-token", va="center", ha="left", fontsize=7.5)
     ax.axhline(e2["chance_state_R@1"], color=INK2, lw=0.9, ls=(0, (3, 2)))
     ax.text(60, e2["chance_state_R@1"] - 0.004, "chance", fontsize=7, color=INK2, va="top")
-    ax.legend(loc="upper left", frameon=False, handlelength=1.6, borderaxespad=0.2)
+    ax.legend(loc="center left", bbox_to_anchor=(0.0, 0.47), frameon=False, handlelength=1.6, borderaxespad=0.2)
     ax.set_xscale("log")
-    ax.set_xticks(ks, [str(k) for k in ks])
+    ax.set_xticks(ks, [f"{k:,}" for k in ks])
     ax.minorticks_off()
     ax.set_xlim(50, 9000)
     ax.set_ylim(0, 0.3)
     ax.set_xlabel("Anchor pairs used to fit the rotation")
     ax.set_ylabel("Same-state recall@1")
-    panel(ax, "a", x=-0.2)
-    fig.savefig(os.path.join(FIG, "e2_anchors.pdf"), metadata=META)
+    panel(ax, "a", x=-0.24, y=1.04)
+    fig.savefig(os.path.join(FIG, "e2_anchors.pdf"), metadata=META, bbox_inches=FULL(fig))
     plt.close(fig)
 
 
@@ -210,9 +225,9 @@ def fig_e3():
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Same-customer precision@10")
     ax.set_title("Searching the old index", loc="left")
-    panel(axes[0], "a", x=-0.12); panel(axes[1], "b", x=-0.16)
     ax.tick_params(axis="x", length=0); ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=2)
+    letter_at(fig, axes[0], "a", dy=0.1); letter_at(fig, axes[1], "b", dy=0.1)
     fig.savefig(os.path.join(FIG, "e3_time.pdf"), metadata=META)
     plt.close(fig)
 
@@ -233,7 +248,7 @@ def fig_robust():
     ax.text(ps[-1] + 0.02, ys2[-1], "same customer\nand quarter", va="center", fontsize=7.5)
     for arm in ("bad", "ntp"):
         y = prh[f"{arm}_s0"]["account_p@10_cross_system"]
-        ax.axhline(y, color=C[arm], lw=1, ls=(0, (2, 2)))
+        ax.axhline(y, color=C[arm], lw=1.1, ls=(0, (1, 1.6)))
     ax.text(0.25, 0.035, "bad views, next-token (clean links)", fontsize=7, color=INK2, va="bottom", ha="center")
     ax.set_xlim(-0.02, 0.8)
     ax.set_xticks(ps, [f"{int(p * 100)}%" for p in ps])
@@ -258,10 +273,10 @@ def fig_robust():
     ax.tick_params(axis="x", length=0, pad=12)
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Same customer, precision@10")
-    ax.set_title("Customer names, contacts and ids masked", loc="left")
-    panel(axes[0], "a", x=-0.13); panel(axes[1], "b", x=-0.15)
+    ax.set_title("Names and identifiers masked", loc="left")
     ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=2)
+    letter_at(fig, axes[0], "a", dy=0.1); letter_at(fig, axes[1], "b", dy=0.1)
     fig.savefig(os.path.join(FIG, "robustness.pdf"), metadata=META)
     plt.close(fig)
     return True
@@ -298,6 +313,7 @@ def fig_persistence():
     states = [tuple(s.split("|")) for s in z["states"]]
     out = {}
     fig, ax = plt.subplots(figsize=(3.3, 2.45))
+    fig.subplots_adjust(left=0.2, right=0.97, bottom=0.25, top=0.9)
     for arm in ["good", "bad", "ntp", "tfidf"]:
         same, other = state_similarity(z[arm], states, z["counts"])
         out[arm] = {"same_customer_by_gap": same, "other_customer_same_quarter": other}
@@ -308,12 +324,13 @@ def fig_persistence():
         ax.plot([off], [other], color=C[arm], marker="D", ms=ms, mfc="white", mew=1.3, ls="none")
     ax.set_xticks([0] + list(range(1, 7)), ["other\ncustomer"] + [str(g) for g in range(1, 7)])
     ax.set_xlim(-0.6, 6.4)
-    ax.set_ylim(-0.05, 1.0)
+    ax.set_ylim(-0.05, 1.14)
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.set_xlabel("Quarters apart, same customer")
     ax.set_ylabel("Cosine similarity of states")
-    panel(ax, "b", x=-0.2)
-    ax.legend(loc="upper right", frameon=False, handlelength=1.5, borderaxespad=0.1)
-    fig.savefig(os.path.join(FIG, "persistence.pdf"), metadata=META)
+    panel(ax, "b", x=-0.24, y=1.04)
+    ax.legend(loc="upper right", ncol=2, frameon=False, handlelength=1.5, borderaxespad=0.1, columnspacing=1.0)
+    fig.savefig(os.path.join(FIG, "persistence.pdf"), metadata=META, bbox_inches=FULL(fig))
     plt.close(fig)
     json.dump(out, open(os.path.join(RES, "persistence.json"), "w"), indent=1)
 
@@ -431,15 +448,16 @@ def fig_heldout():
     plt.close(fig)
 
 
-def letter_at(fig, ax, letter, labels_left=True):
-    """Panel letter above the axis: at the left edge of its tick labels, or just left of the plot."""
+def letter_at(fig, ax, letter, labels_left=True, dy=0.035):
+    """Panel letter above the axis: at the left edge of its tick labels, or just left of the plot. A larger dy puts
+    the letter above the axis title, clear of a long y-axis label."""
     fig.canvas.draw()
     pos = ax.get_position()
     if labels_left:
         x = ax.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.transFigure.inverted()).x0
     else:
         x = pos.x0 - 0.035
-    fig.text(x, pos.y1 + 0.035, letter, fontsize=10.5, fontweight="bold", va="bottom", ha="left", color=INK)
+    fig.text(x, pos.y1 + dy, letter, fontsize=10.5, fontweight="bold", va="bottom", ha="left", color=INK)
 
 
 def _dots(ax, n, means, sds, colours, ref=None, ref_label=None):
@@ -513,8 +531,9 @@ def fig_memory():
     ax.set_xlabel("Questions answered")
     ax.set_title("Questions that name the customer", loc="left", fontsize=8.5)
     key = fig.add_subplot(gs[1, 1]); key.axis("off")
-    key.text(0.07, 0.95, "Grey dot: no store (closed book).\nBlue dot: the reader reads 16 records\nthat the store finds."
-             "\nLines: one standard deviation\nover four seeds.", va="top", ha="left", fontsize=7, color=INK2,
+    key.text(0.07, 0.95, "In a and b: blue marks placement with\nthe state channel; light grey, no store\nand the oracle."
+             "\nIn c: grey, no store; blue, 16 records\nfrom the store."
+             "\nLines: one standard deviation over\nfour seeds.", va="top", ha="left", fontsize=7, color=INK2,
              transform=key.transAxes, linespacing=1.45)
     for ax, letter, left in ((axes[0], "a", True), (axes[1], "b", False), (fig.axes[2], "c", True)):
         letter_at(fig, ax, letter, labels_left=left)
@@ -528,7 +547,7 @@ def fig_decisions():
     SI = load("actions.json").get("simulate", {})
     if not SI:
         return False
-    spaces = [("", "Good\nviews"), ("_bad", "Bad\nviews"), ("_minilm", "Pre-\ntrained"), ("_good_month+minilm", "Two\nchannels")]
+    spaces = [("", "Good views"), ("_bad", "Bad views"), ("_minilm", "Pretrained"), ("_good_month+minilm", "Two channels")]
     fig = plt.figure(figsize=(6.6, 2.7))
     ax = fig.add_axes([0.075, 0.2, 0.25, 0.62])
     xs = np.arange(len(spaces))
@@ -538,10 +557,10 @@ def fig_decisions():
     ax.bar(xs - w / 2, on, w * 0.92, color="#52514e", label="Company intervened")
     ax.bar(xs + w / 2, off, w * 0.92, color="#cfcec9", label="Did not intervene")
     for x, v in zip(xs - w / 2, on):
-        ax.text(x, v + 0.008, f"{100 * v:.0f}", ha="center", va="bottom", fontsize=6.6)
+        ax.text(x, v + 0.008, f"{100 * v:.1f}", ha="center", va="bottom", fontsize=6.2)
     for x, v in zip(xs + w / 2, off):
-        ax.text(x, v + 0.008, f"{100 * v:.1f}" if v < 0.01 else f"{100 * v:.0f}", ha="center", va="bottom", fontsize=6.6)
-    ax.set_xticks(xs, [n for _, n in spaces])
+        ax.text(x, v + 0.008, f"{100 * v:.1f}", ha="center", va="bottom", fontsize=6.2)
+    ax.set_xticks(xs, [n for _, n in spaces], rotation=28, ha="right", rotation_mode="anchor")
     for lab in ax.get_xticklabels():
         lab.set_fontsize(7)
     ax.set_ylim(0, 0.4)

@@ -39,7 +39,7 @@ with the page of the publisher, Crossref, DBLP or arXiv, and reported the source
 We copied the files of the repository to an empty folder, without data and without caches. Then we ran
 `make all PY=python3`, `make clean` and `make all PY=python3` again.
 
-- The clean build gave a PDF that is identical, byte for byte, to the PDF in the repository. The PDF has 45 pages,
+- The clean build gave a PDF that is identical, byte for byte, to the PDF in the repository. The PDF has 46 pages,
   no overfull boxes and no undefined references.
 - Every figure came out identical to the stored file. The two figures that need the caches (the maps and the
   persistence plot) use the stored files.
@@ -52,9 +52,9 @@ The target was 90%.
 
 | Text | Sentences | Share that complies |
 | --- | ---: | ---: |
-| `paper/main.tex` | 1,458 | 98.4% |
-| `README.md` | 333 | 100% |
-| `website/template.html` | 367 | 100% |
+| `paper/main.tex` | 1,447 | 98.3% |
+| `README.md` | 329 | 100% |
+| `website/template.html` | 368 | 100% |
 | `REPRODUCE.md` | 94 | 96.8% |
 | `docs/ARXIV_ABSTRACT.txt` | 17 | 100% |
 
@@ -63,7 +63,32 @@ word has the same sense. The summary paragraph and the figure legends of a Natur
 sentences. The tool does not check the lists of references in the README, because the titles of other works are
 not our text.
 
-## 5. Independent review
+## 5. Independent reviews
+
+Three agents that did not write the work reviewed it. Each reported its findings with quotes, and we fixed every
+one that held.
+
+### The paper
+
+One agent looked at all 46 pages as images and read the text. It checked about 45 numbers against `results/`, and
+all of them agree. It found these problems, and we fixed them.
+
+- The Methods described the data export, the encoder, the pretrained backbone and the metrics twice. Each pair is
+  now one description.
+- One note cited itself, and two Supplementary Tables had no citation. Three tables had columns without an
+  explanation.
+- Figure 1 numbered its panels 1 to 3, its smallest text was about 4 points, and one note claimed more than the
+  results show. Its panels are now a to c, its smallest text is above 6 points, and the note is gone.
+- Legends sat on data in Fig. 2a and Extended Data Fig. 1b. Labels touched in Fig. 5a, and panel letters sat on
+  axis labels in Extended Data Figs. 1, 2 and 4. The key of Fig. 4 described the wrong colors. We drew these
+  figures again from `cwm/make_figures.py`.
+- A heading stood alone at the bottom of a page, URLs broke after "https:", and the footnote mark looked like a
+  citation. We fixed all three.
+- The references followed two rules for authors. `paper/unsrtnat-nature.bst` now applies the rule of Nature: up to
+  five authors, all names; more than five, the first author and "et al.". The NeurIPS and ICML entries now give
+  their volumes in one form.
+
+### The website and the README
 
 An agent that did not write the website or the README read both as an executive would. It also checked each
 number against the paper and opened each link. It reported its findings with quotes, and we fixed every one that
@@ -84,6 +109,12 @@ The agent also reported that Figure 4 showed 41% for the frozen pretrained encod
 The figure rounded twice: it rounded the table value 0.405, which is 0.4048 rounded. The left panel of Figure 4
 now shows one decimal (40.5%), so it rounds once. The value of the paper, 40%, is correct. The agent found no
 other wrong number on the website or in the README. It found no information from Sentra that is not public.
+
+A third agent read the website and the README again after the changes that present the world model as a
+foundation. It found two claims that went beyond the paper. The world model files records under their customer,
+but not reliably under their quarter. Similar cases are a first version, because every representation does about
+as well. Both now say so. It also found that the image for link previews did not name MIT, and that the footer
+logo needed space between its parts. We fixed both.
 
 ## 6. The website
 

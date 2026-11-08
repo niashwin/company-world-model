@@ -21,7 +21,7 @@ def main():
         sys.exit(f"These references have no entry or no link: {missing}")
     lines = [f"{i}. {bibrefs.entry_markdown(bib[k])}" for i, k in enumerate(order, 1)]
     block = ("<!-- refs:start -->\n<details>\n<summary>All " + str(len(order)) +
-             " references of the paper, in its order, with links</summary>\n\n" + "\n".join(lines) +
+             " references, in the order of the paper, with links</summary>\n\n" + "\n".join(lines) +
              "\n\n</details>\n<!-- refs:end -->")
     path = os.path.join(ROOT, "README.md")
     text = open(path, encoding="utf-8").read()

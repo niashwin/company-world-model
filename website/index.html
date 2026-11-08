@@ -6,7 +6,7 @@
 <title>Every company is a world: world models of organizations</title>
 <meta name="description" content="Every company is a world. We build its world model: one learned picture of every customer, deal and project, from the links that the company's systems already keep, with permissions built in.">
 <meta property="og:title" content="Every company is a world. We build its world model.">
-<meta property="og:description" content="Research from Sentra: a world model of the company, learned from the links between its systems, with permissions built in.">
+<meta property="og:description" content="Ashwin Gopinath (MIT and Sentra): a world model of the company, learned from the links between its systems, with permissions built in.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://niashwin.github.io/company-world-model/">
 <meta property="og:image" content="https://niashwin.github.io/company-world-model/assets/og.png">
@@ -57,7 +57,7 @@
         <a class="button" href="#enables">What it makes possible</a>
         <a class="button" href="https://github.com/niashwin/company-world-model">Code on GitHub</a>
       </div>
-      <p class="byline">Ashwin Gopinath, Sentra, San Francisco. Technical report, November 2026.</p>
+      <p class="byline">Ashwin Gopinath, Department of Mechanical Engineering, MIT, and Sentra. Technical report, version 7, November 2026.</p>
     </div>
   </div>
   <div class="hero-figure">
@@ -150,7 +150,7 @@
     <p>World models changed how AI understands the physical world. They learn from prediction, not from labels, and one model then serves perception, prediction and planning. <a href="https://arxiv.org/abs/2506.09985">V-JEPA 2</a> learns the state of a scene from video, and then plans the actions of a robot.</p>
     <p>A company is a world too, and its systems record it from every side. A world model turns those records into one picture of every customer, deal and project. Search, memory, permissions and prediction can then all draw on the same picture.</p>
     <p>The theory also says what matters most: which records count as views of the same situation. Companies already record those pairs as a side effect of their work.</p>
-    <p>We test the idea on Northwind Robotics, a company that <a href="https://arxiv.org/abs/2609.09853">Era by Eon</a> simulates with exact ground truth. It has 78,048 records in seven systems, and 21 customers. With a simulation, we can check every answer against the truth.</p>
+    <p>We test the idea on Northwind Robotics, a company that <a href="https://arxiv.org/abs/2609.09853">Era by Eon</a> simulates with exact ground truth. It has 78,048 records in seven systems and 21 active customers. With a simulation, we can check every answer against the truth.</p>
   </div>
 </section>
 
@@ -167,7 +167,7 @@
         <li><b>Search</b><span>Finds records by the situation that they describe</span><i class="tag shown">Shown here</i></li>
         <li><b>Memory</b><span>Files every record under its customer, also without a link</span><i class="tag shown">Shown here</i></li>
         <li><b>Memory reader</b><span>Reads the records of one situation to answer a question</span><i class="tag shown">Shown here</i></li>
-        <li><b>Similar cases</b><span>Finds earlier situations like the one at hand</span><i class="tag shown">Shown here</i></li>
+        <li><b>Similar cases</b><span>Finds earlier situations like the one at hand</span><i class="tag first">First version</i></li>
         <li><b>Prediction</b><span>How situations change, and what decisions do</span><i class="tag first">First version</i></li>
         <li><b>Notes and skills</b><span>Notes and trained skills, attached to situations</span><i class="tag next">Next</i></li>
       </ul>
@@ -186,11 +186,11 @@
     <thead><tr><th scope="col">Capability</th><th scope="col">Today, one tool at a time</th><th scope="col">With one world model</th></tr></thead>
     <tbody>
       <tr><th scope="row">Search</th><td data-label="Today">Enterprise search and <a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html">retrieval-augmented generation</a> find documents for each question, and a language model reads them.</td><td data-label="With one world model">Finds the records of a situation, also records that lost their link. One email can stand in for the customer's name. <i class="tag shown">Shown here</i></td></tr>
-      <tr><th scope="row">Memory</th><td data-label="Today">Company memory and knowledge graphs, such as <a href="https://arxiv.org/abs/2404.16130">GraphRAG</a>, <a href="https://arxiv.org/abs/2501.13956">Zep</a>, <a href="https://arxiv.org/abs/2310.08560">MemGPT</a> and <a href="https://doi.org/10.3233/FAIA251160">Mem0</a>, keep entities, facts and their sources.</td><td data-label="With one world model">The world model files each record under its customer and quarter, also without a link. The memory keeps the facts and their sources, and every question starts from one picture. <i class="tag shown">Shown here</i></td></tr>
+      <tr><th scope="row">Memory</th><td data-label="Today">Company memory and knowledge graphs, such as <a href="https://arxiv.org/abs/2404.16130">GraphRAG</a>, <a href="https://arxiv.org/abs/2501.13956">Zep</a>, <a href="https://arxiv.org/abs/2310.08560">MemGPT</a> and <a href="https://doi.org/10.3233/FAIA251160">Mem0</a>, keep entities, facts and their sources.</td><td data-label="With one world model">The world model files each record under its customer, also without a link. The memory keeps the facts and their sources, and every question starts from one picture. <i class="tag shown">Shown here</i></td></tr>
       <tr><th scope="row">Memory reader</th><td data-label="Today"><a href="https://arxiv.org/abs/2610.21375">Memorilla</a> turns a collection of documents into 16 memory tokens for each question, which a frozen language model reads.</td><td data-label="With one world model">A reader of this kind reads the records of one situation, which the world model finds. We built a small version. <i class="tag shown">Shown here</i></td></tr>
       <tr><th scope="row">Notes and skills</th><td data-label="Today"><a href="https://engram.com/blog/learning-in-a-world-of-notes">Engram</a> studies a company's information ahead of time, keeps notes, and trains models to use them. It reports gains of 7 to 20 points.</td><td data-label="With one world model">Notes attach to the situations of the world model, and models learn to use them. Each note stays within the permissions of its readers. <i class="tag next">Next</i></td></tr>
       <tr><th scope="row">Permissions</th><td data-label="Today">Filters remove what a person may not read from each list of results.</td><td data-label="With one world model">Permissions are part of training. Each group's world model learns only from what the group may read, and every capability on it inherits that guarantee. In our test, a filter on results did not stop a leak. <i class="tag shown">Shown here</i></td></tr>
-      <tr><th scope="row">Patterns and similar cases</th><td data-label="Today"><a href="https://doi.org/10.1007/978-3-662-49851-4">Process mining</a> maps how work flows, from event logs that a case number links.</td><td data-label="With one world model">Finds earlier situations like the one in front of a team, across customers, from text and links. It needs no case number. <i class="tag shown">Shown here</i></td></tr>
+      <tr><th scope="row">Patterns and similar cases</th><td data-label="Today"><a href="https://doi.org/10.1007/978-3-662-49851-4">Process mining</a> maps how work flows, from event logs that a case number links.</td><td data-label="With one world model">Finds earlier situations like the one in front of a team, across customers, from text and links. It needs no case number. <i class="tag first">First version</i></td></tr>
       <tr><th scope="row">Prediction and decisions</th><td data-label="Today">World models of physical scenes, such as <a href="https://arxiv.org/abs/2506.09985">V-JEPA 2</a> and <a href="https://arxiv.org/abs/2610.06805">H-JEPA</a>, predict what actions do, for video and robots.</td><td data-label="With one world model">Predicts how each situation changes, and tests a decision against similar cases before anyone acts. <i class="tag first">First version</i></td></tr>
     </tbody>
   </table>
@@ -383,8 +383,8 @@
 </section>
 
 <section class="section" id="time">
-  <h2>Prediction is the next layer</h2>
-  <p class="takeaway"><b>For a company:</b> prediction is the next step. It needs a model trained to forecast, and data about decisions.</p>
+  <h2>Prediction: a first version</h2>
+  <p class="takeaway"><b>For a company:</b> a first predictor runs. To predict well, it needs a model trained to forecast, and data about decisions.</p>
   <div class="prose">
     <p>A world model must also predict how a situation changes. On this company's logs, our predictors learn little beyond one rule: next month looks like this month, a little closer to the average. A tuned linear predictor does at most 3.4 points better than that rule.</p>
     <p>The space already answers a related question: what is this like? Every representation finds similar situations of other customers at about twice chance.</p>
@@ -482,8 +482,7 @@ bash scripts/reproduce.sh</pre>
 <pre id="bibtex">@techreport{gopinath2026organizations,
   title       = {Toward World Models of Organizations: Every System Sees the Same Company},
   author      = {Gopinath, Ashwin},
-  institution = {Sentra},
-  address     = {San Francisco},
+  institution = {Massachusetts Institute of Technology and Sentra},
   year        = {2026},
   month       = nov,
   note        = {Version 7},
@@ -494,7 +493,7 @@ bash scripts/reproduce.sh</pre>
   <h3>References</h3>
   <p class="note">All 56 references of the paper, in the order of the paper. Each title links to the source.</p>
   <ol class="refs">
-    <li id="ref-lewis2020rag">P. Lewis, E. Perez, A. Piktus and others. <a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>. Advances in Neural Information Processing Systems, 2020.</li>
+    <li id="ref-lewis2020rag">P. Lewis, E. Perez, A. Piktus and others. <a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>. Advances in Neural Information Processing Systems (NeurIPS), 2020.</li>
     <li id="ref-ha2018world">D. Ha and J. Schmidhuber. <a href="https://arxiv.org/abs/1803.10122">World Models</a>. arXiv:1803.10122, 2018.</li>
     <li id="ref-lecun2022path">Y. LeCun. <a href="https://openreview.net/forum?id=BZ5a1r-kVsf">A Path Towards Autonomous Machine Intelligence</a>. OpenReview preprint, 2022.</li>
     <li id="ref-assran2025vjepa2">M. Assran, A. Bardes, D. Fan, Q. Garrido, R. Howes and others. <a href="https://arxiv.org/abs/2506.09985">V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning</a>. arXiv:2506.09985, 2025.</li>
@@ -516,14 +515,14 @@ bash scripts/reproduce.sh</pre>
     <li id="ref-cai2024ehr">T. Cai, F. Huang, R. Nakada, L. Zhang and D. Zhou. <a href="https://doi.org/10.1080/01621459.2026.2698136">Contrastive Learning on Multimodal Analysis of Electronic Health Records</a>. Journal of the American Statistical Association, 2026.</li>
     <li id="ref-eon2026era">Eon. <a href="https://www.eon.io/blog/era-build-and-test-ai-agents">Meet Era: Simulated Companies to Benchmark Models and Eval Agents</a>. Blog post, 2026.</li>
     <li id="ref-reimers2019sbert">N. Reimers and I. Gurevych. <a href="https://doi.org/10.18653/v1/D19-1410">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a>. Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP), 2019.</li>
-    <li id="ref-wang2020minilm">W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. <a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers</a>. Advances in Neural Information Processing Systems, 2020.</li>
+    <li id="ref-wang2020minilm">W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. <a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers</a>. Advances in Neural Information Processing Systems (NeurIPS), 2020.</li>
     <li id="ref-tiwari2024ifc">T. Tiwari, S. Gururangan, C. Guo and others. <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/tiwari">Information Flow Control in Machine Learning through Modular Model Architecture</a>. USENIX Security Symposium, 2024.</li>
     <li id="ref-pearl2009causality">J. Pearl. <a href="https://doi.org/10.1017/CBO9780511803161">Causality: Models, Reasoning, and Inference</a>. Cambridge University Press, 2009.</li>
     <li id="ref-hernan2020causal">M. A. Hernán and J. M. Robins. <a href="https://miguelhernan.org/whatifbook">Causal Inference: What If</a>. Chapman &amp; Hall/CRC, 2020.</li>
     <li id="ref-vanderaalst2016process">W. M. P. van der Aalst. <a href="https://doi.org/10.1007/978-3-662-49851-4">Process Mining: Data Science in Action</a>. Springer, 2016.</li>
     <li id="ref-vanderaalst2019object">W. M. P. van der Aalst. <a href="https://doi.org/10.1007/978-3-030-30446-1_1">Object-Centric Process Mining: Dealing with Divergence and Convergence in Event Data</a>. Software Engineering and Formal Methods (SEFM), 2019.</li>
     <li id="ref-haochen2021spectral">J. Z. HaoChen, C. Wei, A. Gaidon and T. Ma. <a href="https://proceedings.neurips.cc/paper_files/paper/2021/hash/27debb435021eb68b3965290b5e24c49-Abstract.html">Provable Guarantees for Self-Supervised Deep Learning with Spectral Contrastive Loss</a>. Advances in Neural Information Processing Systems (NeurIPS), 2021.</li>
-    <li id="ref-khosla2020supcon">P. Khosla, P. Teterwak, C. Wang and others. <a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html">Supervised Contrastive Learning</a>. Advances in Neural Information Processing Systems, 2020.</li>
+    <li id="ref-khosla2020supcon">P. Khosla, P. Teterwak, C. Wang and others. <a href="https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html">Supervised Contrastive Learning</a>. Advances in Neural Information Processing Systems (NeurIPS), 2020.</li>
     <li id="ref-schonemann1966procrustes">P. H. Schönemann. <a href="https://doi.org/10.1007/BF02289451">A Generalized Solution of the Orthogonal Procrustes Problem</a>. Psychometrika, 1966.</li>
     <li id="ref-yu2024samecompany">D. Yu, Z. Liu and H. He. <a href="https://doi.org/10.18653/v1/2025.findings-acl.946">Same Company, Same Signal: The Role of Identity in Earnings Call Transcripts</a>. Findings of the Association for Computational Linguistics: ACL 2025.</li>
     <li id="ref-zhang2022metadata">Y. Zhang, Z. Shen, C.-H. Wu and others. <a href="https://doi.org/10.1145/3485447.3512174">Metadata-Induced Contrastive Learning for Zero-Shot Multi-Label Text Classification</a>. Proceedings of the ACM Web Conference 2022.</li>
@@ -537,7 +536,7 @@ bash scripts/reproduce.sh</pre>
     <li id="ref-maiorca2023latent">V. Maiorca, L. Moschella, A. Norelli, M. Fumero, F. Locatello and E. Rodolà. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/ad5fa03c906ca15905144ca3fbf2a768-Abstract.html">Latent Space Translation via Semantic Alignment</a>. Advances in Neural Information Processing Systems (NeurIPS), 2023.</li>
     <li id="ref-nosaka2024collaboration">K. Nosaka, Y. Suetake, Y. Takano and A. Yoshise. <a href="https://doi.org/10.1016/j.compeleceng.2026.111192">Data Collaboration Analysis with Orthonormal Basis Selection and Alignment</a>. Computers and Electrical Engineering, 2026.</li>
     <li id="ref-hamilton2016diachronic">W. L. Hamilton, J. Leskovec and D. Jurafsky. <a href="https://doi.org/10.18653/v1/P16-1141">Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change</a>. Annual Meeting of the Association for Computational Linguistics (ACL), 2016.</li>
-    <li id="ref-vonkugelgen2021content">J. von Kügelgen, Y. Sharma, L. Gresele and others. <a href="https://arxiv.org/abs/2106.04619">Self-Supervised Learning with Data Augmentations Provably Isolates Content from Style</a>. Advances in Neural Information Processing Systems (NeurIPS), 2021.</li>
+    <li id="ref-vonkugelgen2021content">J. von Kügelgen, Y. Sharma, L. Gresele and others. <a href="https://proceedings.neurips.cc/paper/2021/hash/8929c70f8d710e412d38da624b21c3c8-Abstract.html">Self-Supervised Learning with Data Augmentations Provably Isolates Content from Style</a>. Advances in Neural Information Processing Systems (NeurIPS), 2021.</li>
     <li id="ref-shen2020bct">Y. Shen, Y. Xiong, W. Xia and S. Soatto. <a href="https://doi.org/10.1109/CVPR42600.2020.00640">Towards Backward-Compatible Representation Learning</a>. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2020.</li>
     <li id="ref-maystre2025procrustes">L. Maystre and others. <a href="https://arxiv.org/abs/2510.13406">When Embedding Models Meet: Procrustes Bounds and Applications</a>. arXiv:2510.13406, 2025.</li>
     <li id="ref-vejendla2025drift">H. Vejendla. <a href="https://doi.org/10.18653/v1/2025.emnlp-main.805">Drift-Adapter: A Practical Approach to Near Zero-Downtime Embedding Model Upgrades in Vector Databases</a>. Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP), 2025.</li>
@@ -557,7 +556,7 @@ bash scripts/reproduce.sh</pre>
 <footer>
   <div class="section">
     <span class="brandline"><a href="https://www.sentra.app" aria-label="Sentra"><svg class="mark" viewBox="0 0 20.4139 20" aria-hidden="true"><use href="#sentra-mark"/></svg><svg class="wordmark" viewBox="0 0 63.7002 15.8828" aria-hidden="true"><use href="#sentra-word"/></svg></a></span>
-    <span>&#169; 2026 Ashwin Gopinath, Sentra. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
+    <span>&#169; 2026 Ashwin Gopinath. Contact: <a href="mailto:agopi@mit.edu">agopi@mit.edu</a>, <a href="mailto:ashwin@sentra.app">ashwin@sentra.app</a>. Code under the MIT License. The data comes from Era by Eon and is not in the repository.</span>
     <span><a href="https://github.com/niashwin/company-world-model">GitHub</a></span>
   </div>
 </footer>

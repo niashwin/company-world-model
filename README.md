@@ -5,93 +5,94 @@
   </picture></a>
 </p>
 
-# Every system sees the same company
+# Every company is a world. We build its world model.
 
-**Toward world models of organizations.** Ashwin Gopinath, Sentra, San Francisco. Technical report, version 7,
-November 2026.
+**Toward World Models of Organizations: Every System Sees the Same Company.** Ashwin Gopinath, Department of
+Mechanical Engineering, MIT, and Sentra.
+Technical report, version 7, November 2026. Contact: [agopi@mit.edu](mailto:agopi@mit.edu) and
+[ashwin@sentra.app](mailto:ashwin@sentra.app).
 
 [Website](https://niashwin.github.io/company-world-model/) |
 [Paper (PDF)](paper/main.pdf) |
 [Cite](#citation) |
 [![tests](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
 
-[![Every system sees the same company](website/assets/og.png)](https://niashwin.github.io/company-world-model/)
+[![Every company is a world. We build its world model.](website/assets/og.png)](https://niashwin.github.io/company-world-model/)
 
 ## In one minute
 
-A company is a world of its own. Every customer, deal and project has a state: how things stand right now. Email,
-chat, the CRM, support tickets and calls each see a part of that state, and no system sees the whole of it. Most AI
-assistants rebuild the picture from documents for each question, and then forget it.
+A company's email, chat, CRM and support systems each see one part of every customer, deal and project. A world
+model learns the whole: how each situation stands, how it changes, and who may see what. It learns the way a new
+employee does, from the company's own records, with no labels.
 
-This work shows that AI can learn the state itself, from the links that a company's systems already keep. The method
-comes from world models, which let AI learn the state of the physical world from video. Yann LeCun's
+The method comes from world models of the physical world. Yann LeCun's
 [JEPA](https://openreview.net/forum?id=BZ5a1r-kVsf) learns to predict one view of a scene from another view of it.
 Randall Balestriero and Yann LeCun [proved](https://arxiv.org/abs/2610.39302) that such models, with the right pairs
 of views, converge to one picture of the true state. A company's links supply those pairs. An email, a ticket and a
 CRM update about one customer in one week are three views of one situation.
 
 We test the idea on a simulated company from [Era by Eon](https://arxiv.org/abs/2609.09853), with exact ground
-truth: 78,048 records in seven systems, and 21 customers. With a simulation, we can check every answer against the
-truth.
+truth: 78,048 records in seven systems and 21 active customers. There, our world model placed 76% of records whose link it
+never saw with the right customer. A keyword search placed 53%.
 
-## What we found, and why it matters
+## The foundation for corporate AI
+
+Today, AI for companies comes one capability at a time: search, a memory, notes, and a permission filter for each.
+Each tool builds its own partial picture of the company. A world model is one picture of the whole company, and
+every capability can draw on it. Each capability then inherits the permissions of the world model, and gains a
+model of how situations change.
+
+| Capability | Today, one tool at a time | With one world model | This study |
+| --- | --- | --- | --- |
+| Search | Enterprise search and retrieval-augmented generation ([RAG](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html)) find documents for each question, and a language model reads them. | Finds the records of a situation, also records that lost their link. One email can stand in for the customer's name. | Shown |
+| Memory | Company memory and knowledge graphs ([GraphRAG](https://arxiv.org/abs/2404.16130), [Zep](https://arxiv.org/abs/2501.13956), [MemGPT](https://arxiv.org/abs/2310.08560), [Mem0](https://doi.org/10.3233/FAIA251160)) keep entities, facts and their sources. | Files each record under its customer, also without a link. Every question starts from one picture. | Shown |
+| Memory reader | [Memorilla](https://arxiv.org/abs/2610.21375) turns documents into 16 memory tokens for each question, which a frozen language model reads. | A reader of this kind reads the records of one situation, which the world model finds. | Shown, in a small version |
+| Notes and skills | [Engram](https://engram.com/blog/learning-in-a-world-of-notes) keeps notes about a company and trains models to use them. It reports gains of 7 to 20 points. | Notes attach to situations, and each note stays within the permissions of its readers. | Next |
+| Permissions | Filters remove what a person may not read from each list of results. | Each group's world model learns only from what the group may read, and every capability on it inherits that guarantee. | Shown |
+| Patterns and similar cases | [Process mining](https://doi.org/10.1007/978-3-662-49851-4) maps how work flows, from event logs that a case number links. | Finds earlier situations like the one at hand, across customers, from text and links. | First version |
+| Prediction and decisions | World models of physical scenes ([V-JEPA 2](https://arxiv.org/abs/2506.09985), [H-JEPA](https://arxiv.org/abs/2610.06805)) predict what actions do, for video and robots. | Predicts how each situation changes, and tests a decision against similar cases. | First version |
+
+The numbers for Engram and Memorilla come from their own reports. Table 1 of the paper compares these approaches
+with references, and it includes
+[Cartridges](https://proceedings.iclr.cc/paper_files/paper/2026/hash/4681359a7b1e94571598ad1adda35e6e-Abstract-Conference.html).
+
+## What the world model already does
 
 Eight results from the simulated company. Each row says what we tested and what it could mean for a real company.
 
 | Result | What we tested | Why it matters |
 | --- | --- | --- |
-| **76%** of records find their customer, even without their link | We hid the customer links of 5,366 records. The model put 76% with the right customer. A keyword search put 53%, and a guess of the largest customer 12%. | AI can assemble one picture of each customer from every tool, also from records that lost their link. |
-| **33%** without any names | We removed every name, email address and identifier. The model still put 33% of the hidden records with the right customer. A small ready-made AI text model ([MiniLM](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)) put 20%, and a guess of the largest customer 12%. | Names do much of the work, but not all of it. The model also learns what each customer's situation looks like. |
+| **76%** of records find their customer, even without their link | We hid the customer links of 5,366 records. The world model put 76% with the right customer. A keyword search put 53%, and a guess of the largest customer 12%. | AI can assemble one picture of each customer from every tool, also from records that lost their link. |
+| **33%** without any names | We removed every name, email address and identifier. The world model still put 33% of the hidden records with the right customer. A small ready-made AI text model ([MiniLM](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)) put 20%, and a guess of the largest customer 12%. | Names do much of the work, but not all of it. The world model also learns what each customer's situation looks like. |
 | **53% → 62%** for a ready-made AI text model | We added the same training on top of MiniLM. Its share of hidden records with the right customer rose from 53% to 62%. | A company can add this training to a model that it already runs, and does not have to replace the model. We tested one small model. |
-| **No leak** | We planted secret codenames in 150 records that two employees may not read, and searched for them as each employee. A model trained on everything pointed to the right customer every time, even when we filtered the results to what the employee may read. Models trained only on what each employee may read gave the same results with and without the secrets. | A permission filter on search results is not enough. When each group's model learns only from what the group may read, it cannot reveal the rest. People who may read little get less accurate results. |
+| **No leak** | We planted secret codenames in 150 records that two employees may not read, and searched for them as each employee. A model trained on everything pointed to the right customer every time, even when we filtered the results to what the employee may read. World models trained only on what each employee may read gave the same results with and without the secrets. | A permission filter on search results is not enough. When each group's world model learns only from what the group may read, it cannot reveal the rest. People who may read little get less accurate results. |
 | **63.8%** from one email | Questions came with one email or ticket instead of the customer's name. The answers were right 63.8% of the time, against 54.9% with MiniLM and 52.2% with no memory. A system that knows the email's true link gets 68.7%. The names stayed in the records for this test. | One email can stand in for the customer's name: a forwarded email or a ticket can bring the right customer's records. |
 | **13–21%** similar situations | For each customer and quarter, we found the five most similar quarters of other customers. Of these, 13–21% shared the situation, against 8% by chance. The share depends on the representation. | "Have we seen this before?" gets a first, rough answer. |
-| **25 of 29** months with an intervention | In 25 of 29 months in which a customer was in trouble, the company stepped in. | Logs show what a company did, not what worked. To learn what works, a company must record its decisions and their reasons, and sometimes vary them on purpose. |
+| **25 of 29** months with an intervention | In 25 of 29 months in which a customer was in trouble, the company stepped in. | Logs show what a company did, not what worked. To predict what a decision will do, a world model needs decisions with their reasons, and some decisions that vary on purpose. |
 | **2–7 minutes** to train | We timed each model on an ordinary computer, without a GPU. | With 21,972 linked records, as here, a company can train the model again often. It can keep a separate model for each group of people with the same access. We did not test a company with millions of records. |
 
-## Why it matters: from a memory to a model of the company
+## The road to corporate AI
 
 We call the goal corporate AI: AI that understands how a company works, acts within each person's permissions and
-helps the company decide. We see four layers on the way there. Each layer is useful on its own, and each one makes the
-next one possible.
+helps the company decide. A world model of the company is at the center of it.
 
-| Layer | What it gives | Status |
+| Step | What it gives | Status |
 | --- | --- | --- |
 | Memory that accumulates | What happened, who decided it and why, and where each fact came from | In place: products such as [Sentra](https://www.sentra.app) build this layer today |
-| **Representations that learn** | **One learned state space for the company, which places most records with their customer** | **This work, shown in simulation** |
-| Models that predict | How situations change, and what decisions do | Next: this work builds a first version and shows what data it needs |
-| Organizations that improve | People and AI agents test decisions against the model, and the model learns from what happens | Future |
+| **A world model of the company** | **One learned picture of every customer, deal and project, with permissions built in** | **This study builds a first one, in a simulated company** |
+| Prediction and decisions | How situations change and what decisions do. People and AI agents test a decision before they act. | First version |
+| An organization that learns | Decisions and their outcomes become new records, and the world model learns from each one | Future |
 
-The learned state space does not replace the memory. The memory keeps the facts, sources and permissions. The state
-space adds two things: a place for records without a link, and a measure of which situations are alike.
-
-## How it compares
-
-Other approaches give AI knowledge of a company in different ways, and they work best together. Table 1 of the paper
-gives this comparison with references.
-
-| Approach | What it keeps | Where it is strong | What it leaves open |
-| --- | --- | --- | --- |
-| Retrieval ([RAG](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html)) | Documents and a search index | Current and simple, with permission filters on results | Builds each situation again for each question |
-| Company memory and knowledge graphs ([GraphRAG](https://arxiv.org/abs/2404.16130), [Zep](https://arxiv.org/abs/2501.13956), [MemGPT](https://arxiv.org/abs/2310.08560), [Mem0](https://doi.org/10.3233/FAIA251160)) | Entities, facts, decisions, dates and sources | Facts with sources, easy to audit and update | Facts, not a learned state of each situation |
-| Compressed memory ([Memorilla](https://arxiv.org/abs/2610.21375)) | Embeddings of documents, read as 16 memory tokens for each question by a frozen model | A large collection in a few tokens (84.33% on FactKG, against 80.43% with the full context) | Organizes documents, not situations |
-| Trained context and skills ([Cartridges](https://proceedings.iclr.cc/paper_files/paper/2026/hash/4681359a7b1e94571598ad1adda35e6e-Abstract-Conference.html), [Engram](https://engram.com/blog/learning-in-a-world-of-notes)) | A trained cache of the documents, or notes and a model trained to use them | Better and cheaper answers (Engram reports 7 to 20 points from training to use notes) | Organizes text, not situations |
-| [Process mining](https://doi.org/10.1007/978-3-662-49851-4) | Event logs that a case number links | Shows how work flows | Needs structured events, not text |
-| World models of physical scenes ([V-JEPA 2](https://arxiv.org/abs/2506.09985), [H-JEPA](https://arxiv.org/abs/2610.06805)) | Latent states of a scene | Prediction and planning | Built for cameras and sensors, not for records and permissions |
-| **This work** | **A learned state of each situation, from the links between systems** | **Places records whose links it never saw; permissions built in** | **Prediction of change, and the effects of decisions; tested on one simulated company** |
-
-Our memory reader follows Memorilla in a small form, so a reader of this kind could read situations instead of
-separate documents. Agents trained to use notes could act on a shared state that respects permissions. We tested
-only the first of these combinations.
+This is a first world model of a company. It will improve with real data, larger models and records of decisions.
+Search, memory, permissions and prediction can all build on it, and that is why we start here.
 
 ## Website
 
 The interactive project website is part of this repository, in [`website/`](website). It explains the work for a
 general reader, shows every result with an interactive figure, and lists every reference with a link. GitHub Pages
-publishes it with [`.github/workflows/pages.yml`](.github/workflows/pages.yml), together with the PDF of the paper.
-Its address will be [https://niashwin.github.io/company-world-model/](https://niashwin.github.io/company-world-model/).
-Turn on GitHub Pages one time: in Settings > Pages, set Source to GitHub Actions. A GitHub Pages site is public on
-the internet, also when the repository is private. For a private repository, Pages needs a paid GitHub plan.
+publishes it at [https://niashwin.github.io/company-world-model/](https://niashwin.github.io/company-world-model/),
+together with the PDF of the paper, through [`.github/workflows/pages.yml`](.github/workflows/pages.yml). In a fork,
+turn on GitHub Pages one time: in Settings > Pages, set Source to GitHub Actions.
 
 To see the website on your computer, run this command. Then open [http://localhost:8000](http://localhost:8000).
 
@@ -276,7 +277,7 @@ edit of the paper keeps every placeholder, label, reference and citation.
 | `tools/make_og_image.py` | Renders `website/assets/og.png`, the image that link previews of the website show |
 | `tools/readme_refs.py` | Writes the list of all references, with links, into this README from `paper/refs.bib` |
 | `results/` | Every result that the paper reports, as JSON. New in version 2: `v2_*.json`, `extras_e.json` and `memory2_{minilm4,dual,route}.json`. New in version 3: `memory_anchor_*.json` and `memory2_q_*.json`. New in version 4: `actions.json`. Files that end in `_a`, `_b`, ... are parallel runs, and `fill_paper.py` merges them. |
-| `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, PDF |
+| `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, its style (`unsrtnat-nature.bst`) and the PDF |
 | `website/` | The project website. `template.html` is the source of the page, and `cwm/export_site_data.py` generates `index.html` from it. `assets/brand/` holds the Sentra logo, and `assets/fonts/` the Geist fonts (SIL Open Font License). |
 | `.github/workflows/pages.yml` | Publishes `website/` and the PDF of the paper with GitHub Pages |
 | `docs/REVIEW_RESPONSE.md` | Point-by-point answers to every review, from version 1 to version 6 |
@@ -297,7 +298,7 @@ backbone, because it holds no company data. Heads, states and indexes are per sc
 
 Era by Eon is free and generates a synthetic company. No real person, customer or conversation is part of it. We do
 not redistribute the generated data here. Regenerate it with `cwm/era_up.sh` and `cwm/era_export.py`, or with
-`bash scripts/reproduce.sh data`. Check Era's terms before you share it. The MIT licence applies to the code (see
+`bash scripts/reproduce.sh data`. Check Era's terms before you share it. The MIT License applies to the code (see
 `LICENSE`).
 
 ## References
@@ -334,9 +335,9 @@ The key references, with links. The full list of 56 follows them. The
 
 <!-- refs:start -->
 <details>
-<summary>All 56 references of the paper, in its order, with links</summary>
+<summary>All 56 references, in the order of the paper, with links</summary>
 
-1. P. Lewis, E. Perez, A. Piktus and others. [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+1. P. Lewis, E. Perez, A. Piktus and others. [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2020.
 2. D. Ha and J. Schmidhuber. [World Models](https://arxiv.org/abs/1803.10122). arXiv:1803.10122, 2018.
 3. Y. LeCun. [A Path Towards Autonomous Machine Intelligence](https://openreview.net/forum?id=BZ5a1r-kVsf). OpenReview preprint, 2022.
 4. M. Assran, A. Bardes, D. Fan, Q. Garrido, R. Howes and others. [V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning](https://arxiv.org/abs/2506.09985). arXiv:2506.09985, 2025.
@@ -358,14 +359,14 @@ The key references, with links. The full list of 56 follows them. The
 20. T. Cai, F. Huang, R. Nakada, L. Zhang and D. Zhou. [Contrastive Learning on Multimodal Analysis of Electronic Health Records](https://doi.org/10.1080/01621459.2026.2698136). Journal of the American Statistical Association, 2026.
 21. Eon. [Meet Era: Simulated Companies to Benchmark Models and Eval Agents](https://www.eon.io/blog/era-build-and-test-ai-agents). Blog post, 2026.
 22. N. Reimers and I. Gurevych. [Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://doi.org/10.18653/v1/D19-1410). Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP), 2019.
-23. W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. [MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+23. W. Wang, F. Wei, L. Dong, H. Bao, N. Yang and M. Zhou. [MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2020.
 24. T. Tiwari, S. Gururangan, C. Guo and others. [Information Flow Control in Machine Learning through Modular Model Architecture](https://www.usenix.org/conference/usenixsecurity24/presentation/tiwari). USENIX Security Symposium, 2024.
 25. J. Pearl. [Causality: Models, Reasoning, and Inference](https://doi.org/10.1017/CBO9780511803161). Cambridge University Press, 2009.
 26. M. A. Hernán and J. M. Robins. [Causal Inference: What If](https://miguelhernan.org/whatifbook). Chapman & Hall/CRC, 2020.
 27. W. M. P. van der Aalst. [Process Mining: Data Science in Action](https://doi.org/10.1007/978-3-662-49851-4). Springer, 2016.
 28. W. M. P. van der Aalst. [Object-Centric Process Mining: Dealing with Divergence and Convergence in Event Data](https://doi.org/10.1007/978-3-030-30446-1_1). Software Engineering and Formal Methods (SEFM), 2019.
 29. J. Z. HaoChen, C. Wei, A. Gaidon and T. Ma. [Provable Guarantees for Self-Supervised Deep Learning with Spectral Contrastive Loss](https://proceedings.neurips.cc/paper_files/paper/2021/hash/27debb435021eb68b3965290b5e24c49-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2021.
-30. P. Khosla, P. Teterwak, C. Wang and others. [Supervised Contrastive Learning](https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html). Advances in Neural Information Processing Systems, 2020.
+30. P. Khosla, P. Teterwak, C. Wang and others. [Supervised Contrastive Learning](https://proceedings.neurips.cc/paper_files/paper/2020/hash/d89a66c7c80a29b1bdbab0f2a1a94af8-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2020.
 31. P. H. Schönemann. [A Generalized Solution of the Orthogonal Procrustes Problem](https://doi.org/10.1007/BF02289451). Psychometrika, 1966.
 32. D. Yu, Z. Liu and H. He. [Same Company, Same Signal: The Role of Identity in Earnings Call Transcripts](https://doi.org/10.18653/v1/2025.findings-acl.946). Findings of the Association for Computational Linguistics: ACL 2025.
 33. Y. Zhang, Z. Shen, C.-H. Wu and others. [Metadata-Induced Contrastive Learning for Zero-Shot Multi-Label Text Classification](https://doi.org/10.1145/3485447.3512174). Proceedings of the ACM Web Conference 2022.
@@ -379,7 +380,7 @@ The key references, with links. The full list of 56 follows them. The
 41. V. Maiorca, L. Moschella, A. Norelli, M. Fumero, F. Locatello and E. Rodolà. [Latent Space Translation via Semantic Alignment](https://proceedings.neurips.cc/paper_files/paper/2023/hash/ad5fa03c906ca15905144ca3fbf2a768-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2023.
 42. K. Nosaka, Y. Suetake, Y. Takano and A. Yoshise. [Data Collaboration Analysis with Orthonormal Basis Selection and Alignment](https://doi.org/10.1016/j.compeleceng.2026.111192). Computers and Electrical Engineering, 2026.
 43. W. L. Hamilton, J. Leskovec and D. Jurafsky. [Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change](https://doi.org/10.18653/v1/P16-1141). Annual Meeting of the Association for Computational Linguistics (ACL), 2016.
-44. J. von Kügelgen, Y. Sharma, L. Gresele and others. [Self-Supervised Learning with Data Augmentations Provably Isolates Content from Style](https://arxiv.org/abs/2106.04619). Advances in Neural Information Processing Systems (NeurIPS), 2021.
+44. J. von Kügelgen, Y. Sharma, L. Gresele and others. [Self-Supervised Learning with Data Augmentations Provably Isolates Content from Style](https://proceedings.neurips.cc/paper/2021/hash/8929c70f8d710e412d38da624b21c3c8-Abstract.html). Advances in Neural Information Processing Systems (NeurIPS), 2021.
 45. Y. Shen, Y. Xiong, W. Xia and S. Soatto. [Towards Backward-Compatible Representation Learning](https://doi.org/10.1109/CVPR42600.2020.00640). IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2020.
 46. L. Maystre and others. [When Embedding Models Meet: Procrustes Bounds and Applications](https://arxiv.org/abs/2510.13406). arXiv:2510.13406, 2025.
 47. H. Vejendla. [Drift-Adapter: A Practical Approach to Near Zero-Downtime Embedding Model Upgrades in Vector Databases](https://doi.org/10.18653/v1/2025.emnlp-main.805). Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP), 2025.
@@ -403,8 +404,7 @@ The key references, with links. The full list of 56 follows them. The
 @techreport{gopinath2026organizations,
   title       = {Toward World Models of Organizations: Every System Sees the Same Company},
   author      = {Gopinath, Ashwin},
-  institution = {Sentra},
-  address     = {San Francisco},
+  institution = {Massachusetts Institute of Technology and Sentra},
   year        = {2026},
   month       = nov,
   note        = {Version 7},
@@ -412,7 +412,7 @@ The key references, with links. The full list of 56 follows them. The
 }
 ```
 
-## Acknowledgments
+## Acknowledgements
 
 [Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents) is free and made this work possible. SIGReg
 follows [LeJEPA](https://arxiv.org/abs/2511.08544) (Balestriero & LeCun, 2025). The implementation here is our own.

@@ -394,6 +394,7 @@ ul.f-caps .tag { align-self: flex-start; }
 .f-wm b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 23px; letter-spacing: -0.015em; }
 .f-wm ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px;
   color: rgba(255, 255, 255, 0.9); }
+.f-wm li { padding-left: 14px; text-indent: -14px; }
 .f-wm li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #8fb9ff;
   margin-right: 8px; vertical-align: 2px; }
 ul.f-sys { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -457,8 +458,10 @@ table.compare .tag { margin-left: 2px; }
 
 /* ---------------------------------------------------------------- footer */
 footer .brandline { display: flex; align-items: center; gap: 14px; color: var(--ink); }
-footer .brandline svg { height: 20px; width: auto; display: block; }
-footer .brandline a { color: var(--ink); display: inline-flex; }
+footer .brandline svg { width: auto; display: block; }
+footer .brandline svg.mark { height: 18px; }
+footer .brandline svg.wordmark { height: 14px; }
+footer .brandline a { color: var(--ink); display: inline-flex; align-items: center; gap: 6px; }
 .section-head { max-width: var(--wide); margin: 0 auto; padding: 96px var(--gutter) 0; }
 .section-head .rule-line { border-top: 2px solid var(--ink); padding-top: 18px; }
 .section-head h2 { margin-bottom: 12px; }

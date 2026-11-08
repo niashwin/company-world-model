@@ -5,7 +5,8 @@ type: software
 authors:
   - family-names: Gopinath
     given-names: Ashwin
-    affiliation: Sentra
+    affiliation: "Department of Mechanical Engineering, Massachusetts Institute of Technology; Sentra"
+    email: agopi@mit.edu
 version: "7.0"
 date-released: 2026-11-08
 license: MIT
@@ -15,12 +16,12 @@ preferred-citation:
   type: report
   title: "Toward World Models of Organizations: Every System Sees the Same Company"
   institution:
-    name: Sentra
-    city: San Francisco
+    name: "Massachusetts Institute of Technology and Sentra"
   month: 11
   url: "https://github.com/niashwin/company-world-model"
   authors:
     - family-names: Gopinath
       given-names: Ashwin
-      affiliation: Sentra
+      affiliation: "Department of Mechanical Engineering, Massachusetts Institute of Technology; Sentra"
+      email: agopi@mit.edu
   year: 2026

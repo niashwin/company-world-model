@@ -28,11 +28,18 @@ A release for a general reader, with every reference checked and linked. The res
   small model. The leak test used two employees, and similar situations are quarters. The caption of Figure 5 now
   gives the right measure, and Figure 4 no longer rounds twice. `docs/CHECKS.md` lists every finding.
 - **Phones.** The row of section links starts at its first link, and the Paper button stays in the header.
+- **Affiliations.** The author is with the Department of Mechanical Engineering at MIT and with Sentra. The paper,
+  the website, the README and `CITATION.cff` give both affiliations and the contact addresses agopi@mit.edu and
+  ashwin@sentra.app.
+- **A review of the paper.** An agent looked at every page. The Methods no longer describe four things twice.
+  We fixed cross-references, table captions and three figures (1, 4 and 5), and the Extended Data figures no
+  longer put letters or legends on data. The references follow the author rule of Nature through
+  `paper/unsrtnat-nature.bst`.
 - **README.** A plain-language start, the results with why they matter, and linked key references. A list that
   opens on a click gives all 56 references with links. `tools/readme_refs.py` writes that list from
   `paper/refs.bib`, and `make site` runs it.
-- The paper has the label of version 7. Its text did not change, apart from the bibliography and the address of
-  the website in the statement on code availability.
+- The paper has the label of version 7. Its results did not change. Its text changed only where the review
+  found problems, and in the affiliations, the bibliography and the address of the website.
 
 ## v6 (November 2026)
 

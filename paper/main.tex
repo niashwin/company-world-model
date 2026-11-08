@@ -33,6 +33,13 @@
 \hypersetup{pdftitle={Toward World Models of Organizations: Every System Sees the Same Company},pdfauthor={Ashwin Gopinath}}
 \newcommand{\doi}[1]{\href{https://doi.org/#1}{doi:\nolinkurl{#1}}}
 \urlstyle{same}
+\setlength{\emergencystretch}{1.5em}
+% one symbol footnote (a URL), so that it does not read as a citation number
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+% float pages start at the top, with a fixed gap between floats
+\makeatletter
+\setlength{\@fptop}{0pt}\setlength{\@fpsep}{14pt}\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
 
 % Nature-style layout: unnumbered headings, "Fig. 1 |" legends, numbered superscript references
 \setcounter{secnumdepth}{0}
@@ -61,9 +68,12 @@
 \begin{center}
 {\sffamily\bfseries\LARGE Toward World Models of Organizations:\\[3pt] Every System Sees the Same Company\par}
 \vspace{12pt}
-{\large Ashwin Gopinath\par}
+{\large Ashwin Gopinath\textsuperscript{1,2}\par}
+\vspace{4pt}
+{\small \textsuperscript{1}Department of Mechanical Engineering, Massachusetts Institute of Technology, Cambridge, MA, USA\par}
+{\small \textsuperscript{2}Sentra, San Francisco, CA, USA\par}
 \vspace{3pt}
-{\small Sentra, San Francisco, CA, USA\par}
+{\small Correspondence: \href{mailto:agopi@mit.edu}{\nolinkurl{agopi@mit.edu}}, \href{mailto:ashwin@sentra.app}{\nolinkurl{ashwin@sentra.app}}\par}
 \vspace{2pt}
 {\small Technical report, version 7, November 2026\par}
 \end{center}
@@ -88,7 +98,7 @@ Here we build and test the first layers of a world model of an organization on a
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/idea.pdf}
-\caption{\textbf{Every system sees the same company.} (1) Every system records a piece of each customer's situation. (2) Links that the systems already keep show which records are two observations of one situation. These are the \emph{good views} that the Platonic Representation Theorem asks for. (3) A JEPA trained on them maps records from every system into one state space, where records about the same customer and quarter land together. It can also place records whose links it never saw, by what they say, and a rotation can partly align encoders that we train separately. The next layers of a world model predict how states change and choose decisions.}
+\caption{\textbf{Every system sees the same company.} \textbf{a}, Every system records a piece of each customer's situation. \textbf{b}, Links that the systems already keep show which records are two observations of one situation. These are the \emph{good views} that the Platonic Representation Theorem asks for. \textbf{c}, A JEPA trained on them maps records from every system into one state space, where records about the same customer and quarter land together. It can also place records whose links it never saw, by what they say, and a rotation can partly align encoders that we train separately. The next layers of a world model predict how states change and choose decisions.}
 \label{fig:idea}
 \end{figure}
 
@@ -104,11 +114,11 @@ Era by Eon\citep{eon2026era,gruenbaum2026era} generates a company, Northwind Rob
 
 On the records that we use for training, good views gather the records of each customer from every system (Fig.~\ref{fig:state}a--c). Of a record's ten nearest neighbours from other systems, 95.1\% belong to the same customer. With bad views and next-token prediction, it is 13.6\% and 13.2\%, about as low as with a random encoder (Extended Data Fig.~\ref{fig:e1}). In the good-view space, the state explains most of the variance, and the system that wrote a record explains little of it. However, training records are an easy test, because the same customer-quarter groups define the pairs and the score (Extended Data Table~\ref{tab:e1}).
 
-The fairer test withholds links. We hid a quarter of the threads, with 5{,}366 records, from training, so that their links never formed a pair. Then we placed each hidden record at the nearest training state (Fig.~\ref{fig:state}d and Extended Data Table~\ref{tab:heldout}). Good views place 76\% of these records with the right customer. TF-IDF places 53\%, bad views and next-token prediction place 19\% and 20\%, and a guess of the largest customer gets 12\%. They stand in for the 72\% of records without a link, mostly internal chat, which have no ground truth to score.
+The fairer test withholds links. We hid a quarter of the threads, with 5{,}366 records, from training, so that their links never formed a pair. Then we placed each hidden record at the nearest training state (Fig.~\ref{fig:state}d and Extended Data Table~\ref{tab:heldout}). Good views place 76\% of these records with the right customer. TF-IDF places 53\%, bad views and next-token prediction place 19\% and 20\%, and a guess of the largest customer gets 12\%. The hidden records stand in for the 72\% of records without a link, mostly internal chat, which have no ground truth to score.
 
 The same good views also improve an encoder that already knows the language. A frozen pretrained sentence encoder places 53\% of the hidden records with the right customer, about as many as TF-IDF. A small head that we train on good views raises this share to 62\%, and the head trains in about two minutes on a CPU. Thus, the training signal adds to the encoders that companies already use. It does not replace them.
 
-A natural concern is that the space only learns names. When we mask customer names, contacts and identifiers, about half of the customer signal remains on the training records (Extended Data Fig.~\ref{fig:robust}b). With every name and identifier masked, the state space places 33\% of hidden records with the right customer, against 75\% with the names kept. The pretrained encoder places 20\% of the same masked records, and a guess of the largest customer 12\% (Supplementary Note~\ref{sec:twochannel}). Wrong links blur the space, but they do not break it (Extended Data Fig.~\ref{fig:robust}a).
+A natural concern is that the space only learns names. When we mask customer names, contacts and identifiers, about half of the customer signal remains on the training records (Extended Data Fig.~\ref{fig:robust}b). With every name and identifier masked, the state space places 33\% of hidden records with the right customer. The same pipeline places 75\% with the names kept. The pretrained encoder places 20\% of the same masked records, and a guess of the largest customer 12\% (Supplementary Note~\ref{sec:twochannel}). Wrong links blur the space, but they do not break it (Extended Data Fig.~\ref{fig:robust}a).
 
 The space resolves the customer more sharply than the period. On hidden records, good views find the right customer and quarter 26\% of the time. A reference that knows the customer and picks its busiest quarter gets 26\%. With states by month, good views do better than the same kind of reference, 17\% against 13\% (Supplementary Table~\ref{tab:months}). Within one customer, states persist and change gradually. Consecutive quarters have a cosine similarity of 0.88, states six quarters apart 0.38, and different customers in the same quarter 0.05 (Extended Data Fig.~\ref{fig:traj}b).
 
@@ -231,7 +241,7 @@ The decisive next test is causal. In a simulator with a hidden state and known e
 
 Our evidence comes from one simulated company, whose text is cleaner and more regular than real company text. We used small encoders, and most experiments ran with one seed. Larger embedding models may raise the pretrained baselines, and also the results of a good-view head on top of them (Fig.~\ref{fig:state}d). Real deployments add noisy links, ambiguous references and finer access rules. These plug into the same mechanisms, but we did not test them here. Replication on other companies and on real data is the next step (Supplementary Note~\ref{sec:limits}).
 
-Every company already has a world model. Its people hold it in their heads, in parts, and the company loses a part each time a person leaves. An explicit model would let people and AI agents understand the company from one state that respects permissions. They could learn on its history of situations and decisions, and test a decision before they make it. We expect corporate AI to run on models of this kind. At Sentra, we work to build them.
+Every company already has a world model. Its people hold it in their heads, in parts, and the company loses a part each time a person leaves. An explicit model would let people and AI agents understand the company from one state that respects permissions. They could learn from its history of situations and decisions, and test a decision before they make it. We expect corporate AI to run on models of this kind. At Sentra, we work to build them.
 
 \section{Methods}
 
@@ -271,13 +281,11 @@ To learn an encoder, a joint-embedding predictive architecture makes the embeddi
 \subsection{Simulated company and data}
 Era by Eon generates synthetic companies whose systems agree with each other. The systems have vendor-compatible interfaces, and each company has exact ground truth\citep{eon2026era,gruenbaum2026era}. We ran seven of its public simulator images: Gmail, Google Calendar, Slack, Salesforce, Zendesk, Gong and Jira. We ran them with one seed, so all seven describe the same fictional company, Northwind Robotics, as of 31~October 2026 (\emph{day~1}). We then advanced the simulators past the close of the next fiscal quarter, 30~January 2027 (\emph{day~2}).
 
-An exporter pulls every record that contains text through each system's API. It puts the records into one table with system, timestamp, author, thread, text and link fields. Extended Data Table~\ref{tab:data} summarizes the data.
+The simulators run as Docker images (\texttt{erabyeon/*}) with seed 42 and high fidelity. An exporter pulls every record that contains text through each system's REST interface. It reads Slack messages, Gmail messages, Google Calendar events and Salesforce objects (accounts, opportunities, tasks, cases and notes). It also reads Zendesk tickets and comments, Gong call transcripts, and Jira issues and comments. It puts the records into one table with system, timestamp, author, thread, text and link fields. Extended Data Table~\ref{tab:data} summarizes the data.
 
 On day~1, the company has 78{,}048 records. The systems link 21{,}972 of them (28\%) to one of 21 active customers. These linked records belong to 180 customer-quarter states, from 2022~Q4 to 2026~Q4. By day~2, the same customers have 7{,}990 new linked records. Of these, 5{,}961 have dates in the last calendar quarter of 2026 and 2{,}025 in January 2027. The other 4 are calendar events for later months.
 
 Era generates records from one shared company graph. The text comes from templates and from a pre-written text pack. A language model wrote part of this pack. Era fills in the facts of the text from the graph\citep{eon2026era}. Real company text is messier. Supplementary Note~\ref{sec:limits} returns to this point.
-
-\paragraph{Data export.} The seven simulators run as Docker images (\texttt{erabyeon/*}) with seed 42 and high fidelity. We set the simulated date to 31~October 2026. The exporter reads every system through its REST interface. It reads Slack messages, Gmail messages, Google Calendar events and Salesforce objects (accounts, opportunities, tasks, cases and notes). It also reads Zendesk tickets and comments, Gong call transcripts, and Jira issues and comments. Day~2 is the simulators' second state, after the fiscal quarter that closes on 30~January 2027.
 
 We convert the texts to lower case and tokenize them into words. Each record keeps its first 96 tokens. The vocabulary keeps the words that occur at least twice among the linked records. On day~1, the vocabulary has 6{,}061 words. We build it from text only, before any held-out split. All experiments use linked records only.
 
@@ -296,24 +304,16 @@ With \good, each view is a record that we draw at random, with replacement, from
 With \textcolor{badorange}{\textbf{bad views}}, all eight views are copies of the anchor record itself, and we trim and mask each copy. This is standard corruption-based self-supervision for text. Everything else is identical, so the only difference is the definition of ``the same''.
 
 \subsection{Encoders and training}
-We want the encoder to learn from the company's data alone, with no pretrained knowledge of language. Thus we use a deliberately small model, and we train it from scratch. Unigrams and hashed bigrams ($2^{18}$ buckets) feed a 192-dimensional embedding bag. A two-layer MLP follows the bag. Its 256-dimensional output is the representation that we evaluate. We use a projector (1{,}024 hidden units, 128 outputs) only for the loss.
+We want the encoder to learn from the company's data alone, with no pretrained knowledge of language. Thus we use a deliberately small model, and we train it from scratch. Unigrams and hashed bigrams ($2^{18}$ buckets) feed a 192-dimensional embedding bag. LayerNorm, Linear(192, 512), GELU and Linear(512, 256) follow the bag. The 256-dimensional output is the representation that we evaluate. A projector, Linear(256, 1024), BatchNorm, GELU and Linear(1024, 128), serves only the loss.
 
-We train with LeJEPA's loss ($\lambda = 0.05$, 256 random slices) for 1{,}500 steps with batches of 256 anchor records. The peak learning rate is $10^{-3}$, with 5\% warm-up and cosine decay. We use sparse Adam for the embedding table and AdamW for all other parameters. One run takes three to six minutes on a CPU.
+The loss is LeJEPA's, $(1-\lambda)\,\mathcal{L}_{\text{inv}} + \lambda\,\mathcal{L}_{\text{SIGReg}}$, with $\lambda = 0.05$. SIGReg uses 256 random directions and 17 integration knots on $[-5,5]$. We train for 1{,}500 steps with batches of 256 anchor records, and for 1{,}000 steps for the per-family encoders. The peak learning rate is $10^{-3}$, with a 5\% linear warm-up and cosine decay. We use sparse Adam for the embedding bag and AdamW (weight decay 0.05) for all other parameters. One run takes three to six minutes on a CPU.
 
-The \textcolor{ntpaqua}{\textbf{next-token}} baseline trains the same encoder on random prefixes of records. Its softmax head covers the whole vocabulary of 6{,}061 words.
-
-\paragraph{Hyperparameters.} The encoder is an embedding bag of $2^{18}$ buckets $\times$ 192, followed by LayerNorm, Linear(192, 512), GELU and Linear(512, 256). The projector is Linear(256, 1024), followed by BatchNorm, GELU and Linear(1024, 128). The loss is $(1-\lambda)\,\mathcal{L}_{\text{inv}} + \lambda\,\mathcal{L}_{\text{SIGReg}}$, with $\lambda = 0.05$. SIGReg uses 256 random directions and 17 integration knots on $[-5,5]$. We use 2 global views (50--100\% contiguous span) and 6 local views (15--50\%), with 15\% token masking.
-
-We train for 1{,}500 steps (1{,}000 for the per-family encoders) with batch size 256. The peak learning rate is $10^{-3}$, with a 5\% linear warm-up and cosine decay. We use AdamW (weight decay 0.05) for the dense parameters and sparse Adam for the embedding bag. The next-token baseline uses 1{,}024 random prefixes per batch and a softmax over the whole vocabulary.
+The \textcolor{ntpaqua}{\textbf{next-token}} baseline trains the same encoder on 1{,}024 random prefixes of records per batch. Its softmax head covers the whole vocabulary of 6{,}061 words.
 
 \subsection{A pretrained backbone with a good-view head}
-To test whether the recipe also improves the kind of encoder used in practice, we freeze a small pretrained sentence encoder. This encoder is all-MiniLM-L6-v2\citep{reimers2019sbert,wang2020minilm}, with 384 dimensions. It learned from public text and never from this company's records. We train only a head on its outputs, with the same good views, projector and loss, for 800 steps. The head is LayerNorm, Linear(384, 512), GELU and Linear(512, 256).
+To test whether the recipe also improves the kind of encoder used in practice, we freeze a small pretrained sentence encoder. This encoder is all-MiniLM-L6-v2\citep{reimers2019sbert,wang2020minilm}, with mean pooling, normalized outputs and 384 dimensions. It learned from public text and never from this company's records. It reads the raw text of each record, up to 256 word pieces. We train only a head on its outputs, with the same good views, projector and loss, for 800 steps with batches of 256. The head is LayerNorm, Linear(384, 512), GELU and Linear(512, 256). We use AdamW with a peak learning rate of $10^{-3}$ and cosine decay.
 
-Because we freeze the backbone, we embed each record once. A view is a record that we draw from the anchor's state. We do not trim or mask the views. Instead, each view gets 10\% feature dropout and Gaussian noise ($\sigma = 0.02$). The head takes about two minutes to train on a CPU.
-
-\paragraph{Pretrained backbone.} The backbone is all-MiniLM-L6-v2 with mean pooling and normalized outputs. We apply it to the raw text of each record (at most 256 word pieces). The head is LayerNorm(384), followed by Linear(384, 512), GELU and Linear(512, 256). The projector and the loss are as above ($\lambda = 0.05$). We train for 800 steps with batch size 256.
-
-Each anchor has eight views, two global and six local. Here, we construct the global and local views in the same way, because we cannot crop a frozen embedding. Each view is a record drawn with replacement from the anchor's state. We apply 10\% feature dropout and Gaussian noise of standard deviation 0.02 to each view. We use AdamW with a peak learning rate of $10^{-3}$ and cosine decay. For the held-out test, we train the head on the training threads only.
+Because we freeze the backbone, we embed each record once. Each anchor has eight views, as above, but the global and local views are the same here, because we cannot crop a frozen embedding. Each view is a record that we draw with replacement from the anchor's state. Instead of trimming and masking, each view gets 10\% feature dropout and Gaussian noise ($\sigma = 0.02$). The head takes about two minutes to train on a CPU. For the held-out test, we train the head on the training threads only.
 
 \subsection{Baselines and metrics}
 Bad views and next-token prediction isolate the effect of the views. They use the same text, the same encoder and the same budget. TF-IDF with latent semantic analysis (256 dimensions) is a classical text representation. A randomly initialized encoder is a floor. We also use the frozen pretrained encoder, on its own and with a good-view head. This comparison tests whether the recipe transfers to an encoder that already knows the language.
@@ -323,15 +323,13 @@ Bad views and next-token prediction isolate the effect of the views. They use th
 
 \emph{Placement} (held-out records): we assign each record to the training state whose mean embedding is nearest. We report the share assigned to the right customer and the share assigned to the right customer and quarter.
 
-\emph{Cross-family probes}: we train a linear classifier to predict the customer from message embeddings. We test it on the embeddings of records from the systems of record. The reverse probe trains on the systems of record and tests on messages.
+\emph{Cross-family probes}: we train a multinomial logistic regression to predict the customer from message embeddings. We test it on the embeddings of records from the systems of record. The reverse probe trains on the systems of record and tests on messages.
 
 \emph{$\rho$ and $R^2$}: these give the fraction of the embedding that the state, the customer or the system explains. We compute them on the top 32 dimensions, which we whiten. We compute the fraction from the between-group covariance, with the within-group bias removed. $\rho$ is the theorem's scene-explained fraction.
 
 \emph{Alignment}: we measure same-state recall@1 when messages retrieve records after the rotation, on held-out states. Before the rotation, we measure mutual ten-nearest-neighbour agreement.
 
 \emph{Time}: we use customer probes on new-quarter records and the per-direction correlation between old and rotated new embeddings. We also use the precision@10 of new queries against the old index. We define the measures of drift, misalignment and similar situations where we use them (Supplementary Note~\ref{sec:primitives}).
-
-\paragraph{Evaluation details.} Cross-system precision@10 excludes neighbours from the query's own system and thread. It averages over 3{,}000 random linked records. Probes are multinomial logistic regressions. $\rho$ and $R^2$ use the top 32 dimensions after we whiten the embeddings. We correct the between-group covariance for its finite-sample bias.
 
 For the alignment test, we split the 126 states observed by both families in half. The anchors come from one half, and the 1{,}000 test pairs come from the other. The per-direction analysis of the retrained encoder works in the centred (not whitened) space. It fits one rotation and one global scale on 2{,}000 day-1 records embedded by both models. It tests the fit on 6{,}000 other records. Its variance-weighted $R^2$ is 73\% (88\% on the top 8 directions).
 
@@ -384,7 +382,7 @@ For the leak tests, we used 150 training records of five customers in Salesforce
 
 We train each reader's encoder with the same recipe as the main comparison. We use good views and one seed, and we hold out a quarter of the threads. We train the encoder on the records that the reader may read, with a vocabulary built from these records.
 
-\paragraph{Access control with a backbone.} The backbone embeds the canary records with their planted text. We train each reader's head on that reader's readable training records only (800 steps). The public base is a head trained for 800 steps on the 534 customer-linked records that all twelve employees may read. This training leaves out the held-out threads. We then fine-tune the head for 800 steps on the reader's records.
+\paragraph{Access control with a backbone.} The backbone embeds the canary records with their planted text. We train each reader's head on that reader's readable training records only (800 steps). The public base is a head trained for 800 steps on the 534 customer-linked records that every employee may read. This training leaves out the held-out threads. We then fine-tune the head for 800 steps on the reader's records.
 
 For the scope test, we sample with a fixed seed as many records from all systems as the reader may read. We train the scratch encoder on this sample, with the held-out threads hidden and a vocabulary built from the sample. Then we place the reader's held-out readable records against the reader's readable training states.
 
@@ -393,9 +391,9 @@ Training on good views teaches a representation to discard what the views of a s
 
 We therefore give each record two vectors. The \emph{state} vector comes from good views and says which situation the record belongs to. The \emph{detail} vector comes from a representation that we do not train to ignore which system wrote the record. For this representation, we use bad views or the pretrained encoder. The detail vector keeps what the record specifically says.
 
-We combine the two vectors in two ways. \emph{Concatenation} normalizes each channel and puts the two channels side by side. Methods gives the normalization that we use in each experiment. \emph{Routing} uses the state channel to decide which records are relevant and the detail channel to read them.
+We combine the two vectors in two ways. \emph{Concatenation} normalizes each channel and puts the two channels side by side. The next paragraph gives the normalization for each experiment. \emph{Routing} uses the state channel to decide which records are relevant and the detail channel to read them.
 
-\paragraph{Two channels.} For the state probes, we standardize the state matrix of each channel per dimension. We then divide it by the square root of its dimension and concatenate the channels. This way, both channels carry the same total variance.
+\paragraph{Normalization.} For the state probes, we standardize the state matrix of each channel per dimension. We then divide it by the square root of its dimension and concatenate the channels. This way, both channels carry the same total variance.
 
 For the operational primitives and for a reader's own two channels, we put the two L2-normalized embeddings side by side. In the memory store, the concatenated rows put the L2-normalized good-view and pretrained embeddings side by side before the store's PCA map. The routed store keeps the pretrained rows as content and the good-view rows, with the same time code, as retrieval keys. It embeds questions with both encoders.
 
@@ -404,15 +402,15 @@ We store each linked record once, as a row. We map the record's embedding to 112
 
 The store's encoder embeds each question. A Memorilla-style module\citep{fallahpour2026memorilla} turns this embedding into 16 query-conditioned slots. The slots attend, through two Perceiver-style cross-attention blocks, either over the whole store or over 16 retrieved rows. The retrieved rows are the rows of the question's quarter whose content in the retrieval channel is most similar to the question's.
 
-An earlier version of this paper ranked whole rows, in which the time code outweighed the content. In that version, only 24\%--35\% of the rows retrieved belonged to the asked customer. When we rank content within the quarter, this share rises to 65\%--71\%. With this change, the conclusions of Supplementary Note~\ref{sec:twochannel} stay the same. The rows of Supplementary Table~\ref{tab:memory} for the reader over the whole store come from that earlier version. The reader in these rows does not retrieve.
+A first implementation ranked whole rows, in which the time code outweighed the content. In that implementation, only 24\%--35\% of the rows retrieved belonged to the asked customer. When we rank content within the quarter, this share rises to 65\%--71\%. With this change, the conclusions of Supplementary Note~\ref{sec:twochannel} stay the same. The rows of Supplementary Table~\ref{tab:memory} for the reader over the whole store come from that earlier version. The reader in these rows does not retrieve.
 
 We average the slots and match the average against fixed embeddings of the 18 possible answers. These embeddings come from a pretrained sentence encoder (all-MiniLM-L6-v2). Thus, the reader is a classifier with a frozen output layer rather than a language model.
 
 We generate questions from Era's ground truth for each customer-quarter. They ask about the number of support tickets, the worst ticket priority, whether a sales call happened and the deal stage. We split the customer-quarters 70/10/20 into training, validation and test. This gives 36 test customer-quarters and 144 test questions.
 
-We first pre-train the module for 250 steps to recover what the store holds about a customer and date. This includes the share of records from each system and their volume. We then train it on the questions for 12 epochs. We keep the checkpoint that does best on validation.
+We first pretrain the module for 250 steps to recover what the store holds about a customer and date. This includes the share of records from each system and their volume. We then train it on the questions for 12 epochs. We keep the checkpoint that does best on validation.
 
-With the pretrained store, we also embed the questions with the pretrained encoder. This changes the closed-book baseline. Runs are deterministic for a given seed and thread count, but not across thread counts.
+With the pretrained store, we also embed the questions with the pretrained encoder. This changes the closed-book baseline.
 
 \subsection{Questions that come with a record}
 \paragraph{Anchored questions.} We use the questions above, but we replace the customer's name with ``this customer''. We anchor each question with one record of its customer-quarter, drawn at random with a different draw for each seed. The record comes from a held-out thread (Supplementary Note~\ref{sec:heldout}) and from a system other than the one that answers the question. Zendesk answers questions about tickets and priority, Gong answers questions about calls, and Salesforce answers questions about the deal stage. We drop the questions without such a record. This leaves 127 of the 144 test questions and 393 training questions.
@@ -427,7 +425,7 @@ Every stored row has a content vector and a retrieval key. The content vector is
 
 Placement and oracle keys get small random noise, fixed for each seed. We use this noise so that the reader sees 16 random records of the key's customer-quarter. The reader sees the same records for every question about that customer-quarter. We fill each customer-quarter that has fewer than 16 records with records of other states. This is why the oracle's records are not all from the right customer.
 
-We condition the reader's slots on the question text. The question text gives the kind of fact and the quarter, but not the customer. Pre-training uses the same construction. In pre-training, the anchor is a random record of a training thread. The question is ``What happened with this customer?'' We build the targets from the links of training threads only.
+We condition the reader's slots on the question text. The question text gives the kind of fact and the quarter, but not the customer. Pretraining uses the same construction. In pretraining, the anchor is a random record of a training thread. The question is ``What happened with this customer?'' We build the targets from the links of training threads only.
 
 \subsection{Time windows and dynamics}
 \paragraph{Months.} Month states are (customer, calendar month) pairs. Week states use ISO weeks. The month encoder uses the recipe of the main comparison, with month states as positives. We train it on the training threads of the held-out split.
@@ -479,7 +477,7 @@ Balance is the share of each group's months that were themselves in trouble, or 
 The day-2 export ends in January 2027. One of the 396 transitions leads from January into February 2027. That next month holds only a planned calendar event, so its outcomes are zero by construction. Its January month is also one of the 29 months in trouble, and the company intervened in that month. Without it, the observed rates in Supplementary Table~\ref{tab:simulate} are 46\% and 25\% for deals, and 71\% and 75\% for urgent tickets.
 
 \subsection{Statistics and reproducibility}
-The main comparison uses 3 seeds, and the memory reader uses four. The other experiments use one seed, except where a table or figure says otherwise.
+The main comparison uses three seeds, and the memory reader uses four. The other experiments use one seed, except where a table or figure says otherwise.
 
 Intervals are percentiles of bootstrap resamples of customers. Paired differences use the same questions, anchors and seeds for the two stores. Runs are deterministic for a given seed and thread count, but not across thread counts. We used one thread for each process. The repository's tests check every number that the text states directly against the stored results. The script \texttt{cwm/fill\_paper.py} writes every other number into this paper from them.
 
@@ -488,7 +486,7 @@ Era's simulators are free. Anyone can generate the exact company again from the 
 
 \subsection{Code availability}
 \label{sec:code}
-The repository at \url{https://github.com/niashwin/company-world-model} holds the code, the exporter for Era's simulators and all results. It also holds the scripts that draw the figures and fill in every number of this paper. The project website, with interactive figures and a linked list of the references, is at \url{https://niashwin.github.io/company-world-model/}.
+The repository at \href{https://github.com/niashwin/company-world-model}{\mbox{\nolinkurl{https://github.com/}}\nolinkurl{niashwin/company-world-model}} holds the code, the exporter for Era's simulators and all results. It also holds the scripts that draw the figures and fill in every number of this paper. The project website, with interactive figures and a linked list of the references, is at \href{https://niashwin.github.io/company-world-model/}{\mbox{\nolinkurl{https://niashwin.github.io/}}\nolinkurl{company-world-model/}}.
 
 \section{Acknowledgements}
 We thank Eon, which made Era freely available. An AI model (Claude, Anthropic) helped with the experiments and the drafts. The author takes full responsibility for the content.
@@ -499,7 +497,10 @@ A.G. designed the study, ran the experiments and wrote the paper.
 \section{Competing interests}
 A.G. is a co-founder of Sentra, which builds organizational memory for companies.
 
-\bibliographystyle{unsrtnat}
+\section{Additional information}
+{\raggedright Send correspondence and requests for materials to Ashwin Gopinath, at \href{mailto:agopi@mit.edu}{\mbox{\nolinkurl{agopi@mit.edu}}} or \href{mailto:ashwin@sentra.app}{\mbox{\nolinkurl{ashwin@sentra.app}}}.\par}
+
+\bibliographystyle{unsrtnat-nature}
 \bibliography{refs}
 
 \edsection
@@ -507,14 +508,14 @@ A.G. is a co-founder of Sentra, which builds organizational memory for companies
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{figures/e1_precision.pdf}
-\caption{\textbf{On the training records, only good views put records from different systems about the same situation together.} Precision@10 among neighbours from \emph{other} systems, for the same customer (\textbf{a}) and for the same customer and quarter (\textbf{b}). The three JEPA objectives use the same text, encoder and budget. The bars show the mean and standard deviation over three seeds. The dashed line is the most that a model could reach if it recognized only the customer.}
+\caption{\textbf{On the training records, only good views put records from different systems about the same situation together.} Precision@10 among neighbours from \emph{other} systems, for the same customer (\textbf{a}) and for the same customer and quarter (\textbf{b}). The three training objectives use the same text, encoder and budget. The bars show the mean and standard deviation over three seeds. The dashed line is the most that a model could reach if it recognized only the customer.}
 \label{fig:e1}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{figures/robustness.pdf}
-\caption{\textbf{Robustness, on the training records.} \textbf{a}, We train good views with a share of records attached to a random wrong state, and we evaluate against the true states. The dashed lines are bad views and next-token prediction with clean links. \textbf{b}, Same-customer precision before and after we mask customer names, contacts, domains, email addresses and identifiers in every record.}
+\caption{\textbf{Robustness, on the training records.} \textbf{a}, We train good views with a share of records attached to a random wrong state, and we evaluate against the true states. The dotted lines are bad views (orange) and next-token prediction (green) with clean links. \textbf{b}, Same-customer precision before and after we mask customer names, contacts, domains, email addresses and identifiers in every record.}
 \label{fig:robust}
 \end{figure}
 
@@ -558,7 +559,7 @@ All & 78{,}048 & 21{,}972 & 28\% \\
 \begin{table}[h]
 \centering
 \small
-\caption{\textbf{One encoder over all seven systems, measured on the training records} (day~1). The JEPA objectives trained from scratch show the mean $\pm$ standard deviation over three seeds, and the pretrained rows use one seed. The precision columns give cross-system precision@10 for the same customer and for the same state (customer and quarter). The probe columns give the accuracy of customer probes trained on messages and tested on systems of record (M$\to$R), or the reverse. $\rho$ and $R^2$ are the fractions of the whitened embedding that the state or the system explains. The pretrained encoder is a frozen all-MiniLM-L6-v2, and we train its head on good views.}
+\caption{\textbf{One encoder over all seven systems, measured on the training records} (day~1). The objectives trained from scratch show the mean $\pm$ standard deviation over three seeds, and Supplementary Table~\ref{tab:seeds} gives each seed. The pretrained rows use one seed. The precision columns give cross-system precision@10 for the same customer and for the same state (customer and quarter). The probe columns give the accuracy of customer probes trained on messages and tested on systems of record (M$\to$R), or the reverse. $\rho$ and $R^2$ are the fractions of the whitened embedding that the state or the system explains. The pretrained encoder is a frozen all-MiniLM-L6-v2, and we train its head on good views.}
 \label{tab:e1}
 \setlength{\tabcolsep}{3.6pt}
 \begin{tabular}{lccccccc}
@@ -649,7 +650,7 @@ Financial analyst & 9\% & 0.23 & 0.35 & \textbf{0.43} & 0.30 & 0.65 & 0.52 \\
 \begin{table}[h]
 \centering
 \small
-\caption{\textbf{Decisions and dynamics} (396 month-to-month transitions of the 21 customers in the day-2 corpus, frozen day-1 encoders, one run, leave-one-customer-out evaluation). Top: squared error of next month's state in the first 32 principal components, relative to a no-change prediction (negative is better), with the ridge strength from nested validation. ``State'' predicts the change from this month's state alone, and the next two columns add this month's six actions, actual and shuffled across months. The last two add next month's actions, which next month's state itself contains, and next month's mix of systems, each system's share of next month's records. Bottom: next month's outcomes from the first 16 components of this month's state, with and without this month's actions ($^{*}$: the gain's 95\% interval over customers excludes zero). ``Actions alone'' is a model of the six indicators, held out the same way, and the last row scores the support-reply indicator itself.}
+\caption{\textbf{Decisions and dynamics} (396 month-to-month transitions of the 21 customers in the day-2 corpus, frozen day-1 encoders, one run, leave-one-customer-out evaluation). Top: squared error of next month's state in the first 32 principal components, relative to a no-change prediction (negative is better), with the ridge strength from nested validation. ``Shrink'' moves this month's state toward the mean by one fitted factor. ``State'' predicts the change from this month's state alone, and the next two columns add this month's six actions, actual and shuffled across months. The last two add next month's actions, which next month's state itself contains, and next month's mix of systems, each system's share of next month's records. Bottom: next month's outcomes from the first 16 components of this month's state, with and without this month's actions ($^{*}$: the gain's 95\% interval over customers excludes zero). ``Actions alone'' is a model of the six indicators, held out the same way, and the last row scores the support-reply indicator itself.}
 \label{tab:actions}
 \setlength{\tabcolsep}{4.5pt}\begin{tabular}{lcccccc}
 \toprule
@@ -672,7 +673,7 @@ Two channels & $-$21\% & $-$25\% & $-$24\% & $-$24\% & $-$35\% & $-$38\% \\
 \toprule
 & \multicolumn{4}{c}{Next month's outcome from this month, AUROC} \\
 \cmidrule(lr){2-5}
-& \multicolumn{2}{c}{Deal advances or is won} & \multicolumn{2}{c}{Urgent or high ticket} \\
+& \multicolumn{2}{c}{Deal advances or is won} & \multicolumn{2}{c}{Urgent or high-priority ticket} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 Representation & state & + actions & state & + actions \\
 \midrule
@@ -800,7 +801,7 @@ Good-view state vectors are poor at facts about which system recorded what. From
 
 Also, a store of good-view vectors answered fewer test questions than a store of generic pretrained embeddings (Methods). These two results suggest a design with two channels. We built it and tested it with the probes and with the store.
 
-\paragraph{Facts read from states.} Supplementary Table~\ref{tab:twochannel} gives the probes that the Methods describe for single channels and for two channels side by side. A detail channel restores the facts that the state channel misses. From good views alone, probes read whether a call took place 72\% of the time. They read it 87\% of the time with the pretrained encoder as the detail channel and 95\% with bad views.
+\paragraph{Facts read from states.} Supplementary Table~\ref{tab:twochannel} gives the probes that the Methods describe for single channels and for two channels side by side. Supplementary Table~\ref{tab:state} adds TF-IDF, the random encoder and each next-quarter fact. A detail channel restores the facts that the state channel misses. From good views alone, probes read whether a call took place 72\% of the time. They read it 87\% of the time with the pretrained encoder as the detail channel and 95\% with bad views.
 
 However, no combination beats the better of its two channels. Averaged over the four facts, good views reach 57\%, and the pretrained encoder reaches 63\%. Bad views reach 70\%, and good views with the pretrained encoder side by side reach 62\%. Fact by fact, the accuracy of the concatenated states is between that of their two channels, usually close to the better one. Good views read the deal stage best. Its accuracy gets worse when we add the pretrained channel and stays the same with bad views.
 
@@ -816,7 +817,7 @@ The lead comes from how the reader reads the records, or from how we embed the q
 
 The question no longer names the customer. Instead, it comes with one record of the customer, its \emph{anchor}. It is as if someone who has that record asks the question. For example, someone who has a support ticket asks: was there a sales call with this customer this quarter?
 
-The anchor comes from a thread that we hid from the state encoder's training and from the reader's pre-training. It also comes from a different system than the one that answers the question. As a result, the reader must find the customer's other records across systems from one record without its link. We ran this test in two settings. In one setting, we masked the names of customers and employees and all identifiers in every stored record and question. In the other setting, we kept them.
+The anchor comes from a thread that we hid from the state encoder's training and from the reader's pretraining. It also comes from a different system than the one that answers the question. As a result, the reader must find the customer's other records across systems from one record without its link. We ran this test in two settings. In one setting, we masked the names of customers and employees and all identifiers in every stored record and question. In the other setting, we kept them.
 
 A store finds 16 records of the question's quarter for the reader in one of three ways. The first way takes the anchor's nearest neighbours by the content of one channel. The second way, placement, takes the records of the customer whose centroid in that channel is nearest to the anchor. In Supplementary Note~\ref{sec:heldout}, we place records at customer-quarter centroids. Here the quarter comes from the question. The third way, an oracle, takes the records of the anchor's own customer-quarter.
 
@@ -828,7 +829,7 @@ Neighbours are records like the anchor. Placement reads a sample of the whole si
 
 Placement with both channels concatenated does about as well as the state channel alone (64.2\%). The best store without the oracle comes within 4.5 points of the oracle (68.7\%). It is well above no store (52.2\%). Paired with no store, placement with the state channel gains +11.6 points (95\% interval +5.1 to +18.3; per seed +11.0, +11.8, +11.0, +12.6).
 
-\textbf{With every name masked, one record is rarely enough to find the customer.} The state channel still places held-out masked records with the right customer more often than the detail channel (33\% against 20\%). Its nearest neighbours, read through the detail channel, help a little. They answer 57.7\%, against 52.0\% with no store. The paired gain is +5.7 points (95\% interval +0.4 to +10.8; per seed +3.9, +0.8, +8.7, +9.4).
+\textbf{With every name masked, one record is rarely enough to find the customer.} The state channel still places held-out masked records with the right customer more often than the detail channel (33\% against 20\%). With the names kept, it places 75\%. Its nearest neighbours, read through the detail channel, help a little. They answer 57.7\%, against 52.0\% with no store. The paired gain is +5.7 points (95\% interval +0.4 to +10.8; per seed +3.9, +0.8, +8.7, +9.4).
 
 Placement does not help. It answers 52.8\%, a paired gain of +0.8 points (95\% interval $-$3.5 to +5.3; per seed $-$3.1, $-$2.4, $-$0.8, +9.4). The oracle answers 67.1\%.
 
@@ -842,7 +843,7 @@ It is useful to keep both channels, because a world model needs both abilities. 
 
 \suppnote{Time windows, dynamics and operational primitives}{sec:time}
 \label{sec:primitives}
-With quarters as windows, the company has 180 states on day~1. With all records through day~2, it has 202 states and 165 quarter-to-quarter transitions. These are too few to learn how states change. When we divide the same records by calendar month, we get 405 states on day~1. With all records through day~2, we get 469 states and 398 month-to-month transitions. ISO weeks give 1{,}445 customer-weeks with enough records to compare (Supplementary Note~\ref{sec:primitives}).
+With quarters as windows, the company has 180 states on day~1. With all records through day~2, it has 202 states and 165 quarter-to-quarter transitions. These are too few to learn how states change. When we divide the same records by calendar month, we get 405 states on day~1. With all records through day~2, we get 469 states and 398 month-to-month transitions. ISO weeks give 1{,}445 customer-weeks with enough records to compare (Supplementary Table~\ref{tab:primitives}).
 
 \paragraph{Placement by month.} We trained a good-view encoder with customer-month states on the training threads of Supplementary Note~\ref{sec:heldout} and placed the hidden records (Supplementary Table~\ref{tab:months}). The encoder places 75\% of the hidden records with the right customer and 17\% with the right customer and month. For comparison, a reference that knows the customer and chooses its busiest month gets 13\%. With quarters, good views did no better than a reference that knows the customer and chooses its busiest quarter. With months, they do somewhat better, so finer windows let the model use some of the time information in the text. The pretrained encoder, with or without a good-view head, finds the right month less often than the busiest-month reference (7\% and 9\%).
 
@@ -850,13 +851,13 @@ With quarters as windows, the company has 180 states on day~1. With all records 
 
 We also fitted the simplest dynamics model: a linear map from a month's state to its change into the next month (ridge regression). We compared it with a no-change prediction, and with shrinkage of the state toward the average state by one fitted factor. This shrinkage is itself a linear predictor. With a fixed, weak regularization ($\alpha = 10$), the map overfits. In the good-view space, it increases the squared error by 55\% relative to a no-change prediction.
 
-With the regularization chosen by nested leave-one-customer-out validation, the map reduces the error in every space (by 2--31\%). But it never reduces the error by more than 3.4 points beyond what the single shrinkage factor achieves. In 4 of the six spaces, it gains at most half a point over that factor. The bad-view and pretrained spaces are noisy from month to month. So the best linear guess moves the current state about halfway toward the average (shrinkage factors 0.46 and 0.51). Good-view month states are smoother (factor 0.79, cosine 0.83 between consecutive months).
+With the regularization chosen by nested leave-one-customer-out validation, the map reduces the error in every space (by 2--31\%). But it never reduces the error by more than 3.4 points beyond what the single shrinkage factor achieves. In four of the six spaces, it gains at most half a point over that factor. The bad-view and pretrained spaces are noisy from month to month. So the best linear guess moves the current state about halfway toward the average (shrinkage factors 0.46 and 0.51). Good-view month states are smoother (factor 0.79, cosine 0.83 between consecutive months).
 
 Almost everything that a linear model learns here is mean reversion. With 2.4 times as many transitions as the quarters give, linear models still learn little beyond it. Two to three times as many transitions are not enough to learn how a customer's situation moves in this data. This predictor has no actions. Supplementary Note~\ref{sec:decisions} adds the company's actions.
 
 A shared state space can turn operational questions into geometry. We tested three such questions against Era's ground truth (Supplementary Table~\ref{tab:primitives}). Methods gives the details.
 
-\paragraph{Is something off? Drift.} For every customer and ISO week with at least three records, we computed a state vector. We scored the week by its cosine distance from the mean of the customer's previous one to four weekly states within eight weeks (1{,}445 customer-weeks). There are 279 weeks with an escalation (a new urgent or high-priority ticket) or a change of deal stage. If the state moves when the situation does, high scores should mark these weeks, or the weeks just before them. They do not, beyond noise: for every representation, the AUROC is 0.47--0.54, within about two standard errors of chance ($0.50 \pm$ 0.04). For comparison, a score that uses only the change in the number of records gets 0.57.
+\paragraph{Is something off? Drift.} For every customer and ISO week with at least three records, we computed a state vector. We scored the week by its cosine distance from the mean of the customer's previous one to four weekly states within eight weeks (1{,}445 customer-weeks). There are 279 weeks with an escalation (a new urgent or high-priority ticket) or a change of deal stage. If the state moves when the situation does, high scores should mark these weeks, or the weeks just before them. They do not, beyond noise: for every representation, the AUROC is 0.47--0.54, within about two standard errors of chance (0.50~$\pm$~0.04). For comparison, a score that uses only the change in the number of records gets 0.57.
 
 \paragraph{Is something off? Misalignment between teams.} We used every customer-month with at least two sales records (CRM and calls) and two support records (tickets and issues). For these 163 customer-months, we computed the cosine distance between the sales view and the support view of the customer. There are 31 months with an urgent or high-priority ticket during an open deal. If the two teams' records drift apart when a customer is at risk, the distance should be larger in these months. It is not: the AUROC is 0.48--0.57, within two standard errors of chance. With so few months at risk, two standard errors are $\pm$0.12.
 
@@ -891,7 +892,7 @@ The signal is in the support replies. The state plus support replies gives the s
 
 A support reply marks a month with a ticket. A support reply occurs in 99\% of the months with a ticket and in 6\% of the months without one. The indicator of any ticket this month ranks next month's urgent tickets as well (AUROC 0.79). Customers with tickets continue to have them. The reply mostly marks that persistence rather than the effect of a decision.
 
-\paragraph{Around single actions.} At a finer scale, we studied the good-view state in the 14 days before and after an action. We compared it with the same customer's state around a time with no action of that kind within 14 days. We left all records of the action's kind out of both windows. We used only actions with at least two other records of the customer on each side. The actions are 216 sales calls (at 20 customers), 101 engineering escalations (11 customers) and 66 first leader messages after two quiet weeks (19 customers).
+\paragraph{Around single actions.} At a finer scale, we studied the good-view state in the 14 days before and after an action. We compared it with the same customer's state around a time with no action of that kind within 14 days. We left all records of the action's kind out of both windows. We used only actions with at least two other records of the customer on each side. The actions are 216 sales calls (20 customers), 101 engineering escalations (11 customers) and 66 first leader messages after two quiet weeks (19 customers).
 
 The state moves more around engineering escalations than at matched times. The value of 1 $-$ cosine is 0.037 against 0.026, a difference of +0.011 (interval +0.004 to +0.020). But their windows hold more records: a median of 64 before the event, against 46. When we account for the record count of each window, the difference is +0.009 (interval $-$0.003 to +0.017).
 
@@ -929,7 +930,7 @@ For an individual, the difference is concrete. A new account manager sees one cu
 \suppnote{Related work}{sec:related}
 \paragraph{Linked records as positives.} It is an established practice to treat records that share a link as positive pairs. Examples are citations\citep{cohan2020specter}, authors and venues\citep{zhang2022metadata}, product identifiers\citep{peeters2022supervised} and foreign keys in relational databases\citep{peleska2025relational}. Other examples are one bank client's transactions, locations and support calls\citep{mollaev2025banking}, and one patient's codes and notes\citep{cai2024ehr}. In industry, examples are per-company embedding models fine-tuned on document links, co-access and chat threads.\footnote{\url{https://jxnl.co/writing/2025/03/06/fine-tuning-embedding-models-for-enterprise-rag-lessons-from-glean/}}
 
-The closest of these is the multimodal work on bank clients. It trains one encoder per modality jointly with a CLIP-style objective\citep{radford2021clip}. We differ in the following ways. We define states by entity \emph{and} time window across a company's systems. We train per-system encoders separately and join them by a rotation. We test the predictions of the Platonic Representation Theorem against bad-view and next-token controls.
+The closest of these is the multimodal work on bank clients. It trains one encoder per modality jointly with a CLIP-style objective\citep{radford2021clip}. We differ in the following ways. We define states by entity \emph{and} time window across a company's systems. We train encoders on two families of systems separately and join them by a rotation. We test the predictions of the Platonic Representation Theorem against bad-view and next-token controls.
 
 Where the industrial practice fine-tunes a pretrained sentence encoder\citep{reimers2019sbert}, we also train only a head on a frozen one. This keeps the backbone free of company data, and therefore different access scopes can share it.
 
@@ -965,6 +966,7 @@ The four seeds of the anchored version vary the reader and the anchors but not t
 \item \textbf{Access-control policy.} We built our role-based policy from what our export kept: system, channel privacy, direct-message membership, sender and organizer. Real deployments have finer rules: channel membership, email recipients, internal notes and record sharing. These rules plug into the same mechanism, but we did not test them. Per-scope models also cost one training run per scope, and very small scopes may not have enough records to train one. A shared backbone helps some of them (Supplementary Note~\ref{sec:acl-results}).
 \end{itemize}
 
+\clearpage
 \subsection{Supplementary Tables}
 
 \begin{table}[h]
@@ -1111,9 +1113,9 @@ Chance or base rate & 0.50 & 0.50 & 0.50 & 0.08 & 0.07 & 0.12 \\
 \small
 \caption{\textbf{Decision simulation for customers in trouble} (29 customer-months with an urgent or high-priority ticket during an open deal). ``Intervene'': a sales call or an engineering escalation in the month of trouble. Each row is an observational estimate of what follows the two decisions, not of their effect. The first row gives the outcomes observed in the months in trouble. The case-based rows, in four state spaces, use the outcomes after up to 15 of the 60 most similar states of other customers for each decision. The last two rows use, respectively, all other customers' months without matching and a logistic outcome model of the state and the decision. Differences in percentage points use unrounded values, with 95\% intervals in brackets from customer resamples that repeat the neighbour search and refit the outcome model.}
 \label{tab:simulate}
-\setlength{\tabcolsep}{4pt}\begin{tabular}{lcccccc}
+\setlength{\tabcolsep}{3.2pt}\begin{tabular}{lcccccc}
 \toprule
-& \multicolumn{3}{c}{Deal advances or is won next month} & \multicolumn{3}{c}{Urgent or high ticket next month} \\
+& \multicolumn{3}{c}{Deal advances or is won next month} & \multicolumn{3}{c}{Urgent or high-priority ticket next month} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 Estimate & intervene & not & difference & intervene & not & difference \\
 \midrule
@@ -1131,7 +1133,7 @@ Outcome model (good views) & 30\% & 30\% & 0 [$-$10, +6] & 17\% & 12\% & +5 [$-$
 \begin{table}[h]
 \centering
 \small
-\caption{The access policy for the simulated company, and what each evaluated reader may read.}
+\caption{\textbf{Access policy.} The policy for the simulated company, and the share of the records of each system that each evaluated reader may read.}
 \label{tab:policy}
 \begin{tabular}{p{0.5\linewidth}p{0.42\linewidth}}
 \toprule
@@ -1153,7 +1155,7 @@ Google Calendar & the organizer, plus leadership \\
 
 \setlength{\tabcolsep}{4pt}\begin{tabular}{lcccccccc}
 \toprule
-Reader & all & slack & gmail & zendesk & salesforce & gong & jira & calendar \\
+Reader & All & Slack & Gmail & Zendesk & Salesforce & Gong & Jira & Calendar \\
 \midrule
 CEO & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
 Account executive & 81\% & 100\% & 100\% & 0\% & 100\% & 100\% & 100\% & 59\% \\
@@ -1167,7 +1169,7 @@ Financial analyst & 9\% & 100\% & 2\% & 0\% & 100\% & 0\% & 100\% & 0\% \\
 \begin{table}[h]
 \centering
 \small
-\caption{Per-seed results of the main comparison on the training records: cross-system precision@10, customer probes and $\rho$.}
+\caption{\textbf{Per-seed results.} The main comparison on the training records: cross-system precision@10, customer probes and $\rho$.}
 \label{tab:seeds}
 \begin{tabular}{llccccc}
 \toprule
@@ -1191,7 +1193,7 @@ Next-token & 2 & 0.143 & 0.046 & 0.240 & 0.232 & 0.18 \\
 \begin{table}[h]
 \centering
 \small
-\caption{Accuracy of linear probes on state vectors, with one customer held out at a time.}
+\caption{\textbf{Probes on state vectors.} Accuracy of linear probes on state vectors, with one customer held out at a time.}
 \label{tab:state}
 \setlength{\tabcolsep}{4pt}\begin{tabular}{lcccccccccc}
 \toprule
@@ -1214,7 +1216,7 @@ Oracle persistence & \multicolumn{5}{c}{---} & 0.71 & 0.59 & 0.69 & 0.70 & 0.67 
 \begin{table}[h]
 \centering
 \small
-\caption{Accuracy of the memory reader on the 144 test questions (mean over seeds). The reader uses a frozen answer layer.}
+\caption{\textbf{Memory reader accuracy.} Accuracy on the 144 test questions (mean over seeds). The reader uses a frozen answer layer. The next-quarter columns give the accuracy on 172 questions about the 7{,}990 records that day~2 adds. The store either stays at day~1 (not updated) or includes these records (updated).}
 \label{tab:memory}
 \begin{tabular}{llcccc}
 \toprule
@@ -1225,7 +1227,7 @@ Store & Reader & Seeds & Accuracy & not updated & updated \\
 Good views (state) & closed book (no store) & 4 & 0.618 & \multicolumn{2}{c}{0.547} \\
  & 16 tokens over the 16 retrieved rows & 4 & 0.658 & 0.594 & 0.522 \\
  & 16 tokens over the whole store & 1 & 0.639 & 0.576 & 0.576 \\
- & the same, not pre-trained & 1 & 0.639 & 0.523 & 0.523 \\
+ & the same, not pretrained & 1 & 0.639 & 0.523 & 0.523 \\
 \addlinespace[2pt]
 Pretrained (detail) & closed book (no store) & 4 & 0.642 & \multicolumn{2}{c}{0.573} \\
  & 16 tokens over the 16 retrieved rows & 4 & 0.712 & 0.577 & 0.554 \\

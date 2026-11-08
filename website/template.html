@@ -6,7 +6,7 @@
 <title>Every company is a world: world models of organizations</title>
 <meta name="description" content="Every company is a world. We build its world model: one learned picture of every customer, deal and project, from the links that the company's systems already keep, with permissions built in.">
 <meta property="og:title" content="Every company is a world. We build its world model.">
-<meta property="og:description" content="Research from Sentra: a world model of the company, learned from the links between its systems, with permissions built in.">
+<meta property="og:description" content="Ashwin Gopinath (MIT and Sentra): a world model of the company, learned from the links between its systems, with permissions built in.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{SITEURL}}">
 <meta property="og:image" content="{{SITEURL}}assets/og.png">
@@ -57,7 +57,7 @@
         <a class="button" href="#enables">What it makes possible</a>
         <a class="button" href="{{CODEURL}}">Code on GitHub</a>
       </div>
-      <p class="byline">Ashwin Gopinath, Sentra, San Francisco. Technical report, November 2026.</p>
+      <p class="byline">Ashwin Gopinath, Department of Mechanical Engineering, MIT, and Sentra. Technical report, version 7, November 2026.</p>
     </div>
   </div>
   <div class="hero-figure">
@@ -150,7 +150,7 @@
     <p>World models changed how AI understands the physical world. They learn from prediction, not from labels, and one model then serves perception, prediction and planning. <a href="{{REF:assran2025vjepa2}}">V-JEPA 2</a> learns the state of a scene from video, and then plans the actions of a robot.</p>
     <p>A company is a world too, and its systems record it from every side. A world model turns those records into one picture of every customer, deal and project. Search, memory, permissions and prediction can then all draw on the same picture.</p>
     <p>The theory also says what matters most: which records count as views of the same situation. Companies already record those pairs as a side effect of their work.</p>
-    <p>We test the idea on Northwind Robotics, a company that <a href="{{REF:gruenbaum2026era}}">Era by Eon</a> simulates with exact ground truth. It has {{CORPUSRECORDS}} records in seven systems, and {{CORPUSCUSTOMERS}} customers. With a simulation, we can check every answer against the truth.</p>
+    <p>We test the idea on Northwind Robotics, a company that <a href="{{REF:gruenbaum2026era}}">Era by Eon</a> simulates with exact ground truth. It has {{CORPUSRECORDS}} records in seven systems and {{CORPUSCUSTOMERS}} active customers. With a simulation, we can check every answer against the truth.</p>
   </div>
 </section>
 
@@ -167,7 +167,7 @@
         <li><b>Search</b><span>Finds records by the situation that they describe</span><i class="tag shown">Shown here</i></li>
         <li><b>Memory</b><span>Files every record under its customer, also without a link</span><i class="tag shown">Shown here</i></li>
         <li><b>Memory reader</b><span>Reads the records of one situation to answer a question</span><i class="tag shown">Shown here</i></li>
-        <li><b>Similar cases</b><span>Finds earlier situations like the one at hand</span><i class="tag shown">Shown here</i></li>
+        <li><b>Similar cases</b><span>Finds earlier situations like the one at hand</span><i class="tag first">First version</i></li>
         <li><b>Prediction</b><span>How situations change, and what decisions do</span><i class="tag first">First version</i></li>
         <li><b>Notes and skills</b><span>Notes and trained skills, attached to situations</span><i class="tag next">Next</i></li>
       </ul>
@@ -186,11 +186,11 @@
     <thead><tr><th scope="col">Capability</th><th scope="col">Today, one tool at a time</th><th scope="col">With one world model</th></tr></thead>
     <tbody>
       <tr><th scope="row">Search</th><td data-label="Today">Enterprise search and <a href="{{REF:lewis2020rag}}">retrieval-augmented generation</a> find documents for each question, and a language model reads them.</td><td data-label="With one world model">Finds the records of a situation, also records that lost their link. One email can stand in for the customer's name. <i class="tag shown">Shown here</i></td></tr>
-      <tr><th scope="row">Memory</th><td data-label="Today">Company memory and knowledge graphs, such as <a href="{{REF:edge2024graphrag}}">GraphRAG</a>, <a href="{{REF:rasmussen2025zep}}">Zep</a>, <a href="{{REF:packer2023memgpt}}">MemGPT</a> and <a href="{{REF:chhikara2025mem0}}">Mem0</a>, keep entities, facts and their sources.</td><td data-label="With one world model">The world model files each record under its customer and quarter, also without a link. The memory keeps the facts and their sources, and every question starts from one picture. <i class="tag shown">Shown here</i></td></tr>
+      <tr><th scope="row">Memory</th><td data-label="Today">Company memory and knowledge graphs, such as <a href="{{REF:edge2024graphrag}}">GraphRAG</a>, <a href="{{REF:rasmussen2025zep}}">Zep</a>, <a href="{{REF:packer2023memgpt}}">MemGPT</a> and <a href="{{REF:chhikara2025mem0}}">Mem0</a>, keep entities, facts and their sources.</td><td data-label="With one world model">The world model files each record under its customer, also without a link. The memory keeps the facts and their sources, and every question starts from one picture. <i class="tag shown">Shown here</i></td></tr>
       <tr><th scope="row">Memory reader</th><td data-label="Today"><a href="{{REF:fallahpour2026memorilla}}">Memorilla</a> turns a collection of documents into 16 memory tokens for each question, which a frozen language model reads.</td><td data-label="With one world model">A reader of this kind reads the records of one situation, which the world model finds. We built a small version. <i class="tag shown">Shown here</i></td></tr>
       <tr><th scope="row">Notes and skills</th><td data-label="Today"><a href="{{REF:engram2026notes}}">Engram</a> studies a company's information ahead of time, keeps notes, and trains models to use them. It reports gains of 7 to 20 points.</td><td data-label="With one world model">Notes attach to the situations of the world model, and models learn to use them. Each note stays within the permissions of its readers. <i class="tag next">Next</i></td></tr>
       <tr><th scope="row">Permissions</th><td data-label="Today">Filters remove what a person may not read from each list of results.</td><td data-label="With one world model">Permissions are part of training. Each group's world model learns only from what the group may read, and every capability on it inherits that guarantee. In our test, a filter on results did not stop a leak. <i class="tag shown">Shown here</i></td></tr>
-      <tr><th scope="row">Patterns and similar cases</th><td data-label="Today"><a href="{{REF:vanderaalst2016process}}">Process mining</a> maps how work flows, from event logs that a case number links.</td><td data-label="With one world model">Finds earlier situations like the one in front of a team, across customers, from text and links. It needs no case number. <i class="tag shown">Shown here</i></td></tr>
+      <tr><th scope="row">Patterns and similar cases</th><td data-label="Today"><a href="{{REF:vanderaalst2016process}}">Process mining</a> maps how work flows, from event logs that a case number links.</td><td data-label="With one world model">Finds earlier situations like the one in front of a team, across customers, from text and links. It needs no case number. <i class="tag first">First version</i></td></tr>
       <tr><th scope="row">Prediction and decisions</th><td data-label="Today">World models of physical scenes, such as <a href="{{REF:assran2025vjepa2}}">V-JEPA 2</a> and <a href="{{REF:zhang2026hjepa}}">H-JEPA</a>, predict what actions do, for video and robots.</td><td data-label="With one world model">Predicts how each situation changes, and tests a decision against similar cases before anyone acts. <i class="tag first">First version</i></td></tr>
     </tbody>
   </table>
@@ -383,8 +383,8 @@
 </section>
 
 <section class="section" id="time">
-  <h2>Prediction is the next layer</h2>
-  <p class="takeaway"><b>For a company:</b> prediction is the next step. It needs a model trained to forecast, and data about decisions.</p>
+  <h2>Prediction: a first version</h2>
+  <p class="takeaway"><b>For a company:</b> a first predictor runs. To predict well, it needs a model trained to forecast, and data about decisions.</p>
   <div class="prose">
     <p>A world model must also predict how a situation changes. On this company's logs, our predictors learn little beyond one rule: next month looks like this month, a little closer to the average. A tuned linear predictor does at most {{TUNEDMAXGAIN}} points better than that rule.</p>
     <p>The space already answers a related question: what is this like? Every representation finds similar situations of other customers at about twice chance.</p>
@@ -482,8 +482,7 @@ bash scripts/reproduce.sh</pre>
 <pre id="bibtex">@techreport{gopinath2026organizations,
   title       = {Toward World Models of Organizations: Every System Sees the Same Company},
   author      = {Gopinath, Ashwin},
-  institution = {Sentra},
-  address     = {San Francisco},
+  institution = {Massachusetts Institute of Technology and Sentra},
   year        = {2026},
   month       = nov,
   note        = {Version 7},
@@ -502,7 +501,7 @@ bash scripts/reproduce.sh</pre>
 <footer>
   <div class="section">
     <span class="brandline"><a href="https://www.sentra.app" aria-label="Sentra"><svg class="mark" viewBox="0 0 20.4139 20" aria-hidden="true"><use href="#sentra-mark"/></svg><svg class="wordmark" viewBox="0 0 63.7002 15.8828" aria-hidden="true"><use href="#sentra-word"/></svg></a></span>
-    <span>&#169; 2026 Ashwin Gopinath, Sentra. Code under the MIT license. The data comes from Era by Eon and is not in the repository.</span>
+    <span>&#169; 2026 Ashwin Gopinath. Contact: <a href="mailto:agopi@mit.edu">agopi@mit.edu</a>, <a href="mailto:ashwin@sentra.app">ashwin@sentra.app</a>. Code under the MIT License. The data comes from Era by Eon and is not in the repository.</span>
     <span><a href="{{CODEURL}}">GitHub</a></span>
   </div>
 </footer>
