@@ -1,7 +1,7 @@
 """E3b: is a retrained encoder the old one up to a rotation, and is the old store still usable after an update?
 
 Retrain the good-view encoder on day1+day2 (v2), keep the day1 encoder (v1) and its store. Then:
-  * per-direction alignment after one Procrustes rotation (paper, Fig. 6): correlation along v1's principal axes
+  * per-direction alignment after one Procrustes rotation (paper, Extended Data Fig. 4): correlation along v1's principal axes
   * R^2 of the rotation restricted to the top-k directions
   * a practical test: new-quarter queries embedded by v2, rotated, searched against the OLD v1 store (same-customer
     precision). The queries' threads are hidden from v2's training, so neither model has trained on them.

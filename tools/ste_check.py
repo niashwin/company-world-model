@@ -28,7 +28,7 @@ during nothing something anything everything string strings thing things bring b
 morning evening ceiling following training pretraining pre-training embedding embeddings learning forecasting
 tracking masking clustering ranking routing sampling logging planning encoding modeling modelling reasoning timing
 setting settings meeting meetings building buildings briefing onboarding pricing billing marketing engineering
-accounting ticketing padding pooling heading headings listing listings rating ratings warning warnings
+accounting ticketing padding pooling heading headings listing listings rating ratings warning warnings mining
 """.split())
 
 IRREGULAR_PP = set("""
@@ -97,9 +97,9 @@ def latex_to_paragraphs(text):
     text = re.sub(r"(?<!\\)%.*", "", text)                                  # comments
     if "\\begin{document}" in text:
         text = text.split("\\begin{document}", 1)[1]
-    text = text.split("\\bibliographystyle", 1)[0] + ("\n\n" + text.split("\\appendix", 1)[1]
-                                                       if "\\appendix" in text else "")
-    for env in ("tabular", "tabular\\*", "equation", "equation\\*", "align", "align\\*", "verbatim", "lstlisting",
+    # the whole body, without the bibliography commands (Extended Data and Supplementary Information come after them)
+    text = re.sub(r"\\bibliography(?:style)?\{[^}]*\}", "\n\n", text)
+    for env in ("tabular", "tabular\\*", "tabularx", "equation", "equation\\*", "align", "align\\*", "verbatim", "lstlisting",
                 "thebibliography", "tikzpicture"):
         text = strip_env(text, env)
     text, captions = pull_command(text, "caption")
@@ -108,6 +108,8 @@ def latex_to_paragraphs(text):
     text += "\n\n" + "\n\n".join(captions + footnotes)
     text = re.sub(r"\\(?:sub)*section\*?\{[^}]*\}|\\appendix|\\maketitle|\\tableofcontents", "\n\n", text)
     text = re.sub(r"\\paragraph\*?\{[^}]*\}", "\n\n", text)
+    text = re.sub(r"\\suppnote\{[^}]*\}\{[^}]*\}", "\n\n", text)              # Supplementary Note headings
+    text = re.sub(r"(?:\\textbf\{[a-z]\}(?:--|, )?)+,\s", "\n\n", text)          # Nature panel letters: "\textbf{a}, ..."
     text = re.sub(r"\\item\b(\[[^\]]*\])?", "\n\n", text)                   # each list item is its own block
     text = re.sub(r"\\begin\{(?:itemize|enumerate|description|abstract|center|small|quote)\}|"
                   r"\\end\{(?:itemize|enumerate|description|abstract|center|small|quote)\}", "\n\n", text)

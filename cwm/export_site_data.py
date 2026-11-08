@@ -4,10 +4,10 @@ The website shows the paper's own numbers: every table comes from the filled pap
 cwm/fill_paper.py from results/), and the headline figures come from the same substitution map. Three figures need
 more than the paper prints, and this script computes them from the cached embeddings and the data:
 
-  map        two-dimensional t-SNE maps of the 3,000 linked records of Figure 3, in six spaces
+  map        two-dimensional t-SNE maps of the 3,000 linked records of Fig. 2a-c, in six spaces
   hero       the records of one customer-quarter across the seven systems (times only, no text)
   decisions  for each customer-month in trouble, the similar months of other customers that the decision
-             simulation of Section 6.11 compares, with their outcomes
+             simulation of Fig. 5 compares, with their outcomes
 
 Run after the experiments and `make paper`:  python cwm/export_site_data.py
 No record text leaves the repository: the website gets times, systems, anonymous customer numbers and results.
@@ -117,6 +117,16 @@ def parse_tabular(body):
     return rows
 
 
+def table_prefix(tex, i):
+    """What the paper calls a table at position i: main text, Extended Data or Supplementary Information."""
+    ed, si = tex.rfind("\\edsection"), tex.rfind("\\sisection")     # the last use, not the definition
+    if si >= 0 and i > si:
+        return "Supplementary Table"
+    if ed >= 0 and i > ed:
+        return "Extended Data Table"
+    return "Table"
+
+
 def paper_tables(tex):
     out = {}
     for lab in TABLES:
@@ -135,7 +145,7 @@ def paper_tables(tex):
                     caption = env[j + 1:k]
                     break
         tabs = re.findall(r"\\begin\{tabular\}\{[^}]*\}(.*?)\\end\{tabular\}", env, re.S)
-        out[lab] = {"caption": plain(caption), "parts": [parse_tabular(t) for t in tabs]}
+        out[lab] = {"caption": plain(caption), "parts": [parse_tabular(t) for t in tabs], "prefix": table_prefix(tex, i)}
     return out
 
 
@@ -153,7 +163,8 @@ HEADLINE = ["HOGOODCUST", "HOTFCUST", "HOBADCUST", "HONTPCUST", "PTRAWHO", "PTHE
             "ACTLAGRANGE", "ACTNEXTRANGE", "ACTNEXTBEYONDRANGE", "ACTFROMSTATEGOOD", "CORPUSRECORDS",
             "CORPUSLINKED", "CORPUSCUSTOMERS", "CORPUSUNLINKED", "CORPUSNEW", "ACLCANARYN", "EVENGESCADJ",
             "EVCALLADJ", "EVLEADERADJ", "TUNEDMAXGAIN", "TUNEDNWORSE", "E1GOODNSEEDS", "ACLCOSTFINOWN", "ACL2FINHEAD",
-            "ACLCOSTENGOWN", "ACL2ENGHEAD", "ANCHPPLACECONCATACC"]
+            "ACLCOSTENGOWN", "ACL2ENGHEAD", "ANCHPPLACECONCATACC", "ANCHMHOSTATE", "ANCHMHODETAIL", "HOMAJCUST",
+            "TRAINMINLO", "TRAINMINHI"]
 REPO = "https://github.com/niashwin/company-world-model"
 SITEURL = "https://niashwin.github.io/company-world-model/"
 
@@ -170,7 +181,7 @@ def state_map():
     from data import load as load_corpus, window_key
     c = load_corpus(D1)
     rng = np.random.default_rng(0)
-    idx = rng.choice(len(c.obs), 3000, replace=False)       # the records of Figure 3 (cwm/make_figures.py)
+    idx = rng.choice(len(c.obs), 3000, replace=False)       # the records of Fig. 2a-c (cwm/make_figures.py)
     order = np.argsort(-np.bincount(c.account, minlength=len(c.accounts)), kind="stable")
     cust_no = {int(a): i + 1 for i, a in enumerate(order)}   # Customer 1 has the most linked records on day 1
     rank = {c.accounts[int(a)]: n for a, n in cust_no.items()}

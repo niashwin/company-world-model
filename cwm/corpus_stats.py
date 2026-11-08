@@ -1,4 +1,4 @@
-"""Count the records of the simulated company (Table 1 and the data paragraph of Section 5).
+"""Count the records of the simulated company (Extended Data Table 1 and the data paragraph of Methods).
 
 Reads data/era/day1 and data/era/day2 (written by cwm/era_export.py) and writes results/corpus.json:
 records and linked records per system on day 1, customers, customer-quarter states, and the linked records that

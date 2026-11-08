@@ -149,7 +149,18 @@ def fill(text):
                 sub[f"HO{tag}STATE"] = pct(HO[arm]["state_acc"], 0)
                 sub[f"HO{tag}ACCPCT"] = pct(HO[arm][METRICS["ACC"]], 0)
         sub["HOREFSTATE"] = pct(HO["reference_customer_known_state_acc"], 0)
+        sub["HOMAJCUST"] = pct(HO["reference_majority_customer_acc"], 0)
         sub["HOTABLE"] = heldout_table()
+    E2 = PRH.get("E2", {})
+    if "good_s0" in E2:      # alignment of two separately trained encoders (version 6: also in the main text)
+        sub["E2TOPPCT"] = pct(E2["good_s0"]["anchors_64"]["state_R@1"])
+        sub["E2CHANCEPCT"] = pct(E2["chance_state_R@1"])
+    P = load("persistence.json")
+    if "good" in P:          # states persist and drift (Extended Data Fig. 3b)
+        g = P["good"]
+        sub["PERSISTONE"] = f"{g['same_customer_by_gap']['1']:.2f}"
+        sub["PERSISTSIX"] = f"{g['same_customer_by_gap']['6']:.2f}"
+        sub["PERSISTOTHER"] = f"{g['other_customer_same_quarter']:.2f}"
     if E3B:
         c10 = E3B["corr_by_direction_first_10"]
         sub["E3BCORR10"] = f"{min(c10):.2f}--{max(c10):.2f}"
@@ -626,7 +637,7 @@ def thousands(n):
 
 
 def fill_corpus(sub):
-    """Table 1 and the counts of Section 5, from results/corpus.json (cwm/corpus_stats.py)."""
+    """Extended Data Table 1 and the counts in Methods, from results/corpus.json (cwm/corpus_stats.py)."""
     C = load("corpus.json")
     if not C:
         return
@@ -654,7 +665,7 @@ def fill_corpus(sub):
 
 
 def fill_actions(sub):
-    """Section 6.11: actions read from records, action-conditioned dynamics, event windows, decision simulation.
+    """Fig. 5, Extended Data Table 6 and Supplementary Table 7: actions read from records, action-conditioned dynamics, event windows, decision simulation.
     Error changes are printed as a share of the reference model's error, positive meaning worse."""
     AC = load("actions.json")
     if not AC:
@@ -1024,7 +1035,8 @@ if __name__ == "__main__":
                         "MON", "TIME", "DYN", "FCGOOD", "FCTWO", "FCBAD", "STATE2", "CALL", "NOWTWO", "NOWMINI",
                         "MEM2", "MEMGOOD", "MEMDUAL", "MEMMINI", "MEMROUTE", "SHRINK", "TUNED", "PRIM", "DRIFT", "MISR", "SIT", "ACL2",
                         "TROUBLE", "SCOPE", "MONTABLE", "ANCH", "ACT", "SIM", "EVP", "EVC", "EVE", "EVL", "TRAINMIN",
-                        "CORPUS", "DATATABLE", "EONE", "MEMREADER", "SUPPORTAGENTS", "CHK") if w in out]
+                        "CORPUS", "DATATABLE", "EONE", "MEMREADER", "SUPPORTAGENTS", "CHK", "HOMAJ", "E2TOP",
+                        "E2CHANCE", "PERSIST") if w in out]
     print("unfilled:", left or "none")
     if left:
         sys.exit(1)

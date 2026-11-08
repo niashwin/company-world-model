@@ -1,5 +1,43 @@
 # Changelog
 
+## v6 (November 2026)
+
+Answers an expert assessment of version 5 ([`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md)) and gives the
+paper the format of a Nature article. There are no new experiments, and the results did not change.
+
+- **Format of a Nature article.** A referenced summary paragraph of about 200 words. A main text with statement
+  headings, five figures and one table. Then Methods, with the data and code availability. Extended Data has four
+  figures and six tables, and Supplementary Information has eleven notes and eleven tables. The references have numbers.
+  The main text explains each result for a general reader, and Methods and the Supplementary Notes keep every
+  detail.
+- **Held-out records first.** The main text leads with records whose links the encoder never saw. It places 76% of
+  them with the right customer, against 53% for TF-IDF and 12% for a guess of the largest customer (new Fig. 2d).
+- **Identity and state.** The main text reports held-out records with every name and identifier masked (33%,
+  against 20% for the pretrained encoder). It also reports how sharply the space resolves the customer and the
+  period, and how the state of a customer changes from quarter to quarter.
+- **Comparison with other approaches** (Table 1, Discussion). The table compares retrieval and explicit memory
+  (GraphRAG, Zep, MemGPT, Mem0). It also compares compressed memory (Memorilla), trained context and skills
+  (Cartridges, Engram), process mining, and world models of physical scenes (V-JEPA 2, H-JEPA). Thirteen new
+  references.
+- **What a world model of an organization needs** (Discussion). Three levels: representation, prediction and
+  control, with the predictor and the decision rule as equations. A deterministic memory and a learned state as two
+  layers, where the learned state is a view of the memory. Invariance as a design choice. A hierarchy of state
+  spaces for different timescales. The cost of access scopes. The decisive causal test, with a memory-and-rules
+  baseline.
+- **New figures.** Fig. 4 shows the memory results and Fig. 5 the decision layer. `cwm/make_figures.py` draws them
+  (`heldout`, `memory` and `decisions`).
+- **Website.** A section on what the results mean for corporate AI, with four layers and a diagram. Each result has
+  a line on what it means for a company. A comparison with other approaches, with sources, and a section on what
+  comes next.
+- **README.** A summary, the four layers of corporate AI and the comparison with other approaches.
+- **Independent reviews** ([`docs/CHECKS.md`](docs/CHECKS.md)). Two reviewers who did not write the text checked
+  the paper against `results/` and the website against the paper. We changed every claim that went beyond the
+  evidence, and the descriptions of other work that were not fair to it.
+- `cwm/fill_paper.py` has new keys: the guess of the largest customer, the alignment result and its chance level,
+  and the persistence of states. `tools/ste_check.py` now reads the whole paper, with Extended Data and
+  Supplementary Information. The share of sentences that comply with STE is 98.5% for the paper (1,443 sentences),
+  100% for the README and 99.3% for the website.
+
 ## v5 (November 2026)
 
 - **Simplified Technical English.** The paper, the README and the website follow the writing rules of ASD-STE100:

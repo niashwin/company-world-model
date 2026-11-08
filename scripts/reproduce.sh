@@ -34,7 +34,7 @@ stage_data() {
   log "data: move every simulator to day 2 and export again"
   for p in 8080 8081 8082 8083 8084 8085 8087; do curl -fsS --noproxy '*' -XPOST "localhost:$p/_admin/state/day2" >/dev/null; done
   $PY cwm/era_export.py --out data/era/day2
-  $PY cwm/corpus_stats.py               # Table 1 and the counts of Section 5
+  $PY cwm/corpus_stats.py               # Extended Data Table 1 and the counts in Methods
   if ! git diff --quiet -- results/corpus.json 2>/dev/null; then
     echo "WARNING: the exported company differs from the paper's (results/corpus.json changed)."
     echo "         Era's images may have changed since November 2026. See REPRODUCE.md."
@@ -42,7 +42,7 @@ stage_data() {
 }
 
 stage_v1() {
-  log "v1: main comparison (Table 2), alignment (Figure 5), new data (Figure 7)"
+  log "v1: main comparison (Extended Data Table 2), alignment (Extended Data Fig. 3a), new data (Extended Data Fig. 4)"
   STEPS=1500 $PY cwm/run_prh.py e1      # good views, bad views, next-token prediction; caches encoders
   STEPS=1000 $PY cwm/run_prh.py e2      # separately trained encoders and one rotation
   STEPS=1500 $PY cwm/run_prh.py e3      # a new quarter of data
@@ -73,13 +73,13 @@ stage_v2() {
 }
 
 stage_v3() {
-  log "v3: named questions, retrieval by content inside the question's quarter (Table 7)"
+  log "v3: named questions, retrieval by content inside the question's quarter (Supplementary Table 2)"
   for s in jepa_good minilm dual route; do
     KEYS=quarter STORE=$s SEEDS=0,1,2,3 VARIANTS=closed_book,top16_pretrained SUFFIX="_q_${s#jepa_}" \
       $PY cwm/run_memory2.py
   done
   $PY cwm/memory_retrieval.py
-  log "v3: questions that come with a record of the customer (Table 8)"
+  log "v3: questions that come with a record of the customer (Fig. 4 and Supplementary Table 3)"
   CORPUS=masked PREP=1 $PY cwm/run_memory_anchor.py
   CORPUS=plain  PREP=1 $PY cwm/run_memory_anchor.py
   CORPUS=masked $PY cwm/run_memory_anchor.py

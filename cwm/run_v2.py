@@ -2,7 +2,7 @@
 
 embed2      day-2 corpus embedded by the day-1 encoders (good, bad, next-token), for the analyses below
 pretrained  a frozen pretrained backbone (all-MiniLM-L6-v2) with and without a good-view JEPA head:
-            training-record metrics (as Table 2) and held-out records (as Table 3)
+            training-record metrics (as Extended Data Table 2) and held-out records (as Extended Data Table 3)
 monthly     good views with customer-MONTH states (from scratch, a quarter of threads hidden), and the same with
             the pretrained backbone: held-out placement at month resolution
 acl         access control with the pretrained backbone: each reader's head is trained only on records they may read

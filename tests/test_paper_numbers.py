@@ -50,7 +50,7 @@ def mean(arm, key):
     return float(np.mean([r[key] for r in runs(arm)]))
 
 
-def test_table_2_rows_typed_in_the_text():
+def test_extended_data_table_2_rows_typed_in_the_text():
     E1 = load("prh.json")["E1"]
     keys = [ACC, ST, "probe_account_messages_to_records", "probe_account_records_to_messages", "rho_state",
             "r2_state", "r2_system"]
@@ -60,7 +60,7 @@ def test_table_2_rows_typed_in_the_text():
         assert list(got) == want, (label, got, want)
 
 
-def test_baselines_in_section_6_1():
+def test_baselines_in_supplementary_note_1():
     E1 = load("prh.json")["E1"]
     assert find(r"TF-IDF reaches (\d+(?:\.\d+)?)\\%")[0] == p1(E1["tfidf_lsa"][ACC])
     assert find(r"randomly initialized encoder reaches (\d+(?:\.\d+)?)\\%")[0] == p1(E1["random_init"][ACC])

@@ -64,30 +64,33 @@ the image versions that you use with `docker images --digests "erabyeon/*"`.
 
 ## Where each part of the paper comes from
 
+Version 6 has the format of a Nature article. The main text has five figures and one table. Extended Data (ED) has
+four figures and six tables, and Supplementary Information (SI) has eleven notes and eleven tables.
+
 | Part of the paper | Result files | Command |
 | --- | --- | --- |
-| Figure 1 (the idea) | drawn in TikZ: `paper/figures/idea.tex` | `make paper` |
-| Table 1 and the counts in Section 5 | `corpus.json` | `python cwm/corpus_stats.py` |
-| Table 2, Figure 2, Table 15 | `prh.json` (E1), `extras_a.json`, `extras_b.json` | `run_prh.py e1`, `run_extras.py extras_a`, `run_extras.py extras_b` |
-| Pretrained rows of Tables 2 and 3 | `v2_pretrained.json` | `make_minilm.py`, then `run_v2.py pretrained` |
-| Figure 3 (t-SNE maps) | embeddings cached by `run_prh.py e1` | `make figures` |
-| Table 3 (held-out records) | `extras_c.json`, `extras_d.json` | `run_extras.py extras_c`, `run_extras.py extras_d` |
-| Figure 4 and Section 6.3 (names masked, wrong links) | `extras_b.json`, `extras_e.json` | `run_extras.py extras_b`, `run_extras.py extras_e` |
-| Figure 5 and Section 6.5 (alignment) | `prh.json` (E2) | `run_prh.py e2` |
-| Figure 6 (state persistence) | `persistence.json`, from `state_vectors.npz` of `run_state.py` | `make figures` |
-| Figure 7 and Section 6.6 (new data, retraining) | `prh.json` (E3), `e3b.json` | `run_prh.py e3`, `run_e3b.py` |
-| Table 4, Figure 8, Table 14 (access control) | `acl.json` | `run_acl.py train:... eval` |
-| Table 5 (access control with a backbone) | `v2_acl.json` | `run_v2.py acl acl_combo acl_pub` |
-| Table 6 (what states hold) | `v2_state.json` | `run_v2.py state` |
-| Table 7 (named questions) | `memory2_q_*.json`, `memory2_q_retrieval.json` | `KEYS=quarter ... run_memory2.py`, `memory_retrieval.py` |
-| Table 8 (anchored questions) | `memory_anchor_{masked,plain}*.json` | `run_memory_anchor.py` |
-| Table 9 (quarters and months) | `v2_monthly.json` | `run_v2.py monthly` |
-| Table 10 (dynamics) | `v2_time.json` | `run_v2.py time` |
-| Table 11 (drift, misalignment, similar situations) | `v2_primitives.json` | `run_v2.py primitives situations` |
-| What each reader may read (Section 6.7) | `v2_scope.json` | `run_v2.py scope` |
-| Tables 12 and 13 and Appendix B (decisions) | `actions.json` | `run_actions.py table dynamics events simulate checks` |
-| Table 16 (state tracking) | `state.json` | `run_state.py` |
-| Table 17 (memory reader) | `memory2.json`, `memory2_seeds.json`, `memory2_minilm4.json`, `memory2_dual.json`, `memory2_route.json` | `run_memory2.py` with the settings in `scripts/reproduce.sh` |
+| Fig. 1 (the idea) | drawn in TikZ: `paper/figures/idea.tex` | `make paper` |
+| Fig. 2a–c (t-SNE maps) | embeddings cached by `run_prh.py e1` | `make figures` |
+| Fig. 2d and ED Table 3 (held-out records) | `extras_c.json`, `extras_d.json`, `v2_pretrained.json` | `run_extras.py extras_c`, `run_extras.py extras_d`, `run_v2.py pretrained` |
+| Fig. 3, ED Table 4 and SI Table 8 (access control) | `acl.json`, `v2_acl.json` | `run_acl.py train:... eval`, `run_v2.py acl acl_combo acl_pub` |
+| ED Table 5 (access control with a backbone) | `v2_acl.json` | `run_v2.py acl acl_combo acl_pub` |
+| Fig. 4 and SI Tables 2 and 3 (memory: named and anchored questions) | `memory2_q_*.json`, `memory2_q_retrieval.json`, `memory_anchor_{masked,plain}*.json` | `KEYS=quarter ... run_memory2.py`, `memory_retrieval.py`, `run_memory_anchor.py` |
+| Fig. 5, ED Table 6 and SI Table 7 (decisions) | `actions.json` | `run_actions.py table dynamics events simulate checks` |
+| Table 1 (comparison with other approaches) | text only | `make paper` |
+| ED Table 1 and the counts in Methods | `corpus.json` | `python cwm/corpus_stats.py` |
+| ED Fig. 1, ED Table 2 and SI Table 9 (main comparison) | `prh.json` (E1), `extras_a.json`, `extras_b.json`, `v2_pretrained.json` | `run_prh.py e1`, `run_extras.py extras_a`, `run_extras.py extras_b`, `make_minilm.py`, then `run_v2.py pretrained` |
+| ED Fig. 2 (names masked, wrong links) | `extras_b.json`, `extras_e.json` | `run_extras.py extras_b`, `run_extras.py extras_e` |
+| ED Fig. 3a (alignment) | `prh.json` (E2) | `run_prh.py e2` |
+| ED Fig. 3b (state persistence) | `persistence.json`, from `state_vectors.npz` of `run_state.py` | `make figures` |
+| ED Fig. 4 (new data, retraining) | `prh.json` (E3), `e3b.json` | `run_prh.py e3`, `run_e3b.py` |
+| SI Table 1 (what states hold) | `v2_state.json` | `run_v2.py state` |
+| SI Table 4 (quarters and months) | `v2_monthly.json` | `run_v2.py monthly` |
+| SI Table 5 (dynamics) | `v2_time.json` | `run_v2.py time` |
+| SI Table 6 (drift, misalignment, similar situations) | `v2_primitives.json` | `run_v2.py primitives situations` |
+| SI Table 10 (state tracking) | `state.json` | `run_state.py` |
+| SI Table 11 (memory reader) | `memory2.json`, `memory2_seeds.json`, `memory2_minilm4.json`, `memory2_dual.json`, `memory2_route.json` | `run_memory2.py` with the settings in `scripts/reproduce.sh` |
+| What each reader may read (SI Note 5) | `v2_scope.json` | `run_v2.py scope` |
+| Months after the export (Methods, decisions) | `actions.json` | `run_actions.py checks` |
 | Training times | `train_seconds` and `seconds` in `prh.json`, `extras_*.json`, `v2_pretrained.json`, `v2_monthly.json`, `acl.json` | the commands above |
 
 `results/memory_anchor_masked_a.json`, `..._b.json` and the same `plain` files are parallel parts of one run.

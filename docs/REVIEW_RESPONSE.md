@@ -3,11 +3,157 @@
 A note on terms: versions 2 to 4 sometimes called good views "link-trained views". From version 5, the paper, the
 README and the website use "good views" for the pairs that the links give, and "good-view space" for the space that
 an encoder learns from them. The responses below keep the terms of their time. [`CHECKS.md`](CHECKS.md) records the
-checks of version 5.
+checks of version 6. Version 6 also gives the paper the format of a Nature article, so its figures, tables and
+sections have new numbers. The responses to earlier reviews keep the numbers of their time.
 
+- [The expert assessment of version 5](#response-to-the-expert-assessment-of-version-5) → version 6
 - [The "corporate AI" review](#response-to-the-corporate-ai-review) → version 4
 - [Review of version 2](#response-to-the-review-of-version-2) → version 3
 - [Review of version 1](#response-to-the-review-of-version-1) → version 2
+
+# Response to the expert assessment of version 5
+
+The assessment found the central idea sound. Organizations keep many observations of the same situation, and their
+systems already link them, so a company can supply its own training signal. The assessment asked us to keep the
+claims within the evidence and to place the work among other approaches. It also asked what a world model of an
+organization still needs.
+
+We made no new experiments, and the results did not change. Version 6 changes the
+presentation, the comparisons and the discussion, as below. The paper now also has the format of a Nature article
+([`CHANGELOG.md`](../CHANGELOG.md)).
+
+## 1. The held-out result matters more than the result on training records
+
+**Done.** The summary paragraph leads with records whose links the encoder never saw. Good views place 76% of them
+with the right customer. TF-IDF and the pretrained encoder place 53%, and a guess of the largest customer 12%
+(Fig. 2d and Extended Data Table 3). The main text calls the result on training records (95.1%) an easy test,
+because the same groups define the pairs and the score.
+
+## 2. Identity or state?
+
+On held-out records, good views find the exact customer-quarter 26.2% of the time. A reference that knows the
+customer and picks its busiest quarter gets 26.4%. It asked whether the space learns the
+customer more than the customer's situation.
+
+**Done, in the text.** The main text now states this result directly: the space resolves the customer more sharply
+than the period. It also reports the evidence on the other side, which was in the Supplementary Information before:
+
+- With states by month, good views beat the same kind of reference (17% against 13%, Supplementary Table 4).
+- States of one customer change gradually (Extended Data Fig. 3b). The cosine similarity is 0.88 for consecutive
+  quarters and 0.38 for quarters six apart, against 0.05 for different customers.
+- On held-out records with every name and identifier masked, the state space places 33% with the right customer,
+  against 75% with the names kept. The pretrained encoder places 20%, and a guess of the largest customer 12%. This
+  result was in the Supplementary Information before. Version 6 brings it into the main text.
+
+The assessment also proposed a split that separates periods or customers. We did not make this split. Supplementary
+Note 11 now names it: we held out whole threads, not whole periods or customers.
+
+The Discussion explains what the theorem predicts. The space learns what the views of a state share. For views of
+one customer in one quarter, this is the customer and its kind of situation, more than the exact period. Finer
+windows carry more time, and an objective that predicts the future would keep what matters for the future.
+
+## 3. A supervised contrastive baseline
+
+**Answered from theory, without a new experiment.** The theorem ties the representation to the graph of positive
+pairs more than to the loss. Spectral analyses of contrastive learning show the same dependence (HaoChen et al.,
+2021). So a supervised contrastive encoder on the same pairs (Khosla et al., 2020) should learn a similar space.
+
+The Discussion now states the contribution in these terms. The contribution is the training signal that organizations
+keep, and its tests across systems, versions and access scopes. It is not one loss.
+
+## 4. Comparison with Memorilla, Engram and explicit memory
+
+**Done.** Table 1 of the paper compares retrieval with explicit memory (GraphRAG, Zep, MemGPT, Mem0) and compressed
+memory (Memorilla). It also compares trained context and skills (Cartridges, Engram), process mining and world models of
+physical scenes (V-JEPA 2, H-JEPA). The introduction and the Discussion use it.
+
+We agree with the assessment that these approaches
+are layers of one architecture more than rivals. Most of them keep or read what the company wrote. The state space
+organizes the records into situations before anything reads them.
+
+We do not claim to improve on Memorilla as a
+memory system. Our small memory reader follows the design of Memorilla, but it chooses among 18 answers and is not a
+language model. The paper says that we tested only this one combination.
+The website has the same comparison, with sources.
+
+## 5. A ledger and a learned state, as two layers
+
+**Done.** The Discussion now says that the learned state does not replace explicit memory. A ledger keeps what
+happened, who said it, when, and who may see it. The state space keeps which situation each record belongs to, and
+which situations are alike. The paper recommends the learned state as a view of the memory, not as the memory
+itself. The website shows this design in a diagram, and marks it as a design, not a measured system.
+
+## 6. Customers in trouble: 4% against 35%
+
+**Done.** The main text now treats invariance as a design choice. Good views make the state invariant to the
+details that differ between the views of one customer-quarter, such as ticket priorities. These are the details
+that mark a customer in trouble.
+
+So representations that keep detail find other customers in trouble: bad views 35% and
+the pretrained encoder 25%, against a 12% base rate. The good-view state does not (4%). A company needs both channels, which is the
+case for the two-layer design of point 5.
+
+## 7. One small, regular company, and hidden links instead of unlinked records
+
+**Stated, not tested.** The held-out records stand in for the 72% of records without a link. The main text now says
+that those records are mostly internal chat, and that they have no ground truth to score. The Discussion and Supplementary Note 11 state the scope: one simulated
+company, cleaner text than real companies have, and small encoders. Replication on other companies and on real data
+is the next step.
+
+## 8. Dynamics, and decisions from observational logs
+
+**Done, in the text.** The paper names the three levels of a world model: representation, prediction and control.
+It gives the predictor and the decision rule as equations, and says which level each result reaches. The paper
+gives evidence for the first level on records that the model did not see, more for the customer than for the period.
+Its first predictor learns little beyond a return toward the mean. The third level needs decisions whose effects the
+data can identify.
+
+The decision section says why the logs cannot identify effects. The
+company intervened in 25 of 29 months in trouble. Logs identify such effects only when they record what drives each
+decision, and when both decisions occur in similar situations. Here neither holds (Pearl, 2009; Hernán and Robins,
+2020).
+
+## 9. The cost of access scopes
+
+**Done, in the text.** The Discussion explains that a company needs one model for each access scope. Under rules by
+role, a scope is a role. Our policy has rules that follow each sender and each direct message, so almost every
+person is a separate scope. We count 11 scopes for 12 employees. The Discussion names two remedies: keep personal
+records out of training, or share a pretrained backbone across scopes.
+
+The paper gives the cost for restricted readers in full (Fig. 3b and Extended Data Table 5). It also says that we did
+not test these costs at the scale of millions of records.
+
+## 10. Efficiency claims and stronger alternatives
+
+**Done, in the text.** The paper claims only that each model trains in 2–7 minutes on a CPU, at this scale. The
+Discussion says that larger embedding models may raise the pretrained baselines, and also the good-view head on top
+of them. Table 1 places the work against graph-based and retrieval-based alternatives.
+
+## 11. Hierarchical timescales
+
+**Done.** The Discussion now notes that organizations change at several timescales, from hours to quarters. In our
+recipe, the time window sets the timescale of the state. So a hierarchy of state spaces for weeks, months and
+quarters is a direct extension, in the manner of H-JEPA (Zhang et al., 2026).
+
+## 12. The decisive next experiment
+
+**Adopted as the next step.** The Discussion and the website describe the causal test that the assessment proposed.
+A simulator has a hidden state and known effects of actions, and one customer can face different decisions. A world
+model passes the test if it ranks the decisions by their true effects for customers that it did not see. It must
+also beat a ledger with simple rules.
+
+## 13. Novelty
+
+**Done.** The introduction now says that earlier work used linked records as positive pairs. Examples are papers that
+cite each other and the records of one patient. It points to Supplementary Note 10. Our claim is narrower: an
+organization produces such pairs across all its systems, as a side effect of its work. The other contribution is the
+set of tests across systems, versions and access scopes.
+
+## 14. What the results mean for corporate AI
+
+**Done, on the website.** The website explains each result for a company. It also sets out four layers: memory that
+accumulates, representations that learn, models that predict, and organizations that improve. This work is the
+second layer. The README has a short version.
 
 # Response to the "corporate AI" review
 

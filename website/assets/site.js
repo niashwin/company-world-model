@@ -186,7 +186,7 @@
         var q = pos(+k); g.beginPath(); g.arc(q[0], q[1], 3.4, 0, 6.2832); g.fill(); g.stroke();
       });
     }
-    $("hero-map-label").textContent = (heroStep === 5 ? "Bad-view space" : "Good-view space") +
+    $("hero-map-label").textContent = (heroStep === 5 ? "Bad-view space" : "Learned state space") +
       (heroStep >= 4 ? ". Blue: Customer " + H.customer + " in " + quarterName(H.quarter) : "");
   }
   function animateHeroMap(toSpace) {
@@ -543,7 +543,7 @@
       var name = cell(r, 0), rd = cell(r, 1);
       if (/closed book/i.test(name)) { closed = v.v; }
       if (/own link/i.test(name) && rd === "detail") { oracle = v.v; }
-      var strong = anchorNames === "kept" && /^Placement, state channel/.test(name);   // Table 8 bolds names kept only
+      var strong = anchorNames === "kept" && /^Placement, state channel/.test(name);   // SI Table 3 of the paper bolds names kept only
       data.push({ label: name + (rd && rd !== "–" ? ", reads " + rd : ""), strong: strong,
                   marks: [{ v: v.v, lo: v.v - (v.sd || 0), hi: v.v + (v.sd || 0), color: strong ? css("--signal") : css("--ink-2") }],
                   value: pct(v.v, 1) });
@@ -678,14 +678,14 @@
     var fig = document.createElement("figure");
     fig.className = "table-block";
     var cap = document.createElement("figcaption");
-    cap.innerHTML = "<b>Table " + (t.number || "") + ".</b> ";
+    cap.innerHTML = "<b>" + (t.prefix || "Table") + " " + (t.number || "") + ".</b> ";
     cap.appendChild(document.createTextNode(t.caption));
     fig.appendChild(cap);
     var wrap = document.createElement("div");
     wrap.className = "table-wrap";
     wrap.tabIndex = 0;
     wrap.setAttribute("role", "region");
-    wrap.setAttribute("aria-label", "Table " + (t.number || ""));
+    wrap.setAttribute("aria-label", (t.prefix || "Table") + " " + (t.number || ""));
     t.parts.forEach(function (part) {
       var tb = document.createElement("table");
       tb.className = "paper";
@@ -732,13 +732,12 @@
     document.querySelectorAll(".nav a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
-        if (en.isIntersecting && links[en.target.id]) {
-          Object.keys(links).forEach(function (k) { links[k].removeAttribute("aria-current"); });
-          links[en.target.id].setAttribute("aria-current", "true");
-        }
+        if (!en.isIntersecting) { return; }
+        Object.keys(links).forEach(function (k) { links[k].removeAttribute("aria-current"); });
+        if (links[en.target.id]) { links[en.target.id].setAttribute("aria-current", "true"); }
       });
     }, { rootMargin: "-40% 0px -55% 0px" });
-    Object.keys(links).forEach(function (k) { var s = $(k); if (s) { io.observe(s); } });
+    document.querySelectorAll("main section[id]").forEach(function (s) { io.observe(s); });
   }
 
   /* ------------------------------------------------------------------ draw everything */

@@ -3,31 +3,74 @@
 [![tests](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
 
 **Every system sees the same company.** Email, chat, the CRM, support tickets, recorded calls, calendars and issue
-trackers each record part of what happens with every customer, deal and project. But none of them records the
-situation itself. This repository learns the piece that no system records: a shared **state space** with **access
-control built in**. In this space, the situation that each record describes sets its position, whichever system
-wrote the record. The state space is the first layer of a **world model of an organization**.
+trackers each record part of what happens with every customer, deal and project. But no system records the
+situation itself. People rebuild that situation in their heads, and AI assistants rebuild it from documents for
+each question. This repository learns it: one **state space** for the whole company, trained on the links that the
+systems already keep, with **access control built in**. It is the first learned layer of a **world model of an
+organization**.
 
 ![The idea](paper/figures/idea.png)
 
-We expect every company to come to run on an *operational world model*: a model of how the company actually
-functions. People and AI agents can understand the company through it. They can learn on it, as a new employee
-learns the company. They can also use it to try changes before they make them. This repository builds the first
-layers of such a model. It also tests, honestly, how far the rest of the model gets on the same data.
+## Summary
 
-The training signal is free. The Platonic Representation Theorem (Balestriero & LeCun, 2026) shows that JEPAs
-trained on *good views* converge to the same representation up to a rotation. Good views are two different
-observations of the same hidden state. Organizations already keep good views: records that different systems link to the same
-customer in the same time window.
+A recent theorem predicts that encoders trained to predict one observation of a state from another converge to one
+representation (Balestriero & LeCun, 2026). Records that different systems link to the same customer in the same
+period are such observations. So the links that a company already keeps are a free training signal. We test this on
+a simulated company from [Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents), with exact ground truth.
 
-We train small text JEPAs on those links, on a simulated company from
-[Era by Eon](https://www.eon.io/blog/era-build-and-test-ai-agents). We compare them with corruption-based views
-(bad views) and with next-token prediction on identical text. We also repeat the key comparisons with a frozen
-pretrained encoder.
+- Small encoders trained on these links place **76%** of records with withheld links with the right customer. Text
+  similarity places 53%, and a guess of the largest customer 12%.
+- With every name and identifier masked, the encoders still place 33% of these records. A pretrained encoder places
+  20%.
+- The same links raise a frozen pretrained encoder from 53% to 62%.
+- Permissions are part of the model. When we plant secrets in records that a reader may not read, no result that
+  the reader gets changes.
+- The state space indexes a memory. Some questions come with one record of the customer instead of its name. With
+  the names kept in the records, they get the right answer 63.8% of the time. With a pretrained encoder, they get
+  54.9%, and without a store 52.2%.
+- On the same space, we build a first decision layer. We also show what data it needs to learn the effects of
+  decisions.
+- Each encoder and head that we timed trains in 2–7 minutes on a CPU.
 
-**Paper:** [`paper/main.pdf`](paper/main.pdf), version 5. The LaTeX source is in [`paper/`](paper).
+**Paper:** [`paper/main.pdf`](paper/main.pdf), version 6, in the format of a Nature article. The LaTeX source is in
+[`paper/`](paper).
 **What changed and why:** [`docs/REVIEW_RESPONSE.md`](docs/REVIEW_RESPONSE.md) (every review, point by point),
-[`docs/CHECKS.md`](docs/CHECKS.md) (how we checked version 5) and [`CHANGELOG.md`](CHANGELOG.md).
+[`docs/CHECKS.md`](docs/CHECKS.md) (how we checked version 6) and [`CHANGELOG.md`](CHANGELOG.md).
+
+## What this means for corporate AI
+
+Corporate AI is AI that understands how a company works, acts within its permissions and helps it decide. It needs
+a model of the company itself, which stays current as the company works. We see four layers. Each layer is useful on
+its own, and each one makes the next one possible.
+
+| Layer | What it gives | Status |
+| --- | --- | --- |
+| Memory that accumulates | What happened, who decided it and why, and where each fact came from | Organizational memory products, such as Sentra's, build this today |
+| **Representations that learn** | **One state space for the company, which places each record with its customer and finds similar situations** | **This work, shown in simulation** |
+| Models that predict | How situations change, and what decisions do | The next layer. This work builds a first version and shows what data it needs |
+| Organizations that improve | People and agents test decisions against the model, and the model learns from what happens | Future |
+
+The learned state space does not replace the memory. The memory keeps the facts, sources and permissions. The state
+space adds two things: a place for records without a link, and a measure of which situations are alike.
+
+## How it compares
+
+Enterprise AI gives models knowledge of a company in several ways. They are layers of one architecture more than
+rivals. Table 1 of the paper gives this comparison with references.
+
+| Approach | What it keeps | Where it is strong | What it leaves open |
+| --- | --- | --- | --- |
+| Retrieval (RAG) | Documents and a search index | Current and simple, with permission filters on results | Builds each situation again for each question |
+| Explicit memory: graphs, ledgers and memory stores (GraphRAG, Zep, MemGPT, Mem0) | Entities, facts, decisions, dates and sources | Facts with sources, easy to audit and update | Facts, not a learned state of each situation |
+| Compressed memory ([Memorilla](https://arxiv.org/abs/2610.21375)) | Embeddings of documents, read as 16 memory tokens for each question by a frozen model | A large collection in a few tokens (84.33% on FactKG, against 80.43% with the full context) | Organizes documents, not situations |
+| Trained context and skills (Cartridges, [Engram](https://engram.com/blog/learning-in-a-world-of-notes)) | A trained cache of the documents, or notes and a model trained to use them | Better and cheaper answers (Engram reports 7 to 20 points from training to use notes) | Organizes text, not situations |
+| Process mining | Event logs that a case number links | Shows how work flows | Needs structured events, not text |
+| World models of physical scenes (V-JEPA 2, H-JEPA) | Latent states of a scene | Prediction and planning | Built for sensors, not for records and permissions |
+| **This work** | **A learned state of each situation, from the links between systems** | **Places records whose links it never saw; permissions built in** | **Prediction of change, and the effects of decisions; tested on one simulated company** |
+
+Our memory reader follows Memorilla in a small form, so a reader of this kind could read situations instead of
+separate documents. Agents trained to use notes could act on a shared state that respects permissions. We tested
+only the first of these combinations.
 
 ## Website
 
@@ -59,14 +102,15 @@ different number of seeds.
 | --- | --- | --- | --- | --- | --- | --- |
 | **Held-out records** (links hidden in training): placed with the right customer | **76%** | 19% | 20% | 53% | 53% | 62% |
 | Training records: 10 nearest neighbours **from other systems** on the same customer | **95%** (3 seeds) | 14% | 13% | 35% | 40% | 72% |
-| ...with customer names, contacts, domains and ids masked | **48%** | | | 14% | | |
+| Held-out records with **every name and identifier masked**: placed with the right customer | **33%** | | | | 20% | |
+| ...with customer names, contacts, domains and ids masked (training records) | **48%** | | | 14% | | |
 | ...with **employee** names, handles and chat names masked as well | **47%** | | | 14% | | |
 | ...when 25% / 50% of the training links are wrong | **84% / 68%** | | | | | |
 | Encoders trained **separately** on messages and on systems of record, one rotation from 64 anchors: same-state recall@1 (chance 4%) | **21%** | 4% | 4% | | | |
 | **Retrained** encoder that searches the **old** index through one rotation: same-customer precision@10 | **79%** (3% without rotation) | | | | | |
 
-- The links are weak supervision, so numbers on training records are upper bounds. The held-out test is the fair
-  one.
+- The held-out test is the main one: the encoder never saw the links of these records. A guess of the largest
+  customer places 12% of them.
 - The same good views lift a frozen pretrained sentence encoder (all-MiniLM-L6-v2) from 53% to 62% on held-out
   records. So the recipe also improves a ready-made backbone. On this company it stays below the small encoder
   trained from scratch, which learns the company's own vocabulary.
@@ -109,33 +153,32 @@ its readers. The model closes all three paths. So what a reader receives depends
   company can close part of the gap, as the backbone does for the analyst. Only a change in the access policy can
   close the rest.
 
-### The rest of a world model: a division of labor
+### Toward prediction and decisions
 
 | Question | Result |
 | --- | --- |
 | **Two channels** (state + detail) on the 144 memory questions, which name their customer, 4 seeds | The stores retrieve by content within the question's quarter. Detail only (pretrained) 71.2%, state only (good views) 65.8%, concatenated 72.2%, routed (retrieve by state, read detail) 70.1%. **No combination clearly beats the detail channel** (concatenated minus detail: +1.0 points, 95% interval −2.4 to +4.7). Both channels find the named customer's records equally often (65%). So the lead of the detail store comes from how the reader reads its records, or from how we embed the question. The detail store does not find more of the right records. |
-| **Questions that come with one record of the customer instead of its name** (127 questions; 4 seeds of the reader and anchors; 1 state encoder) | Names kept: **the state channel places the record**, then the reader reads its customer's records and answers **63.8%**. Placement with the pretrained encoder: 54.9% (**paired +8.9 points, 95% interval +3.9 to +13.8**). Nearest neighbours of the record 58–60%, no store 52.2%, the record's own link (oracle) 68.7%, placement with both channels concatenated 64.2%. Names masked: only the oracle helps clearly (67.1%). The state channel's neighbours help a little (57.7% vs 52.0%). Given the right records, the reader answers 67.5–68.1% from only their system and time codes, about as well as from their content. |
+| **Questions that come with one record of the customer instead of its name** (127 questions; 4 seeds of the reader and anchors; 1 state encoder) | Names kept: **the state channel places the record**, then the reader reads its customer's records and answers **63.8%**. Placement with the pretrained encoder: 54.9% (**paired +8.9 points, 95% interval +3.9 to +13.8**). Nearest neighbours of the record 58–60%, no store 52.2%, the record's own link (oracle) 68.7%, placement with both channels concatenated 64.2%. Names masked: the state channel's neighbours, read by detail, answer 57.7% against 52.0% without a store (paired +5.7 points, 95% interval +0.4 to +10.8). The oracle answers 67.1%. Given the right records, the reader answers 67.5–68.1% from only their system and time codes, about as well as from their content. |
 | Two channels for state facts ("was there a sales call this quarter?") | Good views alone: 72% (about the majority). With a pretrained detail channel: 87%. With bad views: 95%. The detail channel restores the facts. But no combination beats its better channel on average. |
 | **Monthly windows** (405 states on day 1, 398 transitions through day 2) | Held-out records placed in the right customer-month: 17%, vs 13% for "customer known, busiest month". Finer windows help a little. |
-| Forecasting next month's facts | 44–54% for every representation, vs 54% for the majority class and 72% if we copy this month's facts. **No forecast.** |
-| Linear dynamics (state → next state) | We tune the regularization of a ridge map by nested cross-validation. Then the map beats "no change" in every space (2–31% less error). But it never beats one shrink-toward-the-mean factor by more than 3.4 points. It learns mean reversion, not dynamics. |
-| **Drift** (weekly state jump vs escalations and deal-stage changes, 279 event weeks) | AUROC 0.47–0.54, within about two standard errors of chance. Record volume alone: 0.57. |
-| **Cross-team misalignment** (sales vs support state distance vs at-risk months) | AUROC 0.48–0.57, within noise. |
+| Forecasting next month's facts | 44–54% for every representation, vs 54% for the majority class and 72% if we copy this month's facts. A forecast needs training for change. |
+| Linear dynamics (state → next state) | We tune the regularization of a ridge map by nested cross-validation. Then the map beats "no change" in every space (2–31% less error). But it never beats one shrink-toward-the-mean factor by more than 3.4 points. Most of what it learns is a return toward the mean. |
+| Drift and cross-team misalignment (weekly state jumps; distance between sales and support states) | As signals of escalations, deal-stage changes or at-risk months, AUROC 0.47–0.57. Record volume alone gives 0.57. |
 | **Decisions: action-conditioned dynamics.** Six company actions per customer-month, which we read from the company's logs and Era's ground truth. They are sales calls, leaders' messages, CRM tasks, engineering escalations, support replies and outbound email. | This month's actions add nothing to predictions of next month's state (error change −0.1% to +0.6% of the state-only error, where positive is worse). In the good-view space, the state already encodes most of them: we predict each action from the state with AUROC 0.63–0.88. Next month's actions lower the error by 9–19%, mostly as a description of next month's records. With next month's mix of systems in the model, they add 3–5%. Next-month outcomes: actions add +0.02 to +0.26 AUROC, and support replies alone do as well as all six. Replies mark months with tickets, and tickets persist. |
 | **Decisions: around single actions** (14-day windows, records of the action's kind left out) | After an adjustment for the record count of each window, no action moves the state detectably more than matched times. Engineering escalations +0.009 (95% interval −0.003 to +0.017, +0.011 before the adjustment), sales calls 0.000, leaders' messages −0.024. Knowledge of the action does not help to predict where the state goes. |
 | **Decisions: a simulation of intervention vs no intervention for customers in trouble** (29 customer-months) | The machinery works: it finds similar states of other customers and splits them by what the company did. But the logs barely contain the alternative: the company intervened in 25 of 29. In all four state spaces, similar states where it intervened were in trouble 19–24% of the time, vs 0.2–4% where it did not. So more urgent tickets appear to follow interventions, as we would see if calls and escalations come when problems are severe. The estimates move with the state space: +12 to +15 points for deals and +8 to +29 for urgent tickets. Six of the eight intervals include zero. The outcome model attributes little to the decision. **Learning from decisions needs actions with a known assignment.** |
-| **Similar situations across customers** | Of the 5 nearest states of other customers, 18% share the situation, vs 8% by chance. Every representation does about as well. When we restrict the neighbours to other quarters, it is still 17% vs 7%. For customers in trouble, the detail channel finds others in trouble (bad views 35%, pretrained 25%, vs a 12% base rate). The state channel does not (4%). |
+| **Similar situations across customers** | Of the 5 nearest states of other customers, 18% share the situation, vs 8% by chance. Every representation does about as well. When we restrict the neighbours to other quarters, it is still 17% vs 7%. Good views make the state sensitive to whose situation it is. So for "customers in trouble", representations that keep detail are the right tool. Bad views find 35%, pretrained 25% and good views 4%, against a 12% base rate. The two channels concatenated find 5%, so each channel should answer its own kind of query. |
 
 The experiments point to a division of labor. We can learn the **state space** from links alone. It places records
-without links. Through rotations, different encoders can share it. It can also carry access control.
+whose links it never saw. Through rotations, different encoders can share it. It can also carry access control.
 
 A **memory** should find a question's records through the state space, or by name when the question has one. It
 should then read them from the store. For questions about how many tickets there were or whether a call took place,
 the provenance of the right records carries most of the answer.
 
-A **predictor** of how states change did not emerge from a space trained for static similarity. When we condition it
-on the company's logged actions, this does not change. The company intervened in situations unlike those where it
-did not intervene. So its logs show the situations in which it acted, rather than the effect of its actions. A
+A **predictor** of how states change needs training for change. A space trained for similarity gives little of it on
+its own, also with the company's logged actions. The company intervened in situations unlike those where it did not
+intervene. So its logs show the situations in which it acted, rather than the effect of its actions. A
 **decision layer** needs actions with a known assignment (logged with reasons, deliberately varied, or replayed in a
 simulator).
 
@@ -175,7 +218,7 @@ for a given seed and thread count, but not across thread counts. The version-2 r
 
 ## Writing standard
 
-In version 5, the paper, this README and the website follow the rules of ASD-STE100 (Simplified Technical English).
+Since version 5, the paper, this README and the website follow the rules of ASD-STE100 (Simplified Technical English).
 Our target is that at least 90% of the sentences comply. `tools/ste_check.py` measures this. It checks each sentence
 for the main rules: length, active voice, simple tenses and no -ing forms. The score is the share of sentences that
 comply. It is 98% for the paper and more than 99% for this README and the website.
@@ -195,7 +238,7 @@ edit of the paper keeps every placeholder, label, reference and citation.
 | Path | What it is |
 | --- | --- |
 | `cwm/era_up.sh`, `cwm/era_export.py` | Start Era's seven simulators and export every record into one table plus ground truth |
-| `cwm/corpus_stats.py` | Counts the records: Table 1 and the counts of Section 5 (`results/corpus.json`) |
+| `cwm/corpus_stats.py` | Counts the records: Extended Data Table 1 and the counts in Methods (`results/corpus.json`) |
 | `cwm/data.py` | Records to states (customer × quarter, month or ISO week), tokens, system families |
 | `cwm/jepa.py` | Bag-of-n-grams encoder, LeJEPA loss with SIGReg, good and bad views, next-token baseline |
 | `cwm/pretrained.py` | Frozen all-MiniLM-L6-v2 backbone and the good-view JEPA head trained on its features |
@@ -221,8 +264,8 @@ edit of the paper keeps every placeholder, label, reference and citation.
 | `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, PDF |
 | `website/` | The project website. `template.html` is the source of the page, and `cwm/export_site_data.py` generates `index.html` from it. |
 | `.github/workflows/pages.yml` | Publishes `website/` and the PDF of the paper with GitHub Pages |
-| `docs/REVIEW_RESPONSE.md` | Point-by-point answers to every review, from version 1 to version 4 |
-| `docs/CHECKS.md` | The checks of version 5 and their results: tests of the numbers, a clean rebuild, the STE measure and the independent reviews |
+| `docs/REVIEW_RESPONSE.md` | Point-by-point answers to every review, from version 1 to version 6 |
+| `docs/CHECKS.md` | The checks of version 6 and their results: tests of the numbers, a clean rebuild, the STE measure and the independent reviews |
 | `docs/ARXIV_ABSTRACT.txt` | A shorter abstract that fits arXiv's 1,920-character limit |
 
 ## Moving to real data
@@ -252,7 +295,7 @@ not redistribute the generated data here. Regenerate it with `cwm/era_up.sh` and
   address     = {San Francisco},
   year        = {2026},
   month       = nov,
-  note        = {Version 5},
+  note        = {Version 6},
   url         = {https://github.com/niashwin/company-world-model}
 }
 ```

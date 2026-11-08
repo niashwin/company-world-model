@@ -1,4 +1,4 @@
-"""Which records the named-question memory stores retrieve (Table 7, version 3 keys): for each test question, the share
+"""Which records the named-question memory stores retrieve (Supplementary Table 2, version 3 keys): for each test question, the share
 of the 16 retrieved records that belong to the asked customer and customer-quarter, with retrieval by the content of
 the retrieval channel among records of the question's quarter, and, for comparison, by whole store rows (versions 1-2).
 Writes results/memory2_q_retrieval.json."""

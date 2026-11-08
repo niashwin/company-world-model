@@ -53,11 +53,18 @@ def seeds(metric, arm):
     return np.array(vals)
 
 
-def bar_labels(ax, xs, ys, fmt="{:.2f}", dy=0.015, tops=None):
-    """Value labels: the text is the value, placed above `tops` (bar plus error bar) when given."""
+def panel(ax, letter, x=-0.1, y=1.06):
+    """Nature-style panel letter at the top left of an axis."""
+    ax.text(x, y, letter, transform=ax.transAxes, fontsize=10.5, fontweight="bold", va="bottom", ha="left", color=INK)
+
+
+def bar_labels(ax, xs, ys, fmt="{:.2f}", dy=0.015, tops=None, bg=False):
+    """Value labels: the text is the value, placed above `tops` (bar plus error bar) when given. With bg, a white
+    background keeps a reference line from crossing the label."""
     tops = ys if tops is None else tops
     for x, y, t in zip(xs, ys, tops):
-        ax.text(x, t + dy, fmt.format(y), ha="center", va="bottom", fontsize=7.5, color=INK)
+        ax.text(x, t + dy, fmt.format(y), ha="center", va="bottom", fontsize=7.5, color=INK, zorder=4,
+                bbox=dict(fc="white", ec="none", pad=0.4) if bg else None)
 
 
 # ---------------------------------------------------------------------------------------------- E1
@@ -77,17 +84,18 @@ def fig_e1():
         xs = np.arange(len(arms))
         ax.bar(xs, means, width=0.62, color=[C[a] for a in arms], yerr=errs, capsize=2.5,
                error_kw=dict(ecolor=INK2, elinewidth=0.8, capthick=0.8))
-        bar_labels(ax, xs, np.array(means), tops=np.array(means) + np.array(errs))
+        bar_labels(ax, xs, np.array(means), tops=np.array(means) + np.array(errs), bg=True)
         ax.set_xticks(xs, ["Good\nviews", "Bad\nviews", "Next-\ntoken", "TF-IDF", "Random\ninit"], rotation=0)
         ax.set_ylim(0, 1.08)
         ax.set_title(title, loc="left", color=INK)
         ax.tick_params(axis="x", length=0)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("Precision@10, other systems")
+    panel(axes[0], "a", x=-0.16); panel(axes[1], "b", x=-0.1)
     # identity-only ceiling on the unmasked corpus (run_extras.identity_only_state_precision)
     from_ident = load("extras_b.json").get("mask", {}).get("identity_only_state_p@10", 0.163)
     axes[1].axhline(from_ident, color=INK2, lw=0.9, ls=(0, (3, 2)))
-    axes[1].text(1.25, from_ident + 0.025, "knowing only the customer", ha="center", va="bottom", fontsize=7, color=INK2)
+    axes[1].text(4.4, from_ident + 0.03, "knowing only the customer", ha="right", va="bottom", fontsize=7, color=INK2)
     for ax in axes:
         for lab in ax.get_xticklabels():
             lab.set_fontsize(7.5)
@@ -134,6 +142,8 @@ def tsne_maps():
         for s in ax.spines.values():
             s.set_visible(False)
         ax.set_title(NAME[arm], color=C[arm], fontweight="bold")
+    for ax, letter in zip(axes, "abc"):
+        panel(ax, letter, x=0.0, y=1.02)
     axes[0].legend(loc="lower left", frameon=False, handletextpad=0.2, borderaxespad=0.1, markerscale=1.6)
     fig.tight_layout(w_pad=0.8)
     fig.savefig(os.path.join(FIG, "maps.pdf"), metadata=META, dpi=300)
@@ -161,6 +171,7 @@ def fig_e2():
     ax.set_ylim(0, 0.3)
     ax.set_xlabel("Anchor pairs used to fit the rotation")
     ax.set_ylabel("Same-state recall@1")
+    panel(ax, "a", x=-0.2)
     fig.savefig(os.path.join(FIG, "e2_anchors.pdf"), metadata=META)
     plt.close(fig)
 
@@ -199,6 +210,7 @@ def fig_e3():
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Same-customer precision@10")
     ax.set_title("Searching the old index", loc="left")
+    panel(axes[0], "a", x=-0.12); panel(axes[1], "b", x=-0.16)
     ax.tick_params(axis="x", length=0); ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=2)
     fig.savefig(os.path.join(FIG, "e3_time.pdf"), metadata=META)
@@ -247,6 +259,7 @@ def fig_robust():
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Same customer, precision@10")
     ax.set_title("Customer names, contacts and ids masked", loc="left")
+    panel(axes[0], "a", x=-0.13); panel(axes[1], "b", x=-0.15)
     ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=2)
     fig.savefig(os.path.join(FIG, "robustness.pdf"), metadata=META)
@@ -298,6 +311,7 @@ def fig_persistence():
     ax.set_ylim(-0.05, 1.0)
     ax.set_xlabel("Quarters apart, same customer")
     ax.set_ylabel("Cosine similarity of states")
+    panel(ax, "b", x=-0.2)
     ax.legend(loc="upper right", frameon=False, handlelength=1.5, borderaxespad=0.1)
     fig.savefig(os.path.join(FIG, "persistence.pdf"), metadata=META)
     plt.close(fig)
@@ -361,9 +375,10 @@ def fig_acl():
         lab.set_fontsize(6.8)
     ax.tick_params(axis="x", length=0)
     ax.set_ylim(0, 1.25)
-    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0], ["0%", "25%", "50%", "75%", "100%"])
     ax.set_ylabel("Held-out records, right customer")
     ax.set_title("Cost (under each reader: share readable)", loc="left")
+    panel(axes[0], "a", x=-0.14); panel(axes[1], "b", x=-0.15)
     ax.legend(loc="upper right", frameon=False, fontsize=6.4, handlelength=1.2, borderaxespad=0.1, ncol=1)
     ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=1.5)
@@ -371,11 +386,214 @@ def fig_acl():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------------------------------------- Nature-style main figures
+PRE, PRE_HEAD = "#5f6f82", "#9cc2ee"     # frozen pretrained encoder; the same with a good-view head (blue, hatched)
+
+
+def _fp():
+    """The paper's own aggregation of results (cwm/fill_paper.py), so figures and text use the same numbers."""
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import fill_paper
+    return fill_paper
+
+
+def fig_heldout():
+    """Fig. 2d: records whose links were withheld, placed with the right customer."""
+    FP = _fp()
+    HO, P = FP.HO, FP.V2["pretrained"].get("heldout", {})
+    if "good_s0" not in HO or "minilm_head" not in P:
+        return False
+    rows = [("Good views", HO["good_s0"]["customer_acc"], C["good"], None),
+            ("Bad views", HO["bad_s0"]["customer_acc"], C["bad"], None),
+            ("Next-token", HO["ntp_s0"]["customer_acc"], C["ntp"], None),
+            ("TF-IDF", HO["tfidf_lsa"]["customer_acc"], C["tfidf"], None),
+            ("Random encoder", HO["random_init"]["customer_acc"], C["random"], None),
+            ("Pretrained, frozen", P["minilm_raw"]["customer_acc"], PRE, None),
+            ("Pretrained + good-view head", P["minilm_head"]["customer_acc"], PRE_HEAD, "////")]
+    fig, ax = plt.subplots(figsize=(6.6, 2.05))
+    ys = np.arange(len(rows))[::-1]
+    for y, (name, v, col, hatch) in zip(ys, rows):
+        ax.barh(y, v, height=0.62, color=col, hatch=hatch, edgecolor="white", lw=0)
+        ax.text(v + 0.012, y, f"{100 * v:.0f}%", va="center", fontsize=7.5, color=INK)
+    ref = HO["reference_majority_customer_acc"]
+    ax.axvline(ref, color=INK2, lw=0.9, ls=(0, (3, 2)))
+    ax.text(ref + 0.008, ys[0] + 0.62, "largest customer", fontsize=7, color=INK2, va="center")
+    ax.set_yticks(ys, [r[0] for r in rows])
+    ax.set_xlim(0, 1)
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0], ["0%", "25%", "50%", "75%", "100%"])
+    ax.set_xlabel("Records with withheld links placed with the right customer")
+    ax.tick_params(axis="y", length=0)
+    ax.grid(axis="y", visible=False)
+    ax.set_ylim(-0.6, len(rows) - 0.1)
+    panel(ax, "d", x=-0.34, y=1.0)
+    fig.savefig(os.path.join(FIG, "heldout.pdf"), metadata=META)
+    plt.close(fig)
+
+
+def letter_at(fig, ax, letter, labels_left=True):
+    """Panel letter above the axis: at the left edge of its tick labels, or just left of the plot."""
+    fig.canvas.draw()
+    pos = ax.get_position()
+    if labels_left:
+        x = ax.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.transFigure.inverted()).x0
+    else:
+        x = pos.x0 - 0.035
+    fig.text(x, pos.y1 + 0.035, letter, fontsize=10.5, fontweight="bold", va="bottom", ha="left", color=INK)
+
+
+def _dots(ax, n, means, sds, colours, ref=None, ref_label=None):
+    ys = np.arange(n)[::-1]
+    for y, m, sd, col in zip(ys, means, sds, colours):
+        if sd:
+            ax.plot([m - sd, m + sd], [y, y], color=col, lw=1.6, alpha=0.55, solid_capstyle="butt")
+        ax.plot([m], [y], marker="o", ms=5.2, color=col, mec="white", mew=0.8)
+    if ref is not None:
+        ax.axvline(ref, color=INK2, lw=0.9, ls=(0, (3, 2)))
+        ax.text(ref + 0.004, n - 0.45, ref_label, fontsize=6.8, color=INK2, ha="left", va="bottom")
+    ax.set_ylim(-0.6, n - 0.1 + 0.45)
+    ax.grid(axis="y", visible=False)
+    ax.tick_params(axis="y", length=0)
+    return ys
+
+
+def fig_memory():
+    """Fig. 4: questions that come with one record of the customer instead of its name, with names kept (a) or
+    masked (b); and questions that name the customer (c)."""
+    FP = _fp()
+    if not FP.ANCH["plain"].get("runs") or not FP.ANCH["masked"].get("runs"):
+        return False
+    fig = plt.figure(figsize=(6.6, 3.95))
+    gs = fig.add_gridspec(2, 2, height_ratios=[2.45, 1.0], hspace=0.62, wspace=0.07,
+                          left=0.29, right=0.985, top=0.92, bottom=0.11)
+    rows = [("closed", "No store"), ("state", "Neighbours, state channel"), ("detail", "Neighbours, detail channel"),
+            ("concat", "Neighbours, both channels"), ("routed", "Neighbours by state, read by detail"),
+            ("place_detail", "Placement, detail channel"), ("place_concat", "Placement, both channels"),
+            ("place_state", "Placement, state channel"), ("link", "Oracle: the anchor's own link")]
+    axes = []
+    for j, (corpus, title) in enumerate((("plain", "Names kept in the records"), ("masked", "Names masked"))):
+        ax = fig.add_subplot(gs[0, j])
+        means, sds, cols = [], [], []
+        for k, _ in rows:
+            acc = FP.anchor_stats(corpus, k)[0]
+            means.append(float(acc.mean())); sds.append(float(acc.std(ddof=1)) if len(acc) > 1 else 0.0)
+            hl = k == "place_state" and corpus == "plain"
+            cols.append(C["good"] if hl else ("#9a9890" if k in ("closed", "link") else INK2))
+        ys = _dots(ax, len(rows), means, sds, cols, ref=means[0], ref_label="no store")
+        ax.set_xlim(0.44, 0.76)
+        ax.set_xticks([0.5, 0.6, 0.7], ["50%", "60%", "70%"])
+        ax.set_yticks(ys, [r[1] for r in rows] if j == 0 else [""] * len(rows))
+        if j == 0:
+            for lab in ax.get_yticklabels():
+                lab.set_fontsize(7.4)
+        ax.set_xlabel("Questions answered")
+        ax.set_title(title, loc="left", fontsize=8.5, x=0.0 if j == 0 else 0.07)
+        axes.append(ax)
+    # c: questions that name the customer
+    ax = fig.add_subplot(gs[1, 0])
+    stores = [("good", "State channel"), ("minilm", "Detail channel"), ("dual", "Both, concatenated"),
+              ("route", "Found by state, read by detail")]
+    closed_of = {"route": "minilm"}
+    ys = np.arange(len(stores))[::-1]
+    for y, (k, name) in zip(ys, stores):
+        cb = [v for _, n, v in FP.MEM[closed_of.get(k, k)] if n == "closed_book"]
+        st = [v for _, n, v in FP.MEM[k] if n == "top16_pretrained"]
+        a, b, sd = float(np.mean(cb)), float(np.mean(st)), float(np.std(st, ddof=1))
+        ax.plot([a, b], [y, y], color="#cfcec9", lw=1.6)
+        ax.plot([b - sd, b + sd], [y, y], color=C["good"], lw=1.6, alpha=0.5, solid_capstyle="butt")
+        ax.plot([a], [y], marker="o", ms=4.6, color="#9a9890", mec="white", mew=0.8)
+        ax.plot([b], [y], marker="o", ms=5.2, color=C["good"], mec="white", mew=0.8)
+    ax.set_yticks(ys, [n for _, n in stores])
+    for lab in ax.get_yticklabels():
+        lab.set_fontsize(7.4)
+    ax.set_xlim(0.55, 0.8)
+    ax.set_xticks([0.6, 0.7, 0.8], ["60%", "70%", "80%"])
+    ax.set_ylim(-0.6, len(stores) - 0.4)
+    ax.grid(axis="y", visible=False); ax.tick_params(axis="y", length=0)
+    ax.set_xlabel("Questions answered")
+    ax.set_title("Questions that name the customer", loc="left", fontsize=8.5)
+    key = fig.add_subplot(gs[1, 1]); key.axis("off")
+    key.text(0.07, 0.95, "Grey dot: no store (closed book).\nBlue dot: the reader reads 16 records\nthat the store finds."
+             "\nLines: one standard deviation\nover four seeds.", va="top", ha="left", fontsize=7, color=INK2,
+             transform=key.transAxes, linespacing=1.45)
+    for ax, letter, left in ((axes[0], "a", True), (axes[1], "b", False), (fig.axes[2], "c", True)):
+        letter_at(fig, ax, letter, labels_left=left)
+    fig.savefig(os.path.join(FIG, "memory.pdf"), metadata=META)
+    plt.close(fig)
+
+
+def fig_decisions():
+    """Fig. 5: the decision simulation for customer-months in trouble. a, balance: similar months of other customers
+    that were themselves in trouble, by decision. b, c, what followed: intervene minus not, with 95% intervals."""
+    SI = load("actions.json").get("simulate", {})
+    if not SI:
+        return False
+    spaces = [("", "Good\nviews"), ("_bad", "Bad\nviews"), ("_minilm", "Pre-\ntrained"), ("_good_month+minilm", "Two\nchannels")]
+    fig = plt.figure(figsize=(6.6, 2.7))
+    ax = fig.add_axes([0.075, 0.2, 0.25, 0.62])
+    xs = np.arange(len(spaces))
+    w = 0.36
+    on = [SI["escalation"]["balance_in_trouble" + s][0] for s, _ in spaces]
+    off = [SI["escalation"]["balance_in_trouble" + s][1] for s, _ in spaces]
+    ax.bar(xs - w / 2, on, w * 0.92, color="#52514e", label="Company intervened")
+    ax.bar(xs + w / 2, off, w * 0.92, color="#cfcec9", label="Did not intervene")
+    for x, v in zip(xs - w / 2, on):
+        ax.text(x, v + 0.008, f"{100 * v:.0f}", ha="center", va="bottom", fontsize=6.6)
+    for x, v in zip(xs + w / 2, off):
+        ax.text(x, v + 0.008, f"{100 * v:.1f}" if v < 0.01 else f"{100 * v:.0f}", ha="center", va="bottom", fontsize=6.6)
+    ax.set_xticks(xs, [n for _, n in spaces])
+    for lab in ax.get_xticklabels():
+        lab.set_fontsize(7)
+    ax.set_ylim(0, 0.4)
+    ax.set_yticks([0, 0.1, 0.2, 0.3], ["0%", "10%", "20%", "30%"])
+    ax.set_ylabel("Similar months in trouble")
+    ax.set_title("Who is compared", loc="left", fontsize=8.5)
+    ax.legend(loc="upper right", frameon=False, fontsize=6.6, handlelength=1, borderaxespad=0.1)
+    ax.tick_params(axis="x", length=0); ax.grid(axis="x", visible=False)
+    est = [("observed_in_trouble", "Observed"), ("case", "Similar months, good views"),
+           ("case_bad", "Similar months, bad views"), ("case_minilm", "Similar months, pretrained"),
+           ("case_good_month+minilm", "Similar months, two channels"), ("unmatched", "All other months"),
+           ("model", "Outcome model")]
+    axs = [ax]
+    for j, (yk, title) in enumerate((("escalation", "Urgent ticket"), ("deal_progress", "Deal advances"))):
+        ax = fig.add_axes([0.555 + 0.235 * j, 0.2, 0.2, 0.62])
+        ys = np.arange(len(est))[::-1]
+        for y, (k, name) in zip(ys, est):
+            v = SI[yk][k]
+            d = 100 * (v[0] - v[1])
+            ci = SI[yk].get(k + "_difference_ci")
+            col = C["good"] if k == "case" else ("#9a9890" if k == "observed_in_trouble" else INK2)
+            if ci:
+                ax.plot([100 * ci[0], 100 * ci[1]], [y, y], color=col, lw=1.6, alpha=0.55, solid_capstyle="butt")
+            if k == "observed_in_trouble":
+                ax.plot([d], [y], marker="D", ms=4.6, color=col, mfc="white", mec=col, mew=1.2)
+            else:
+                ax.plot([d], [y], marker="o", ms=5, color=col, mec="white", mew=0.8)
+        ax.axvline(0, color=INK2, lw=0.9)
+        ax.set_xlim(-45, 65)
+        ax.set_xticks([-40, 0, 40], ["−40", "0", "+40"])
+        ax.set_xlabel("Difference (points)")
+        ax.set_ylim(-0.6, len(est) - 0.4)
+        ax.grid(axis="y", visible=False); ax.tick_params(axis="y", length=0)
+        ax.set_yticks(ys, [n for _, n in est] if j == 0 else [""] * len(est))
+        if j == 0:
+            for lab in ax.get_yticklabels():
+                lab.set_fontsize(7)
+            ax.get_yticklabels()[1].set_fontweight("bold")
+        ax.set_title(title, loc="left", fontsize=8.5, x=0.0 if j == 0 else 0.07)
+        axs.append(ax)
+    for ax, letter, left in ((axs[0], "a", True), (axs[1], "b", True), (axs[2], "c", False)):
+        letter_at(fig, ax, letter, labels_left=left)
+    fig.savefig(os.path.join(FIG, "decisions.pdf"), metadata=META)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     import sys
-    which = sys.argv[1:] or ["e1", "maps", "e2", "e3", "robust", "persist", "acl"]
+    which = sys.argv[1:] or ["e1", "maps", "e2", "e3", "robust", "persist", "acl", "heldout", "memory", "decisions"]
     for w in which:
         done = {"e1": fig_e1, "maps": tsne_maps, "e2": fig_e2, "e3": fig_e3, "robust": fig_robust,
-                "persist": fig_persistence, "acl": fig_acl}[w]()
+                "persist": fig_persistence, "acl": fig_acl, "heldout": fig_heldout, "memory": fig_memory,
+                "decisions": fig_decisions}[w]()
         if done is not False:
             print("made", w)
