@@ -1,0 +1,10 @@
+# Files that scripts generate. GitHub collapses them in diffs and leaves them out of the language statistics.
+website/index.html linguist-generated=true
+website/data/site-data.js linguist-generated=true
+paper/main.tex linguist-generated=true
+# A copy of natbib's unsrtnat.bst with one change (the author rule of Nature).
+paper/unsrtnat-nature.bst linguist-vendored=true
+# Binary files
+*.pdf binary
+*.png binary
+*.woff2 binary

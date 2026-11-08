@@ -280,6 +280,7 @@ edit of the paper keeps every placeholder, label, reference and citation.
 | `paper/` | LaTeX source (`main.in.tex` with placeholders, generated `main.tex`), figures, bibliography, its style (`unsrtnat-nature.bst`) and the PDF |
 | `website/` | The project website. `template.html` is the source of the page, and `cwm/export_site_data.py` generates `index.html` from it. `assets/brand/` holds the Sentra logo, and `assets/fonts/` the Geist fonts (SIL Open Font License). |
 | `.github/workflows/pages.yml` | Publishes `website/` and the PDF of the paper with GitHub Pages |
+| `.gitattributes` | Marks the generated files (`website/index.html`, `website/data/site-data.js`, `paper/main.tex`), so that GitHub collapses them in diffs |
 | `docs/REVIEW_RESPONSE.md` | Point-by-point answers to every review, from version 1 to version 6 |
 | `docs/CHECKS.md` | The checks of version 7 and their results: tests of the numbers, a clean rebuild, the references, the STE measure and the independent reviews |
 | `docs/ARXIV_ABSTRACT.txt` | A shorter abstract that fits arXiv's 1,920-character limit |
