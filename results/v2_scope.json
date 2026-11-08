@@ -1,0 +1,49 @@
+{
+ "software_engineer": {
+  "records": 4733,
+  "reader_systems": {
+   "calendar": 2,
+   "gmail": 80,
+   "jira": 77,
+   "slack": 457,
+   "zendesk": 4117
+  },
+  "random_scope_systems": {
+   "calendar": 39,
+   "gmail": 3089,
+   "gong": 378,
+   "jira": 13,
+   "salesforce": 237,
+   "slack": 101,
+   "zendesk": 876
+  },
+  "placement_random_scope_same_size": {
+   "customer_acc": 0.4204946996466431,
+   "state_acc": 0.17667844522968199,
+   "n_test": 1132
+  }
+ },
+ "financial_analyst": {
+  "records": 1999,
+  "reader_systems": {
+   "gmail": 329,
+   "jira": 77,
+   "salesforce": 1136,
+   "slack": 457
+  },
+  "random_scope_systems": {
+   "calendar": 19,
+   "gmail": 1270,
+   "gong": 174,
+   "jira": 5,
+   "salesforce": 111,
+   "slack": 40,
+   "zendesk": 380
+  },
+  "placement_random_scope_same_size": {
+   "customer_acc": 0.30628803245436104,
+   "state_acc": 0.09533468559837728,
+   "n_test": 493
+  }
+ }
+}

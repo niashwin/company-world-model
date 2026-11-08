@@ -4,7 +4,7 @@ data/
 results/*.npy
 results/*.npz
 results/*.pt
-results/masked_observations.jsonl
+results/masked_*.jsonl
 # LaTeX build files
 paper/*.aux
 paper/*.log

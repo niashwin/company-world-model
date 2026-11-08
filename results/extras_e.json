@@ -1,0 +1,37 @@
+{
+ "mask_employees": {
+  "all_records": 78048,
+  "all_records_changed": 36909,
+  "linked_records": 21972,
+  "linked_records_changed": 18936,
+  "identity_only_state_p@10": 0.16334083029778165,
+  "examples": [
+   "hi  xent , could you try the same request from our on-premise gateway and tell me whether saml metadata endpoint still fails? --  xent   xent  | support northwind robotics  xent  on thu, 7 may 2026 at",
+   "re: just flagging,  xent  security review is waiting on  xent . hi  xent , resolved, and i have written it up internally. i have picked this up \u2014  xent  is mine until it closes. --  xent   xent  | acc",
+   "adding another example - same symptom, same error 409. this is blocking the board reporting pack.",
+   "hi  xent , request  xent  matches a known issue. please retry the export once as a workaround. --  xent   xent  | support northwind robotics  xent  on fri, 23 oct 2026 at 12:59,  xent   xent  wrote: >",
+   "hi  xent , for salesforce sync, you are right, the failure is back: the mitigation was reverted with a later release. for salesforce sync, re-escalating with the original trace attached. --  xent   xe"
+  ],
+  "tfidf_lsa": {
+   "account_p@10_cross_system": 0.14326666666666668,
+   "state_p@10_cross_system": 0.065,
+   "probe_account_messages_to_records": 0.21794697484704284,
+   "probe_account_records_to_messages": 0.1037148525689266,
+   "rho_state": 0.09343871244441503,
+   "r2_state": 0.031736303996294096,
+   "r2_account": 0.019811482679910244,
+   "r2_system": 0.053459896164147785
+  },
+  "good_s0": {
+   "account_p@10_cross_system": 0.47336666666666666,
+   "state_p@10_cross_system": 0.24946666666666667,
+   "probe_account_messages_to_records": 0.5937457511896669,
+   "probe_account_records_to_messages": 0.29684613805842514,
+   "rho_state": 0.42616770719747654,
+   "r2_state": 0.24240206454585822,
+   "r2_account": 0.11065041332288951,
+   "r2_system": 0.048889334474709716,
+   "train_seconds": 345.10462474823
+  }
+ }
+}

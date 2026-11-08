@@ -26,6 +26,19 @@ def quarter(ts):
     return f"{d.year}Q{(d.month - 1) // 3 + 1}"
 
 
+def window_key(ts, window="quarter"):
+    """Time window of a timestamp: 'quarter' (2026Q3), 'month' (2026-07) or 'week' (ISO week, 2026-W27)."""
+    if window == "quarter":
+        return quarter(ts)
+    d = datetime.fromtimestamp(ts, timezone.utc)
+    if window == "month":
+        return f"{d.year}-{d.month:02d}"
+    if window == "week":
+        y, w, _ = d.isocalendar()
+        return f"{y}-W{w:02d}"
+    raise ValueError(window)
+
+
 def tokenize(text):
     return TOKEN.findall((text or "").lower())
 
@@ -48,7 +61,7 @@ class Corpus:
     pools: dict = field(default_factory=dict)   # state -> obs indices; (state, modality) -> obs indices
 
 
-def load(path, linked_only=True, vocab=None, accounts=None, states=None, max_words=96):
+def load(path, linked_only=True, vocab=None, accounts=None, states=None, max_words=96, window="quarter"):
     obs = [json.loads(line) for line in open(path)]
     obs = [o for o in obs if o.get("ts") and o.get("text")]
     if linked_only:
@@ -60,13 +73,15 @@ def load(path, linked_only=True, vocab=None, accounts=None, states=None, max_wor
     tok = [np.array([vocab.get(t, 0) for t in ts_], dtype=np.int64) for ts_ in toks]
     accounts = list(accounts) if accounts is not None else sorted({o["account_id"] for o in obs if o.get("account_id")})
     a_ix = {a: i for i, a in enumerate(accounts)}
-    states = list(states) if states is not None else sorted({(o["account_id"], quarter(o["ts"])) for o in obs if o.get("account_id")})
+    states = list(states) if states is not None else sorted({(o["account_id"], window_key(o["ts"], window))
+                                                             for o in obs if o.get("account_id")})
     s_ix = {s: i for i, s in enumerate(states)}
     systems = sorted({o["system"] for o in obs})
     sys_ix = {s: i for i, s in enumerate(systems)}
     authors = {}
     threads = {}
-    st = np.array([s_ix.get((o["account_id"], quarter(o["ts"])), -1) if o.get("account_id") else -1 for o in obs])
+    st = np.array([s_ix.get((o["account_id"], window_key(o["ts"], window)), -1) if o.get("account_id") else -1
+                   for o in obs])
     c = Corpus(
         obs=obs, tok=tok, vocab=vocab, state=st, states=states,
         account=np.array([a_ix.get(o.get("account_id"), -1) for o in obs]), accounts=accounts,

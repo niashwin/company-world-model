@@ -4,7 +4,7 @@ Store: every observation encoded ONCE by a frozen encoder (plus a time code), ne
 Read:  K learned slots -> conditioned on the query by cross-attention -> L cross-attention blocks over the WHOLE store
        (softmax over documents, Perceiver-style) -> LayerNorm -> projection to the consumer's input space.
 Consumer: frozen. Here (CPU prototype) it is the frozen answer-embedding space of a pretrained sentence encoder,
-       scored like PersonaMem-v2 short-answer accuracy (the nearest predefined answer wins); in the Memorilla paper it is a
+       scored like PersonaMem-v2 short-answer accuracy (the nearest predefined answer wins); in production it is a
        frozen open-weight LLM reading the K memory tokens before the question (paper, Sec. 2.3).
 Variants (paper, App. E.1): no memory (closed book), global mean-pool, cosine top-K, MEMORILLA.
 """
@@ -15,7 +15,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from data import quarter, time_code
+from data import time_code
 
 
 # ----------------------------------------------------------------------------------------- questions from ground truth
@@ -119,9 +119,10 @@ class StoreAttention(nn.Module):
 
 
 class Memory(nn.Module):
-    def __init__(self, d_in, d_out, variant="memorilla", K=16, h=64, heads=4, layers=2, dropout=0.1, topk=16):
+    def __init__(self, d_in, d_out, variant="memorilla", K=16, h=64, heads=4, layers=2, dropout=0.1, topk=16, split=None):
         super().__init__()
         self.variant, self.K, self.topk = variant, K, topk
+        self.split = split          # routing: rows are [content | key]; retrieve by the key, read the content
         self.doc_in = nn.Identity() if d_in == h else nn.Linear(d_in, h, bias=False)
         self.q_in = nn.Linear(d_in, h)
         self.slots = nn.Parameter(torch.empty(K, h))
@@ -139,6 +140,9 @@ class Memory(nn.Module):
         self.proj = nn.Linear(h, d_out)
 
     def forward(self, store, q, store_raw=None, q_raw=None, return_attn=False, return_state=False):
+        if self.split is not None:
+            store, store_raw = store[:, :self.split], store[:, self.split:]
+            q, q_raw = q[:, :self.split], q[:, self.split:]
         B = q.size(0)
         zq = self.q_in(q).unsqueeze(1)                                     # B x 1 x h
         slots = self.slots.unsqueeze(0).expand(B, -1, -1)
@@ -256,7 +260,7 @@ def recall_targets(sem, ts, acct, sysid, n_sys, a, t, sigma=30 * 86400.0):
 
 
 def pretrain_memory(mem, store, sem, ts, acct, sysid, n_sys, account_queries, steps=400, batch=32, lr=1e-3, seed=0,
-                    log=None, tdim=16):
+                    log=None, tdim=16, make_query=None):
     """Memorilla's stage 1 adapted to a company: from a question naming a customer and a date, recover what the
     store holds about that customer around that date. Unlimited queries, no labels beyond the link graph."""
     rng = np.random.default_rng(seed)
@@ -273,7 +277,10 @@ def pretrain_memory(mem, store, sem, ts, acct, sysid, n_sys, account_queries, st
             y = recall_targets(sem, ts, acct, sysid, n_sys, a, t)
             if y is None:
                 continue
-            qs.append(np.concatenate([account_queries[a], time_code(np.array([t]), tdim)[0], np.zeros(n_sys, np.float32)]))
+            if make_query is not None:
+                qs.append(make_query(a, t))
+            else:
+                qs.append(np.concatenate([account_queries[a], time_code(np.array([t]), tdim)[0], np.zeros(n_sys, np.float32)]))
             tg.append(y)
         q = torch.from_numpy(np.stack(qs))
         y = torch.from_numpy(np.stack(tg))

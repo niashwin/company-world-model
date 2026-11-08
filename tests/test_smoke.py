@@ -1,5 +1,6 @@
 """Fast checks that run without Era data: a tiny synthetic company, a few training steps, the metrics, the access
-policy, and non-interference of an encoder trained on one reader's records."""
+policy, non-interference of an encoder trained on one reader's records, the good-view head on frozen features, and
+the fact that a rotation cannot change a reader's placement accuracy."""
 import json
 import os
 import sys
@@ -95,3 +96,32 @@ def test_non_interference(tmp_path, secret):
     write_company(b, secret=secret)          # the secret lives only in CRM records support cannot read
     Xa, Xb = _reader_view(a), _reader_view(b)
     assert np.array_equal(Xa, Xb)
+
+
+def test_pretrained_head_trains(tmp_path):
+    """The good-view head trains on frozen backbone features (no download needed: features are random here)."""
+    from pretrained import train_head
+    p = tmp_path / "obs.jsonl"
+    write_company(p)
+    c = load(str(p))
+    build_pools(c)
+    F = np.random.default_rng(0).normal(size=(len(c.obs), 384)).astype(np.float32)
+    h = train_head(F, c, steps=5, batch=16, seed=0)
+    Z = h.embed(F)
+    assert Z.shape == (len(c.obs), 256) and np.isfinite(Z).all()
+
+
+def test_rotation_does_not_change_placement(tmp_path):
+    """Placement at the nearest state centroid (cosine) is the same after any rotation of the reader's space, so a
+    rotation can make two readers' views comparable but cannot make either more accurate."""
+    from run_acl import placement
+    p = tmp_path / "obs.jsonl"
+    write_company(p)
+    c = load(str(p))
+    rng = np.random.default_rng(3)
+    X = rng.normal(size=(len(c.obs), 32))
+    is_test = rng.random(len(c.obs)) < 0.3
+    rows = np.arange(len(c.obs))
+    Q, _ = np.linalg.qr(rng.normal(size=(32, 32)))
+    a, b = placement(X, rows, c, is_test), placement(X @ Q, rows, c, is_test)
+    assert a == b

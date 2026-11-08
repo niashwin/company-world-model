@@ -1,0 +1,37 @@
+{
+ "minilm_raw": {
+  "account_p@10_cross_system": 0.4047666666666667,
+  "state_p@10_cross_system": 0.13033333333333333,
+  "probe_account_messages_to_records": 0.23861318830727396,
+  "probe_account_records_to_messages": 0.45898611206129847,
+  "rho_state": 0.28871568412820375,
+  "r2_state": 0.13280308851880648,
+  "r2_account": 0.10700795835909066,
+  "r2_system": 0.05311903049679666
+ },
+ "minilm_head": {
+  "account_p@10_cross_system": 0.7169,
+  "state_p@10_cross_system": 0.19863333333333336,
+  "probe_account_messages_to_records": 0.6252889191026513,
+  "probe_account_records_to_messages": 0.8256140110829856,
+  "rho_state": 0.5389036316439044,
+  "r2_state": 0.36343575250728416,
+  "r2_account": 0.31057459631437856,
+  "r2_system": 0.045925815752280906,
+  "train_seconds": 143.47327709197998
+ },
+ "heldout": {
+  "minilm_raw": {
+   "account_p@10_cross_system": 0.2573,
+   "state_p@10_cross_system": 0.07066666666666667,
+   "customer_acc": 0.5260901975400671,
+   "state_acc": 0.12765560939247111
+  },
+  "minilm_head": {
+   "account_p@10_cross_system": 0.5011666666666666,
+   "state_p@10_cross_system": 0.1159,
+   "customer_acc": 0.6226239284383153,
+   "state_acc": 0.16362281028699216
+  }
+ }
+}

@@ -5,6 +5,8 @@
 2. Source type kept as explicit metadata on each stored row: the good-view encoder deliberately discards which
    system wrote a record (nuisance for state), but "was there a call?" needs it.
 Store rows = [state vector (good-view JEPA, PCA-112) ; time code (16) ; source one-hot (7)].
+STORE=minilm uses a pretrained sentence encoder instead; STORE=dual puts both side by side (two channels: state and
+detail) before the same PCA-112 map; STORE=route retrieves with the state channel and reads the detail channel.
 Writes results/memory2.json.
 """
 import json
@@ -53,11 +55,19 @@ def main():
     enc.load_state_dict(torch.load(f"{OUT}/enc_good_s0.pt"))
     tok = lambda texts: [np.array([c1.vocab.get(t, 0) for t in tokenize(s)][:96], dtype=np.int64) for s in texts]  # noqa: E731
     STORE = os.environ.get("STORE", "jepa_good")
-    if STORE == "minilm":
+    if STORE in ("minilm", "dual", "route"):
         from sentence_transformers import SentenceTransformer as _ST
         _m = _ST("sentence-transformers/all-MiniLM-L6-v2", cache_folder=os.path.join(ROOT, "models"), device="cpu")
-        emb_texts = lambda texts: _m.encode(list(texts), batch_size=128, show_progress_bar=False, convert_to_numpy=True)  # noqa: E731
-        X = emb_texts([o["text"] for o in c1.obs])
+        mini = lambda texts: _m.encode(list(texts), batch_size=128, show_progress_bar=False, convert_to_numpy=True,  # noqa: E731
+                                       normalize_embeddings=True)
+        cache = os.path.join(OUT, "minilm_day1.npy")
+        Xm = np.load(cache) if os.path.exists(cache) else mini([o["text"] for o in c1.obs])
+        if STORE in ("minilm", "route"):
+            emb_texts, X = mini, Xm
+        else:   # two channels: the good-view state vector and the pretrained detail vector, side by side
+            l2 = lambda A: A / (np.linalg.norm(A, axis=1, keepdims=True) + 1e-9)  # noqa: E731
+            emb_texts = lambda texts: np.concatenate([l2(enc.embed(tok(texts))), l2(mini(texts))], 1)  # noqa: E731
+            X = np.concatenate([l2(np.load(f"{OUT}/emb_good_s0.npy")), l2(Xm)], 1)
     else:
         emb_texts = lambda texts: enc.embed(tok(texts))  # noqa: E731
         X = np.load(f"{OUT}/emb_good_s0.npy")
@@ -67,6 +77,12 @@ def main():
     sem = f(X)
     n_sys = len(c1.systems)
     S = rows(sem, c1.ts, c1.system, n_sys)
+    d_content = S.size(1)
+    if STORE == "route":     # retrieval keys from the good-view state channel, appended after the content
+        Xk = np.load(f"{OUT}/emb_good_s0.npy")
+        fk = fit_store_map(Xk)
+        key_texts = lambda texts: fk(enc.embed(tok(texts)))  # noqa: E731
+        S = torch.cat([S, rows(fk(Xk), c1.ts, c1.system, n_sys)], 1)
 
     qs = make_questions(gt1, c1.states)
     rng = np.random.default_rng(0)                          # the same split as run_memory.py
@@ -80,7 +96,18 @@ def main():
     val_q = [q for q in qs if q["split"] == "val"]
     test_q = [q for q in qs if q["split"] == "test"]
     Q = rows(f(emb_texts([q["text"] for q in qs])), np.array([q["ts"] for q in qs]), None, n_sys)
-    acct_q = f(emb_texts([f"What happened with {names.get(a, a)}?" for a in c1.accounts]))
+    acct_texts = [f"What happened with {names.get(a, a)}?" for a in c1.accounts]
+    acct_q = f(emb_texts(acct_texts))
+    make_query = None
+    if STORE == "route":
+        Q = torch.cat([Q, rows(key_texts([q["text"] for q in qs]), np.array([q["ts"] for q in qs]), None, n_sys)], 1)
+        acct_k = key_texts(acct_texts)
+
+        def route_query(a, t):
+            tc = time_code(np.array([t]), 16)[0]
+            z = np.zeros(n_sys, np.float32)
+            return np.concatenate([acct_q[a], tc, z, acct_k[a], tc, z]).astype(np.float32)
+        make_query = route_query
 
     from sentence_transformers import SentenceTransformer
     st = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder=os.path.join(ROOT, "models"), device="cpu")
@@ -95,12 +122,17 @@ def main():
     seen = {o["src_id"] for o in c1.obs}
     new = [i for i, o in enumerate(c2.obs) if o["src_id"] not in seen and c2.account[i] >= 0]
     sys2 = np.array([c1.systems.index(c2.obs[i]["system"]) for i in new])
-    Xnew = emb_texts([c2.obs[i]["text"] for i in new]) if STORE == "minilm" else enc.embed([c2.tok[i] for i in new])
-    S2 = torch.cat([S, rows(f(Xnew), c2.ts[new], sys2, n_sys)])
+    Xnew = emb_texts([c2.obs[i]["text"] for i in new]) if STORE in ("minilm", "dual", "route") else enc.embed([c2.tok[i] for i in new])
+    new_rows = rows(f(Xnew), c2.ts[new], sys2, n_sys)
+    if STORE == "route":
+        new_rows = torch.cat([new_rows, rows(fk(enc.embed([c2.tok[i] for i in new])), c2.ts[new], sys2, n_sys)], 1)
+    S2 = torch.cat([S, new_rows])
     q_new = make_questions(gt2, sorted({s for s in c2.states if s[1] in ("2026Q4", "2027Q1")}))
     for i, q in enumerate(q_new):
         q["qi"] = i
     Qn = rows(f(emb_texts([q["text"] for q in q_new])), np.array([q["ts"] for q in q_new]), None, n_sys)
+    if STORE == "route":
+        Qn = torch.cat([Qn, rows(key_texts([q["text"] for q in q_new]), np.array([q["ts"] for q in q_new]), None, n_sys)], 1)
     maj_new = float(np.mean([q["answer_ix"] == max(set(a := [x["answer_ix"] for x in train_q if x["kind"] == q["kind"]]),
                                                    key=a.count) for q in q_new]))
     results["growth_setup"] = {"new_records": len(new), "new_questions": len(q_new), "majority_on_new": maj_new}
@@ -116,9 +148,10 @@ def main():
                 continue
             t = time.time()
             torch.manual_seed(seed)
-            mem = Memory(S.size(1), bank.size(1), variant=variant)
+            mem = Memory(d_content, bank.size(1), variant=variant, split=d_content if STORE == "route" else None)
             if pre:
-                pretrain_memory(mem, S, sem, c1.ts, c1.account, c1.system, n_sys, acct_q, steps=PRE, seed=seed, log=log)
+                pretrain_memory(mem, S, sem, c1.ts, c1.account, c1.system, n_sys, acct_q, steps=PRE, seed=seed, log=log,
+                                make_query=make_query)
             mem = train_memory(S, Q, train_q, bank, kind_ix, variant, epochs=EPOCHS, batch=32, seed=seed, log=log,
                                val=val_q, init=mem)
             r = evaluate(mem, S, Q, test_q, bank, kind_ix)

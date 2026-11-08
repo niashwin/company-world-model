@@ -1,0 +1,281 @@
+{
+ "public_records": 534,
+ "readers": {
+  "ceo": {
+   "visible_share": 1.0,
+   "placement_open_head": {
+    "customer_acc": 0.6226239284383153,
+    "state_acc": 0.16623183004099887,
+    "n_test": 5366
+   },
+   "placement_own_head": {
+    "customer_acc": 0.6226239284383153,
+    "state_acc": 0.16623183004099887,
+    "n_test": 5366
+   },
+   "placement_raw_backbone": {
+    "customer_acc": 0.5262765560939248,
+    "state_acc": 0.1274692508386135,
+    "n_test": 5366
+   }
+  },
+  "account_executive": {
+   "visible_share": 0.8094847988348808,
+   "placement_open_head": {
+    "customer_acc": 0.7035509736540665,
+    "state_acc": 0.18373424971363117,
+    "n_test": 4365
+   },
+   "placement_own_head": {
+    "customer_acc": 0.6978235967926689,
+    "state_acc": 0.170446735395189,
+    "n_test": 4365
+   },
+   "placement_raw_backbone": {
+    "customer_acc": 0.624971363115693,
+    "state_acc": 0.15120274914089346,
+    "n_test": 4365
+   }
+  },
+  "support_engineer": {
+   "visible_share": 0.85800109229929,
+   "placement_open_head": {
+    "customer_acc": 0.6128606033913235,
+    "state_acc": 0.13785509799603612,
+    "n_test": 4541
+   },
+   "placement_own_head": {
+    "customer_acc": 0.6115393085223519,
+    "state_acc": 0.14269984584893194,
+    "n_test": 4541
+   },
+   "placement_raw_backbone": {
+    "customer_acc": 0.5426117595243338,
+    "state_acc": 0.12552301255230125,
+    "n_test": 4541
+   },
+   "leak": {
+    "open": {
+     "with": {
+      "codename_precision": 0.52,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.8,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": 0.44615146550154744,
+      "secret_advantage": 0.5619047619047619
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": -0.07384853449845259,
+      "secret_advantage": 0.16190476190476194
+     },
+     "codename_advantage": 0.52,
+     "secret_advantage": 0.4
+    },
+    "filtered": {
+     "with": {
+      "codename_precision": 0.28,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.8,
+      "secret_chance@5": 0.25,
+      "codename_advantage": 0.21120093358794825,
+      "secret_advantage": 0.55
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.2,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.06879906641205177,
+      "secret_advantage": -0.04999999999999999
+     },
+     "codename_advantage": 0.28,
+     "secret_advantage": 0.6000000000000001
+    },
+    "built_in": {
+     "with": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.06879906641205177,
+      "secret_advantage": 0.15000000000000002
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.06879906641205177,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.06879906641205177,
+      "secret_advantage": 0.15000000000000002
+     },
+     "codename_advantage": 0.0,
+     "secret_advantage": 0.0
+    },
+    "non_interference_max_abs_diff": 0.0
+   }
+  },
+  "software_engineer": {
+   "visible_share": 0.2154105224831604,
+   "placement_open_head": {
+    "customer_acc": 0.2941696113074205,
+    "state_acc": 0.0706713780918728,
+    "n_test": 1132
+   },
+   "placement_own_head": {
+    "customer_acc": 0.2941696113074205,
+    "state_acc": 0.06713780918727916,
+    "n_test": 1132
+   },
+   "placement_raw_backbone": {
+    "customer_acc": 0.14840989399293286,
+    "state_acc": 0.03268551236749117,
+    "n_test": 1132
+   },
+   "placement_public_base_finetuned": {
+    "customer_acc": 0.21643109540636044,
+    "state_acc": 0.05565371024734982,
+    "n_test": 1132
+   },
+   "leak": {
+    "open": {
+     "with": {
+      "codename_precision": 0.52,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.8,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": 0.44615146550154744,
+      "secret_advantage": 0.5619047619047619
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.07384853449845259,
+      "secret_precision@5": 0.4,
+      "secret_chance@5": 0.23809523809523808,
+      "codename_advantage": -0.07384853449845259,
+      "secret_advantage": 0.16190476190476194
+     },
+     "codename_advantage": 0.52,
+     "secret_advantage": 0.4
+    },
+    "filtered": {
+     "with": {
+      "codename_precision": 0.4,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.6,
+      "secret_chance@5": 0.25,
+      "codename_advantage": 0.2589055567293472,
+      "secret_advantage": 0.35
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.0,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.14109444327065285,
+      "secret_advantage": -0.25
+     },
+     "codename_advantage": 0.4,
+     "secret_advantage": 0.6
+    },
+    "built_in": {
+     "with": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.2,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.14109444327065285,
+      "secret_advantage": -0.04999999999999999
+     },
+     "without": {
+      "codename_precision": 0.0,
+      "codename_chance": 0.14109444327065285,
+      "secret_precision@5": 0.2,
+      "secret_chance@5": 0.25,
+      "codename_advantage": -0.14109444327065285,
+      "secret_advantage": -0.04999999999999999
+     },
+     "codename_advantage": 0.0,
+     "secret_advantage": 0.0
+    },
+    "non_interference_max_abs_diff": 0.0
+   },
+   "placement_own_scratch": {
+    "customer_acc": 0.2765017667844523,
+    "state_acc": 0.13780918727915195,
+    "n_test": 1132
+   },
+   "placement_own_head_rerun": {
+    "customer_acc": 0.2941696113074205,
+    "state_acc": 0.06713780918727916,
+    "n_test": 1132
+   },
+   "placement_own_two_channels": {
+    "customer_acc": 0.3197879858657244,
+    "state_acc": 0.14752650176678445,
+    "n_test": 1132
+   },
+   "placement_public_base_finetuned_800": {
+    "customer_acc": 0.24734982332155478,
+    "state_acc": 0.06713780918727916,
+    "n_test": 1132
+   },
+   "placement_public_base_only": {
+    "customer_acc": 0.1687279151943463,
+    "state_acc": 0.05035335689045936,
+    "n_test": 1132
+   }
+  },
+  "financial_analyst": {
+   "visible_share": 0.09097942836337157,
+   "placement_open_head": {
+    "customer_acc": 0.5152129817444219,
+    "state_acc": 0.1643002028397566,
+    "n_test": 493
+   },
+   "placement_own_head": {
+    "customer_acc": 0.4259634888438134,
+    "state_acc": 0.15010141987829614,
+    "n_test": 493
+   },
+   "placement_raw_backbone": {
+    "customer_acc": 0.35294117647058826,
+    "state_acc": 0.09533468559837728,
+    "n_test": 493
+   },
+   "placement_public_base_finetuned": {
+    "customer_acc": 0.43204868154158216,
+    "state_acc": 0.15415821501014199,
+    "n_test": 493
+   },
+   "placement_own_scratch": {
+    "customer_acc": 0.23123732251521298,
+    "state_acc": 0.12373225152129817,
+    "n_test": 493
+   },
+   "placement_own_head_rerun": {
+    "customer_acc": 0.4259634888438134,
+    "state_acc": 0.15010141987829614,
+    "n_test": 493
+   },
+   "placement_own_two_channels": {
+    "customer_acc": 0.30425963488843816,
+    "state_acc": 0.13793103448275862,
+    "n_test": 493
+   },
+   "placement_public_base_finetuned_800": {
+    "customer_acc": 0.4056795131845842,
+    "state_acc": 0.15618661257606492,
+    "n_test": 493
+   },
+   "placement_public_base_only": {
+    "customer_acc": 0.3752535496957404,
+    "state_acc": 0.0973630831643002,
+    "n_test": 493
+   }
+  }
+ }
+}

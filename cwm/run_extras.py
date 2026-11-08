@@ -66,10 +66,22 @@ GENERIC = {"bank", "labs", "lab", "payments", "pay", "systems", "system", "compo
            "and", "of", "works", "studio", "studios", "finance", "financial", "bio", "labs.", "corp", "company"}
 
 
-def identity_patterns(gt):
+def identity_patterns(gt, employees=False):
     """Regexes that remove customer identity: account names and their distinctive words, contact names, domains,
-    email addresses and record ids. Internal staff names are kept (they are the company's own people)."""
+    email addresses and record ids. With employees=True the company's own people are masked too (names, email
+    handles, Slack names), so that an employee who works with one customer cannot give that customer away."""
     words, phrases = set(), set()
+    if employees:
+        for p in gt["people"]["people"]:
+            for w in re.findall(r"[a-z]+", p["name"].lower()):
+                if len(w) >= 3:
+                    words.add(w)
+            words.add(p["email"].split("@")[0].lower())
+        for u in gt.get("slack_users", []):
+            if str(u.get("id", "")).startswith("user-") and u["id"][5:].isdigit():
+                for w in re.findall(r"[a-z]+", (u.get("real_name") or "").lower() + " " + (u.get("name") or "").lower()):
+                    if len(w) >= 3:
+                        words.add(w)
     acct_ids = {o["external_id"] for o in gt["zendesk_orgs"]} | {a["Id"] for a in gt["accounts"]}
     for a in gt["accounts"]:
         if a["Id"] not in acct_ids:
@@ -109,10 +121,10 @@ def mask_text(text, pats):
     return t
 
 
-def masked_corpus(src, gt_path):
+def masked_corpus(src, gt_path, employees=False):
     gt = json.load(open(gt_path))
-    pats = identity_patterns(gt)
-    dst = os.path.join(OUT, "masked_observations.jsonl")
+    pats = identity_patterns(gt, employees=employees)
+    dst = os.path.join(OUT, "masked_employees_observations.jsonl" if employees else "masked_observations.jsonl")
     n = {"all_records": 0, "all_records_changed": 0, "linked_records": 0, "linked_records_changed": 0}
     with open(src) as f, open(dst, "w") as g:
         for line in f:
@@ -141,10 +153,11 @@ def stage_seeds(c, res, arg):
             yield
 
 
-def stage_mask(c, res, arg):
-    path, counts = masked_corpus(D1, D1.replace("observations.jsonl", "ground_truth.json"))
+def stage_mask(c, res, arg, employees=False):
+    path, counts = masked_corpus(D1, D1.replace("observations.jsonl", "ground_truth.json"), employees=employees)
     cm = load(path)
-    out = res.setdefault("mask", dict(counts, **{"identity_only_state_p@10": identity_only_state_precision(cm)}))
+    out = res.setdefault("mask_employees" if employees else "mask",
+                         dict(counts, **{"identity_only_state_p@10": identity_only_state_precision(cm)}))
     sample = [cm.obs[i]["text"][:200] for i in np.random.default_rng(3).choice(len(cm.obs), 5, replace=False)]
     out["examples"] = sample
     out["tfidf_lsa"] = e1_metrics(cm, tfidf_lsa(cm), np.random.default_rng(0)); log("mask tfidf", out["tfidf_lsa"])
@@ -261,8 +274,9 @@ if __name__ == "__main__":
     c = load(D1)
     for st in stages:
         key, _, arg = st.partition(":")
-        for _ in {"seeds": stage_seeds, "mask": stage_mask, "noise": stage_noise,
-                  "heldout": stage_heldout}[key](c, res, arg):
+        table = {"seeds": stage_seeds, "mask": stage_mask, "noise": stage_noise, "heldout": stage_heldout,
+                 "maskall": lambda c_, r_, a_: stage_mask(c_, r_, a_, employees=True)}
+        for _ in table[key](c, res, arg):
             json.dump(res, open(path, "w"), indent=1)
     json.dump(res, open(path, "w"), indent=1)
     log("done", name, stages)

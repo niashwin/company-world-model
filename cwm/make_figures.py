@@ -339,12 +339,22 @@ def fig_acl():
     ax.legend(loc="upper left", frameon=False, fontsize=6.8, handlelength=1.2, borderaxespad=0.1)
     ax.tick_params(axis="x", length=0); ax.grid(axis="x", visible=False)
     ax = axes[1]
+    R2 = load("v2_acl.json").get("readers", {})
     readers = [r for r in short if r in R]
     xs = np.arange(len(readers))
     o = [R[r]["placement_open_encoder"]["customer_acc"] for r in readers]
     b = [R[r].get("placement_own_encoder", R[r]["placement_open_encoder"])["customer_acc"] for r in readers]
-    ax.bar(xs - 0.2, o, 0.38, color="#b9b8b2", label="Encoder trained on everything")
-    ax.bar(xs + 0.2, b, 0.38, color=C["good"], label="Reader's own encoder")
+    bars = [(o, "Trained on everything (leaks)", "#b9b8b2", None), (b, "Own encoder", C["good"], None)]
+    if R2:
+        h = [R2[r]["placement_own_head"]["customer_acc"] if r in R2 else np.nan for r in readers]
+        bars.append((h, "Backbone + own head", "#9cc2ee", "////"))
+    w = 0.8 / len(bars)
+    for j, (ys, name, col, hatch) in enumerate(bars):
+        xx = xs + (j - (len(bars) - 1) / 2) * w
+        ax.bar(xx, ys, w * 0.92, color=col, hatch=hatch, edgecolor="white", lw=0, label=name)
+        for x, y in zip(xx, ys):
+            if np.isfinite(y):
+                ax.text(x, y + 0.015, f"{100 * y:.0f}", ha="center", va="bottom", fontsize=5.8, color=INK)
     ax.set_xticks(xs, [f"{short[r]}\n{100 * R[r]['visible_share']:.0f}%" for r in readers])
     for lab in ax.get_xticklabels():
         lab.set_fontsize(6.8)
@@ -353,7 +363,7 @@ def fig_acl():
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_ylabel("Held-out records, right customer")
     ax.set_title("Cost (under each reader: share readable)", loc="left")
-    ax.legend(loc="upper right", frameon=False, fontsize=6.8, handlelength=1.2, borderaxespad=0.1)
+    ax.legend(loc="upper right", frameon=False, fontsize=6.4, handlelength=1.2, borderaxespad=0.1, ncol=1)
     ax.grid(axis="x", visible=False)
     fig.tight_layout(w_pad=1.5)
     fig.savefig(os.path.join(FIG, "acl.pdf"))

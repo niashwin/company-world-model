@@ -1,0 +1,139 @@
+{
+ "n_states": 469,
+ "n_transitions": 398,
+ "baselines": {
+  "tickets": {
+   "majority": 0.5653266331658291,
+   "oracle_persistence": 0.6834170854271356
+  },
+  "priority": {
+   "majority": 0.5653266331658291,
+   "oracle_persistence": 0.6030150753768844
+  },
+  "call": {
+   "majority": 0.7613065326633166,
+   "oracle_persistence": 0.8065326633165829
+  },
+  "stage": {
+   "majority": 0.28391959798994976,
+   "oracle_persistence": 0.7989949748743719
+  }
+ },
+ "good_month": {
+  "tickets": 0.4396984924623116,
+  "priority": 0.4623115577889447,
+  "call": 0.6959798994974874,
+  "stage": 0.25125628140703515,
+  "mean_next": 0.4623115577889447,
+  "dynamics": {
+   "cos_persistence": 0.8259014967482669,
+   "cos_predicted": 0.6263733885260345,
+   "cos_change_direction": 0.17994024194765312,
+   "error_reduction_vs_persistence": -0.5498481411719234,
+   "shrink_error_reduction_vs_persistence": 0.11600847562130823,
+   "shrink_factor": 0.7935398654504255,
+   "tuned_error_reduction_vs_persistence": 0.04886856383427696,
+   "tuned_alphas": {
+    "1000.0": 18,
+    "10000.0": 4
+   }
+  }
+ },
+ "good_quarter": {
+  "tickets": 0.40703517587939697,
+  "priority": 0.4271356783919598,
+  "call": 0.6582914572864321,
+  "stage": 0.27638190954773867,
+  "mean_next": 0.44221105527638194,
+  "dynamics": {
+   "cos_persistence": 0.896732962749964,
+   "cos_predicted": 0.7596306381197225,
+   "cos_change_direction": 0.12760475043541736,
+   "error_reduction_vs_persistence": -0.7427814923295812,
+   "shrink_error_reduction_vs_persistence": 0.07444005385680308,
+   "shrink_factor": 0.8714010281996294,
+   "tuned_error_reduction_vs_persistence": 0.015136762502953593,
+   "tuned_alphas": {
+    "1000.0": 13,
+    "10000.0": 9
+   }
+  }
+ },
+ "bad": {
+  "tickets": 0.5226130653266332,
+  "priority": 0.5402010050251256,
+  "call": 0.7738693467336684,
+  "stage": 0.3316582914572864,
+  "mean_next": 0.5420854271356784,
+  "dynamics": {
+   "cos_persistence": 0.5790287219780619,
+   "cos_predicted": 0.5739190481672176,
+   "cos_change_direction": 0.46747913976181205,
+   "error_reduction_vs_persistence": 0.26664934710515165,
+   "shrink_error_reduction_vs_persistence": 0.27657386425720676,
+   "shrink_factor": 0.4649788791483099,
+   "tuned_error_reduction_vs_persistence": 0.2787081309411745,
+   "tuned_alphas": {
+    "100.0": 16,
+    "1000.0": 6
+   }
+  }
+ },
+ "minilm": {
+  "tickets": 0.5100502512562815,
+  "priority": 0.5201005025125628,
+  "call": 0.7738693467336684,
+  "stage": 0.2914572864321608,
+  "mean_next": 0.5238693467336684,
+  "dynamics": {
+   "cos_persistence": 0.6113804751058254,
+   "cos_predicted": 0.5812858097760086,
+   "cos_change_direction": 0.41432905316659385,
+   "error_reduction_vs_persistence": 0.2851652261295853,
+   "shrink_error_reduction_vs_persistence": 0.28840069261757284,
+   "shrink_factor": 0.5108042738654397,
+   "tuned_error_reduction_vs_persistence": 0.3064552227873676,
+   "tuned_alphas": {
+    "1000.0": 22
+   }
+  }
+ },
+ "minilm_head_month": {
+  "tickets": 0.535175879396985,
+  "priority": 0.507537688442211,
+  "call": 0.7763819095477387,
+  "stage": 0.23366834170854273,
+  "mean_next": 0.5131909547738693,
+  "dynamics": {
+   "cos_persistence": 0.7299730021239788,
+   "cos_predicted": 0.5466602619704627,
+   "cos_change_direction": 0.2500113422731429,
+   "error_reduction_vs_persistence": -0.017978726618274266,
+   "shrink_error_reduction_vs_persistence": 0.18728556230636084,
+   "shrink_factor": 0.7141842110590502,
+   "tuned_error_reduction_vs_persistence": 0.18811101874094938,
+   "tuned_alphas": {
+    "1000.0": 22
+   }
+  }
+ },
+ "good_month+minilm": {
+  "tickets": 0.5402010050251256,
+  "priority": 0.535175879396985,
+  "call": 0.7763819095477387,
+  "stage": 0.2864321608040201,
+  "mean_next": 0.5345477386934674,
+  "dynamics": {
+   "cos_persistence": 0.7392326046037837,
+   "cos_predicted": 0.6821551269660016,
+   "cos_change_direction": 0.312847807431872,
+   "error_reduction_vs_persistence": 0.19166960301058866,
+   "shrink_error_reduction_vs_persistence": 0.2117569357754303,
+   "shrink_factor": 0.6819915730381746,
+   "tuned_error_reduction_vs_persistence": 0.24595290037274886,
+   "tuned_alphas": {
+    "1000.0": 22
+   }
+  }
+ }
+}

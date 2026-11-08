@@ -1,0 +1,163 @@
+{
+ "drift": {
+  "good": {
+   "auroc_event_week": 0.493367946045974,
+   "auroc_next_week": 0.4869783576680129,
+   "weeks": 1445,
+   "event_weeks": 279
+  },
+  "good_month": {
+   "auroc_event_week": 0.5131595935004334,
+   "auroc_next_week": 0.4915022781402092,
+   "weeks": 1445,
+   "event_weeks": 279
+  },
+  "bad": {
+   "auroc_event_week": 0.5328989837510836,
+   "auroc_next_week": 0.5358451123537331,
+   "weeks": 1445,
+   "event_weeks": 279
+  },
+  "minilm": {
+   "auroc_event_week": 0.5253324480348217,
+   "auroc_next_week": 0.5185212151806979,
+   "weeks": 1445,
+   "event_weeks": 279
+  },
+  "minilm_head": {
+   "auroc_event_week": 0.4923427826653633,
+   "auroc_next_week": 0.4806487522004763,
+   "weeks": 1445,
+   "event_weeks": 279
+  },
+  "good+minilm": {
+   "auroc_event_week": 0.4728477716913505,
+   "auroc_next_week": 0.4706268768768769,
+   "weeks": 1445,
+   "event_weeks": 279
+  },
+  "volume": {
+   "auroc_event_week": 0.5664819220814352,
+   "auroc_next_week": 0.5415792948120534,
+   "weeks": 1445,
+   "event_weeks": 279
+  }
+ },
+ "misalignment": {
+  "good": {
+   "auroc": 0.47849462365591394,
+   "windows": 163,
+   "at_risk": 31
+  },
+  "good_month": {
+   "auroc": 0.510019550342131,
+   "windows": 163,
+   "at_risk": 31
+  },
+  "bad": {
+   "auroc": 0.5273704789833822,
+   "windows": 163,
+   "at_risk": 31
+  },
+  "minilm": {
+   "auroc": 0.541544477028348,
+   "windows": 163,
+   "at_risk": 31
+  },
+  "minilm_head": {
+   "auroc": 0.5735581622678396,
+   "windows": 163,
+   "at_risk": 31
+  },
+  "good+minilm": {
+   "auroc": 0.5303030303030303,
+   "windows": 163,
+   "at_risk": 31
+  }
+ },
+ "situations": {
+  "good": {
+   "precision@5": 0.185,
+   "chance": 0.07917872676113176,
+   "states": 160
+  },
+  "good_month": {
+   "precision@5": 0.18375000000000002,
+   "chance": 0.07917872676113176,
+   "states": 160
+  },
+  "bad": {
+   "precision@5": 0.20750000000000002,
+   "chance": 0.07917872676113176,
+   "states": 160
+  },
+  "minilm": {
+   "precision@5": 0.18375,
+   "chance": 0.07917872676113176,
+   "states": 160
+  },
+  "minilm_head": {
+   "precision@5": 0.1325,
+   "chance": 0.07917872676113176,
+   "states": 160
+  },
+  "good+minilm": {
+   "precision@5": 0.175,
+   "chance": 0.07917872676113176,
+   "states": 160
+  }
+ },
+ "situations_controls": {
+  "states": 160,
+  "trouble_states": 22,
+  "same_quarter_baseline": 0.13150722718746552,
+  "good": {
+   "precision@5_all": 0.185,
+   "chance_all": 0.07917872676113176,
+   "precision@5_other_quarters": 0.17124999999999999,
+   "chance_other_quarters": 0.07326439051762326,
+   "trouble_precision@5": 0.03636363636363637,
+   "trouble_base_rate": 0.119103763744172
+  },
+  "good_month": {
+   "precision@5_all": 0.18375000000000002,
+   "chance_all": 0.07917872676113176,
+   "precision@5_other_quarters": 0.17375000000000002,
+   "chance_other_quarters": 0.07326439051762326,
+   "trouble_precision@5": 0.06363636363636363,
+   "trouble_base_rate": 0.119103763744172
+  },
+  "bad": {
+   "precision@5_all": 0.20750000000000002,
+   "chance_all": 0.07917872676113176,
+   "precision@5_other_quarters": 0.16999999999999998,
+   "chance_other_quarters": 0.07326439051762326,
+   "trouble_precision@5": 0.3454545454545455,
+   "trouble_base_rate": 0.119103763744172
+  },
+  "minilm": {
+   "precision@5_all": 0.18375,
+   "chance_all": 0.07917872676113176,
+   "precision@5_other_quarters": 0.17,
+   "chance_other_quarters": 0.07326439051762326,
+   "trouble_precision@5": 0.2545454545454546,
+   "trouble_base_rate": 0.119103763744172
+  },
+  "minilm_head": {
+   "precision@5_all": 0.1325,
+   "chance_all": 0.07917872676113176,
+   "precision@5_other_quarters": 0.12375,
+   "chance_other_quarters": 0.07326439051762326,
+   "trouble_precision@5": 0.1,
+   "trouble_base_rate": 0.119103763744172
+  },
+  "good+minilm": {
+   "precision@5_all": 0.175,
+   "chance_all": 0.07917872676113176,
+   "precision@5_other_quarters": 0.15250000000000002,
+   "chance_other_quarters": 0.07326439051762326,
+   "trouble_precision@5": 0.05454545454545454,
+   "trouble_base_rate": 0.119103763744172
+  }
+ }
+}

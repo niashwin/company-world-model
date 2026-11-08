@@ -1,0 +1,29 @@
+{
+ "n_states": 405,
+ "reference_customer_known_month_acc": 0.1317554975773388,
+ "good_month": {
+  "account_p@10_cross_system": 0.6936666666666667,
+  "state_p@10_cross_system": 0.08773333333333334,
+  "customer_acc": 0.746552366753634,
+  "state_acc": 0.16790905702571748,
+  "train_seconds": 346.8013074398041
+ },
+ "good_quarter_all_threads": {
+  "account_p@10_cross_system": 0.9106666666666666,
+  "state_p@10_cross_system": 0.1494,
+  "customer_acc": 0.9545285128587402,
+  "state_acc": 0.24972046216921356
+ },
+ "minilm_raw": {
+  "account_p@10_cross_system": 0.2573,
+  "state_p@10_cross_system": 0.04513333333333334,
+  "customer_acc": 0.5270219903093551,
+  "state_acc": 0.07100260901975401
+ },
+ "minilm_head_month": {
+  "account_p@10_cross_system": 0.4849,
+  "state_p@10_cross_system": 0.06173333333333334,
+  "customer_acc": 0.6149832277301528,
+  "state_acc": 0.08684308609765189
+ }
+}
